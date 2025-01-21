@@ -10,7 +10,7 @@ Website:
 4. Member 4
 5. Member 5
 
-## Project Summary and Vision: **Yearn2Learn*
+## Project Summary and Vision: **Yearn2Learn**
 
 ### **Summary**
 
