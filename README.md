@@ -4,7 +4,7 @@ Website:
 
 ### Team members
 
-1. Member 1 | [email@myumanitoba.ca]email@myumanitoba.ca | StudentID
+1. Member 1 | [email@myumanitoba.ca](mailto:email@myumanitoba.ca) | StudentID
 2. Member 2
 3. Member 3
 4. Member 4
