@@ -8,7 +8,7 @@ Website:
 2. Member 2
 3. Member 3
 4. Member 4
-5. Member 5
+5. Thanh Nam Nguyen | [nguyen89@myumanitoba.ca](mailto:nguyen89@myumanitoba.ca) | 7952436
 
 ## Project Summary and Vision: **Yearn2Learn**
 
@@ -22,7 +22,7 @@ Our vision
 
 ## Core features
 
-### 1. Feature 1: User can **do something**
+### 1. Account Management: User can register and maintain their personal account.
 
 ### 2. Feature 2: User can **do something**
 
@@ -46,7 +46,11 @@ Our vision
 
 ## User Stories
 
-User stories for each feature
+### Account Management
+1. As a new user, I want to register my account so that I can save my personal information/preference.
+2. As a user, I want to be able to sign in so that I could manage/customize my study plan.
+3. As a logged-in user, I want to be able to change my personal information.
+
 
 # System Architecture (Block Diagram):
 
