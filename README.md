@@ -2,6 +2,8 @@
 
 Website:
 
+Project Proposal: [ProjectProposal_Ver2.pdf](https://github.com/user-attachments/files/18575234/ProjectProposal_Ver2.pdf)
+
 ### Team members
 
 1. Member 1 | [email@myumanitoba.ca](mailto:email@myumanitoba.ca) | StudentID
