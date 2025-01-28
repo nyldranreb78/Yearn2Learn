@@ -59,3 +59,4 @@ Our vision
 # System Architecture (Block Diagram):
 
 # Code Style
+We will follow [the code style from Google for Typescript](https://google.github.io/styleguide/tsguide.html).
