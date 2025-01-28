@@ -22,20 +22,6 @@ Our summary
 
 Our vision
 
-## Core features
-
-### 1. Dynamic Notepad
-
-### 2. Pomodoro Timer
-
-### 3. Deadline & Goal Tracker
-
-### 4. Flash Card Creator
-
-### 5. Account Management
-
-### 6. Performance (Non-funtional)
-
 ## Technologies
 - Programming language: TypeScript
 - Frontend: VueJS
@@ -47,28 +33,28 @@ Our vision
 - CI/CD: GitHub Actions
 - VCS: Git (GitHub) with Feature branch Workflow
 
-## User Stories
+## Core Features and User Stories
 
-### Dynamic Notepad
-1. As a student, I want to create/delete my class notes so that I can study anytime and anywhere.
-2. As a student, I want to edit and save my class notes so that I can ensure up-to-date and correct content.
+### 1. Dynamic Notepad
+- As a student, I want to create/delete my class notes so that I can study anytime and anywhere.
+- As a student, I want to edit/save my class notes so that I can ensure up-to-date and correct content.
 
-### Pomodoro Timer
-3. As a student that gets distracted easily, I want to be held accountable by being timed so that I can fully focus on working through class material.
+### 2. Pomodoro Timer
+- As a student that gets distracted easily, I want to be held accountable by being timed so that I can fully focus on working through class material.
 
-### Deadline & Goal Tracker
-4. As a full-time student, I want to be constantly reminded of my upcoming deadlines and some personal goals that I set for this term so that I don't lose track of them and increase my chances of accomplishing them in time.
+### 3. Deadline & Goal Tracker
+- As a full-time student, I want to be constantly reminded of my upcoming deadlines and some personal goals that I set for this term so that I don't lose track of them and increase my chances of accomplishing them in time.
 
-### Flash Card Creator
-5. As a student who loves using flash cards as part of studying, I want to have flash cards as part of my study tools so that I can study more efficiently.
+### 4. Flash Card Creator
+- As a student who loves using flash cards as part of studying, I want to have flash cards as part of my study tools so that I can study more efficiently.
 
-### Account Management
-6. As a new user, I want to register my account so that I can save my personal information/preference.
-7. As a user, I want to be able to sign in so that I could manage/customize my study plan.
-8. As a logged-in user, I want to be able to change my personal information.
+### 5. Account Management
+- As a new user, I want to register my account so that I can save my personal information/preference.
+- As a user, I want to be able to sign in so that I could manage/customize my study plan.
+- As a logged-in user, I want to be able to change my personal information.
 
-### Performance (Non-functional)
-9. As a student in large classes of 100 students or more, I want to be able to take and save my notes reliably even with 100 other students writing the same amount of notes as me at the same time so that I would be able to keep up with my classes' pace without worrying about losing my notes.
+### 6. Performance (Non-functional)
+- As a student in large classes of 100 students or more, I want to be able to take and save my notes reliably even with 100 other students writing the same amount of notes as me at the same time so that I would be able to keep up with my classes' pace without worrying about losing my notes.
 
 # System Architecture (Block Diagram):
 
