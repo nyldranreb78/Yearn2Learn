@@ -8,7 +8,7 @@ Project Proposal: [ProjectProposal_Ver2.pdf](https://github.com/user-attachments
 
 1. Earl Alminana | [email@myumanitoba.ca](mailto:email@myumanitoba.ca) | StudentID
 2. Evan James | [jamese1@myumanitoba.ca](mailto:jamese1@myumanitoba.ca) | 7901799
-3. Ngene Chika | [email@myumanitoba.ca](mailto:ngenec@myumanitoba.ca) | 7918889
+3. Ngene Chika | [ngenec@myumanitoba.ca](mailto:ngenec@myumanitoba.ca) | 7918889
 4. Nyl Salvador | [email@myumanitoba.ca](mailto:email@myumanitoba.ca) | 7887825
 5. Thanh Nam Nguyen | [nguyen89@myumanitoba.ca](mailto:nguyen89@myumanitoba.ca) | 7952436
 
