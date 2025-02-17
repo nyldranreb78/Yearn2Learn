@@ -1,17 +1,5 @@
 const jwt = require('jsonwebtoken')
 
-function generateJWT(user){
-  return jwt.sign(
-    {
-      id: user.id
-    },
-    process.env.ACCESS_TOKEN_SECRET,
-    {
-      expiresIn: '1800s'
-    }
-  )
-}
-
 exports.requireLogin = (req, res, next) => {
     const token = verifyToken(req);
     if (!token) {
