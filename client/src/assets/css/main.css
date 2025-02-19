@@ -1,0 +1,31 @@
+.y2l-blue {
+	background-color: #2f5597;
+}
+
+.y2l-yellow {
+	background-color: #ffc000;
+}
+
+.y2l-red {
+	background-color: #ea4d21;
+}
+
+.txt-y2l-blue {
+	color: #2f5597;
+}
+
+.txt-y2l-yellow {
+	color: #ffc000;
+}
+
+.txt-y2l-red {
+	color: #ea4d21;
+}
+
+/* Bootstrap overrides */
+.btn-hanging {
+	border-top-left-radius: 0px !important;
+	border-top-right-radius: 0px !important;
+	border-bottom-left-radius: 16px !important;
+	border-bottom-right-radius: 16px !important;
+}

@@ -6,7 +6,7 @@ Project Proposal: [ProjectProposal_Ver2.pdf](https://github.com/user-attachments
 
 ### Team members
 
-1. Earl Alminana | [email@myumanitoba.ca](mailto:email@myumanitoba.ca) | StudentID
+1. Earl Alminana | [email@myumanitoba.ca](mailto:email@myumanitoba.ca) | 7880997
 2. Evan James | [jamese1@myumanitoba.ca](mailto:jamese1@myumanitoba.ca) | 7901799
 3. Chikamnaele (Chika) Ngene | [ngenec@myumanitoba.ca](mailto:ngenec@myumanitoba.ca) | 7918889
 4. Nyl Salvador | [email@myumanitoba.ca](mailto:email@myumanitoba.ca) | 7887825
@@ -46,7 +46,7 @@ The vision is to ultimately create something that goes beyond ordinary notes and
 - As a student in large classes of 100 students or more, I want to be able to take and save my notes reliably even with 100 other students writing the same amount of notes as me at the same time so that I would be able to keep up with my classes' pace without worrying about losing my notes.
 
 ## Technologies
-- Programming language: TypeScript
+- Programming language: JavaScript
 - Frontend: VueJS
 - Backend: ExpressJS, NodeJS
 
@@ -61,4 +61,4 @@ The vision is to ultimately create something that goes beyond ordinary notes and
 ![Image](https://github.com/user-attachments/assets/b897a090-5887-488b-af72-5a6a929485fc)
 
 # Code Style
-We will follow [the code style from Google for Typescript](https://google.github.io/styleguide/tsguide.html).
+Currently, we are following [the code style from Prettier](https://prettier.io/docs/rationale/).
