@@ -59,16 +59,22 @@ async function show(req, res){
 async function update(req, res) {
     const id = auth.getUserID(req)
 
-    User.findOne({_id: id})
-    .then(user => {
-        const note = new Note({
-            title: req.body.title,
-            content: req.body.content,
-        })
-        note.author = user._id
-        Note.findOneAndUpdate({_id: req.params.id}, note)
+    Note.findOne({_id: req.params.id})
+    .then(note => {
+        if (!note) 
+            return res.status(404).json({message: 'Note not found'})
+
+        if (note.author != id) 
+            return res.status(403).json({message: 'Unauthorized'})
+
+        note.title = req.body.title || note.title
+        note.content = req.body.content
+        note.save()
         .then(note => {
-            return res.status(201).json({note: note})
+            return res.status(200).json({note: note})
+        })
+        .catch(err => {
+            return res.status(500).json({message: err.message})
         })
     })
 }
