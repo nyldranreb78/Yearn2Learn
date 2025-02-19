@@ -1,4 +1,6 @@
 import { createApp } from "vue";
+import { createPinia } from "pinia";
+import { authentication } from "./plugins/authentication";
 import App from "./App.vue";
 import "./registerServiceWorker";
 import router from "./router";
@@ -8,7 +10,16 @@ import "bootstrap/dist/css/bootstrap.css";
 import 'bootstrap-icons/font/bootstrap-icons.scss';
 import './assets/css/main.css';
 
-createApp(App).use(store).use(router).mount("#app");
+const app = createApp(App);
+// createApp(App).use(store).use(router).mount("#app");
+const pinia = createPinia(); // Create Pinia instance
+app.use(pinia);
+
+authentication.install().then(()=>{
+    app.use(store);
+    app.use(router); 
+    app.mount("#app"); 
+})
 
 // Provided by Boostrap documentation to use with the Popover dependency
 // From https://getbootstrap.com/docs/5.3/components/popovers/
