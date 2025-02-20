@@ -1,26 +1,5 @@
-<style scoped>
-    .nav-item {
-    list-style: none !important;
-    }
-
-    .nav-item::before,
-    .nav-item::after {
-    content: none !important;
-    }
-
-    .dropdown-menu li {
-    list-style: none !important;
-    }
-
-    .btn-warning.router-link-active,
-    .btn-warning.router-link-exact-active {
-        color: #2F5597 !important;
-        font-weight: bold !important;
-    }
-</style>
-
 <template>
-   <nav class="navbar navbar-expand-lg bg-light">
+   <nav class="navbar navbar-expand-lg bg-white shadow-sm">
     <div class="container-fluid">
 		<div class="col-3"></div>
         <div class="col-6">
@@ -93,3 +72,24 @@ await authStore.logout()
 }
 
 </script>
+
+<style scoped>
+    .nav-item {
+    list-style: none !important;
+    }
+
+    .nav-item::before,
+    .nav-item::after {
+    content: none !important;
+    }
+
+    .dropdown-menu li {
+    list-style: none !important;
+    }
+
+    .btn-warning.router-link-active,
+    .btn-warning.router-link-exact-active {
+        color: #2F5597 !important;
+        font-weight: bold !important;
+    }
+</style>
