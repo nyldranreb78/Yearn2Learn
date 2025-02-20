@@ -268,7 +268,7 @@ const textEditorData = reactive({
 	content: ""
 })
 
-const courseList = ref([{id: uuid.v1(), course_name: "COMP 4350", is_major: true, attached_notes:[{file_name: "Test Notes", data:"WEEEEEEEEEEEE"}]}]);
+const courseList = ref([]);
 
 async function addCourse(){
 	// Add the new course to the list
