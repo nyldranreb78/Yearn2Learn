@@ -83,5 +83,15 @@ export const useAuthStore = defineStore("auth", {
         throw error.message;
       }
     },
+
+    async createFolder(folderData) {
+      try {
+        const { data } = await useApiPrivate().post(`/api/folder/create`, folderData);
+        return data;
+      } catch (error) {
+        console.error("Error creating folder:", error.response?.data || error.message);
+        throw error.message;
+      }
+    }
   },
 });

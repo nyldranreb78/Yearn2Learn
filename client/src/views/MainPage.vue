@@ -67,14 +67,21 @@
 								<div class="list-group">
 									<a href="#" class="list-group-item list-group-item-action">Feb 13 Class</a>
 									<a href="#" class="list-group-item list-group-item-action">Feb 11 Class</a>
+									
+									<div class="d-flex">
+										<button @click="createNote" class="btn btn-warning me-2">
+											Create Note
+										</button>
+									</div>
+
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 				<div class="d-flex">
-					<button @click="createNote" class="btn btn-warning me-2">
-						Create Note
+					<button @click="createFolder" class="btn btn-warning me-2">
+						New Folder
 					</button>
 				</div>
 			</div>
@@ -134,17 +141,29 @@ export default {
   },
   methods: {
     async createNote() {
-      try {
-        const noteData = {
-          title: "New Note",
-          content: "This is a sample note."
-        };
-        const response = await this.authStore.createNote(noteData);
-        console.log("Note created successfully:", response);
-      } catch (error) {
-        console.error("Error creating note:", error);
-      }
-    }
+		try {
+			const noteData = {
+			title: "New Note",
+			content: "This is a sample note."
+			};
+			const response = await this.authStore.createNote(noteData);
+			console.log("Note created successfully:", response);
+		} catch (error) {
+			console.error("Error creating note:", error);
+		}
+    },
+	
+	async createFolder() {
+		try {
+			const folderData = {
+			name: "New Folder"
+			};
+			const response = await this.authStore.createFolder(folderData);
+			console.log("Folder created successfully:", response);
+		} catch (error) {
+			console.error("Error creating folder:", error);
+		}
+	}
   }
 };
 </script>
