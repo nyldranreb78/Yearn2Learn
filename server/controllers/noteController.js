@@ -1,5 +1,6 @@
 const User = require('../models/user')
 const Note = require('../models/note')
+const Folder = require('../models/folder')
 const auth = require('../middleware/auth-service')
 
 async function verifyID(id, res) {
@@ -22,6 +23,27 @@ async function index(req, res){
         console.error("Error fetching notes:", err.message);
         return res.status(500).json({message: err.message})
     }
+}
+
+async function indexFolder(req, res){
+    const id = auth.getUserID(req)
+
+    Folder.findOne({_id: req.params.folderID})
+    .then(folder => {
+        if (!folder) 
+            return res.status(404).json({message: 'Folder not found'})
+
+        if (folder.author != id) 
+            return res.status(403).json({message: 'Unauthorized'})
+
+        Note.find({_id: folder.notes})
+        .then(notes => {
+            return res.status(200).json({notes: notes})
+        })
+        .catch(err => {
+            return res.status(500).json({message: err.message})
+        })
+    })
 }
 
 async function create(req, res){
@@ -48,6 +70,43 @@ async function create(req, res){
         console.error("Error creating note:", err.message);
         return res.status(500).json({message: err.message})
     }
+}
+
+async function createInFolder(req, res){
+    const id = auth.getUserID(req)
+
+    User.findOne({_id: id})
+    .then(user => {
+        if(!user) return res.status(500).json()
+        
+        Folder.findOne({_id: req.params.folderID})
+        .then(folder => {
+            if (!folder) 
+                return res.status(404).json({message: 'Folder not found'})
+            
+            if (folder.author != id) 
+                return res.status(403).json({message: 'Unauthorized'})
+
+            const note = new Note({
+                title: req.body.title,
+                content: req.body.content,
+            })
+    
+            note.author = user._id
+            note.save()
+
+            folder.notes.push(note)
+            folder.save()
+
+            .then(note => {
+                return res.status(201).json({folder: note})
+            })
+            .catch(err => {
+                return res.status(500).json({message: err.message})
+            })
+        })
+            
+    })
 }
 
 async function show(req, res){
@@ -121,4 +180,4 @@ async function remove(req, res) {
     }
 }
 
-module.exports = {index, create, show, update, remove}
+module.exports = {index, indexFolder, create, createInFolder, show, update, remove}

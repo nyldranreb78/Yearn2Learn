@@ -43,6 +43,7 @@ app.use(errorHandlerMiddleware)
 
 // Routes
 app.use('/api/auth', require('./routes/api/auth'))
+app.use('/api/folder', require('./routes/api/folder'))
 app.use('/api/note', require('./routes/api/note'))
 
 app.all('*', (req, res) => {
@@ -54,9 +55,6 @@ app.all('*', (req, res) => {
     res.type('text').send('404 Not Found')
   }
 })
-
-
-
 
 
 mongoose.connection.on('error', (error) => console.error(error))
