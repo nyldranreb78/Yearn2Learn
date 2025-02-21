@@ -73,5 +73,15 @@ export const useAuthStore = defineStore("auth", {
         throw error.message;
       }
     },
+
+    async createNote(noteData) {
+      try {
+        const { data } = await useApiPrivate().post(`/api/note/create`, noteData);
+        return data;
+      } catch (error) {
+        console.error("Error creating note:", error.response?.data || error.message);
+        throw error.message;
+      }
+    },
   },
 });

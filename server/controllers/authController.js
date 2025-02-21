@@ -109,7 +109,8 @@ async function refresh(req, res){
         { expiresIn: '1800s' }
       )
 
-      res.json({access_token: accessToken})
+      console.log("New Access Token on Refresh:", accessToken);
+      res.json({access_token: accessToken});
     }
   )
 }

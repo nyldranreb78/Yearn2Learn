@@ -72,6 +72,11 @@
 						</div>
 					</div>
 				</div>
+				<div class="d-flex">
+					<button @click="createNote" class="btn btn-warning me-2">
+						Create Note
+					</button>
+				</div>
 			</div>
 		</div>
 
@@ -111,14 +116,35 @@
   </div>
 </template>
 
+
 <script>
 // @ is an alias to /src
 import TextEditor from "@/components/TextEditor.vue";
+import { useAuthStore } from "@/store/auth";
 
 export default {
   name: "MainPage",
   components: {
     TextEditor,
   },
+  data() {
+    return {
+      authStore: useAuthStore(),
+    };
+  },
+  methods: {
+    async createNote() {
+      try {
+        const noteData = {
+          title: "New Note",
+          content: "This is a sample note."
+        };
+        const response = await this.authStore.createNote(noteData);
+        console.log("Note created successfully:", response);
+      } catch (error) {
+        console.error("Error creating note:", error);
+      }
+    }
+  }
 };
 </script>
