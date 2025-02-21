@@ -175,10 +175,29 @@
 									>
 										{{ note.file_name }}
 									</div>
+
+					<!--	<div id="class1" class="accordion-collapse collapse" data-bs-parent="#classList">
+							<div class="accordion-body pt-2 pb-0 ps-3 pe-0 fs-6">
+								<div class="list-group">
+									<a href="#" class="list-group-item list-group-item-action">Feb 13 Class</a>
+									<a href="#" class="list-group-item list-group-item-action">Feb 11 Class</a>
+									
+									<div class="d-flex">
+										<button @click="createNote" class="btn btn-warning me-2">
+											Create Note
+										</button>
+									</div> -->
+
+
 								</div>
 							</div>
 						</div>
 					</div>
+				</div>
+				<div class="d-flex">
+					<button @click="createFolder" class="btn btn-warning me-2">
+						New Folder
+					</button>
 				</div>
 			</div>
 		</div>
@@ -228,6 +247,7 @@
 		</div>
   </div>
 </template>
+
 
 <script setup lang="js">
 // @ is an alias to /src
@@ -361,3 +381,50 @@ async function openNotes(course, note){
 	aspect-ratio: 1;
 }
 </style>
+
+//! Below is Chika's and Nam's implementation 
+
+<script>
+// @ is an alias to /src
+import TextEditor from "@/components/TextEditor.vue";
+import { useAuthStore } from "@/store/auth";
+
+export default {
+  name: "MainPage",
+  components: {
+    TextEditor,
+  },
+  data() {
+    return {
+      authStore: useAuthStore(),
+    };
+  },
+  methods: {
+    async createNote() {
+		try {
+			const noteData = {
+			title: "New Note",
+			content: "This is a sample note."
+			};
+			const response = await this.authStore.createNote(noteData);
+			console.log("Note created successfully:", response);
+		} catch (error) {
+			console.error("Error creating note:", error);
+		}
+    },
+	
+	async createFolder() {
+		try {
+			const folderData = {
+			name: "New Folder"
+			};
+			const response = await this.authStore.createFolder(folderData);
+			console.log("Folder created successfully:", response);
+		} catch (error) {
+			console.error("Error creating folder:", error);
+		}
+	}
+  }
+};
+</script>
+
