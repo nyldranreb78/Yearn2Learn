@@ -5,7 +5,7 @@
     <div class="row bg-light vh-100">
       <div class="col-3">
 				<button
-					class="btn btn-secondary btn-circle mt-3 ms-1"
+					class="btn btn-secondary btn-circle mt-3 ms-1 position-fixed"
 					type="button"
 					data-bs-toggle="offcanvas"
 					data-bs-target="#side_bar_left"
@@ -14,25 +14,51 @@
 				</button>
 			</div>
 
-			<div class="col-6">
-				<div class="card">
-					<div class="card-header y2l-blue text-white text-start">
-						<label for="file_name"><small>{{ textEditorData.course_name }}</small></label>
-						<div class="fs-5" id="file_name">{{ textEditorData.file_name }}</div>
+			<div class="col-6 bg-white p-0">
+				<!-- FILE NAME & TEXT EDITOR TOOLBAR -->
+				<div class="row border border-top-0 m-0">
+					<div class="col-6">
+						<div class="fs-5 mt-1">{{ textEditorData.course_name }} / {{ textEditorData.file_name }}</div>
 					</div>
 					
-					<div class="card-body">
-						<div class="bg-white shadow-sm">
-							<QuillEditor
-								theme="snow"
-								toolbar="essential"
-								class="vh-100"
-								v-model:content="textEditorData.content"
-								content-type="html"
-								ref="textEditor"
-							/>
+					<div class="col-6">
+						<div id="fixed_toolbar" class="border-0 d-flex justify-content-end">
+							<!-- Font size selector -->
+							<select class="ql-size me-4">
+								<option value="small"></option>
+								<option selected></option>
+								<option value="large"></option>
+								<option value="huge"></option>
+							</select>
+
+							<!-- Common text modifiers -->
+							<button class="ql-bold"></button>
+							<button class="ql-italic"></button>
+							<button class="ql-underline"></button>
+							<button class="ql-strike"></button>
+							<button class="ql-script" value="sub"></button>
+							<button class="ql-script me-4" value="super"></button>
+
+							<!-- Lists -->
+							<button class="ql-list" value="bullet"></button>
+							<button class="ql-list me-4" value="ordered"></button>
+
+							<!-- Niche tools -->
+							<button class="ql-blockquote"></button>
+							<button class="ql-code-block"></button>
 						</div>
 					</div>
+				</div>
+
+				<div class="row border border-top-0 bg-white m-0">
+					<QuillEditor
+						theme="snow"
+						toolbar="#fixed_toolbar"
+						class="vh-100 border-top-0"
+						v-model:content="textEditorData.content"
+						content-type="html"
+						ref="textEditor"
+					/>
 				</div>
 			</div>
 
@@ -115,7 +141,7 @@
 				<!--COLLAPSIBLE COURSE LIST-->
 				<div class="accordion accordion-flush">
 					<div class="accordion-item" v-for="course in courseList" :key="course.id">
-						<h2 class="accordion-header border">
+						<h2 class="accordion-header">
 							<button
 								class="accordion-button collapsed"
 								type="button" 
@@ -129,7 +155,7 @@
 						<!--NOTES LIST FOR EACH COURSE-->
 						<div :id="'courseID' + course.id" class="accordion-collapse collapse">
 							<div class="accordion-body pt-0 pb-0 ps-3 pe-0 fs-6 mb-2">
-								<div class="list-group sharp-top-border border-top-0">
+								<div class="list-group sharp-top-border">
 									<!--ADD NOTE FORM TRIGGER-->
 									<button
 										type="button"
@@ -138,7 +164,7 @@
 										data-bs-target="#add_note_form"
 										v-on:click="passCurrentCourse(course)"
 									>
-										<i class="bi bi-plus-lg me-2"></i>Create new note
+										<i class="bi bi-plus-lg me-2"></i> Create new note
 									</button>
 
 									<div
@@ -252,11 +278,15 @@ async function refreshCourseForm(){
 }
 
 async function closeCourseForm(){
-	const form = document.querySelector('#add_course_form');
-	bootstrap.Collapse.getInstance(form).hide();
+	// Only close the form if it is open in the first place
+	if(courseFormInProgress.value){
+		const form = document.querySelector("#add_course_form");
+		bootstrap.Collapse.getInstance(form).hide();
 
-	courseFormInProgress.value = false;
-	resetCourseData();
+		courseFormInProgress.value = false;
+
+		resetCourseData();
+	}
 }
 
 async function resetCourseData(){
@@ -291,7 +321,7 @@ async function addNote(){
 }
 
 async function toggleNoteForm(){
-	const form = document.querySelector('#add_note_form');
+	const form = document.querySelector("#add_note_form");
 	bootstrap.Modal.getInstance(form).hide();
 }
 
