@@ -1,16 +1,16 @@
 <template>
-  <div class="container-fluid text-start">
+  <div class="container-fluid text-start h-100 d-flex flex-column navbar-offset">
 		<!--MAIN SCREEN-->
 		<!--The table grid divides the screen into three with the text editor in the middle-->
-    <div class="row bg-light">
-      <div class="col-3 text-center">
+    <div class="row bg-light vh-100">
+      <div class="col-3">
 				<button
-					class="btn btn-warning btn-hanging"
+					class="btn btn-secondary btn-circle mt-3 ms-1"
 					type="button"
 					data-bs-toggle="offcanvas"
 					data-bs-target="#side_bar_left"
 				>
-					Class List
+					<i class="bi bi-list"></i>
 				</button>
 			</div>
 
@@ -26,7 +26,7 @@
 							<QuillEditor
 								theme="snow"
 								toolbar="essential"
-								style="min-height:100vh;"
+								class="vh-100"
 								v-model:content="textEditorData.content"
 								content-type="html"
 								ref="textEditor"
@@ -36,51 +36,49 @@
 				</div>
 			</div>
 
-			<div class="col-3 text-center">
-				<button
-					class="btn btn-warning btn-hanging"
-					type="button"
-					data-bs-toggle="offcanvas"
-					data-bs-target="#side_bar_right"
-				>
-					Timers & Trackers
-				</button>
-
-			</div>
+			<div class="col-3 text-center"></div>
 		</div>
 
 		<!--LEFT SIDEBAR-->
 		<div
-			class="offcanvas offcanvas-start"
+			class="offcanvas offcanvas-start navbar-offset"
 			data-bs-scroll="true"
 			data-bs-backdrop="false"
 			tabindex="-1"
 			id="side_bar_left"
 		>
 			<!--HEADER-->
-			<div class="offcanvas-header">
+			<div class="offcanvas-header pb-0">
+				<button
+					type="button"
+					class="btn btn-secondary btn-circle me-3"
+					data-bs-dismiss="offcanvas"
+					v-on:click="closeCourseForm()"
+				>
+					<i class="bi bi-arrow-left"></i>
+				</button>
+
 				<h5 class="offcanvas-title"><strong>Course List</strong></h5>
-				<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
 			</div>
 			
 			<!--BODY-->
 			<div class="offcanvas-body">
 
 				<!--ADD COURSE FORM-->
-				<div class="row p-1">
+				<div class="row p-3">
 					<button
-						class="btn mb-2"
-						:class="courseformInProgress? 'btn-secondary' : 'btn-primary'"
+						class="btn"
+						:class="courseFormInProgress? 'btn-secondary' : 'btn-primary'"
 						type="button"
 						data-bs-toggle="collapse"
 						data-bs-target="#add_course_form"
-						v-on:click="courseformInProgress = !courseformInProgress"
+						v-on:click="refreshCourseForm()"
 					>
-						<i :class="courseformInProgress? 'bi bi-x-lg' : 'bi bi-plus-lg'"></i>
+						<i :class="courseFormInProgress? 'bi bi-x-lg' : 'bi bi-plus-lg'"></i>
 					</button>
 
 					<div class="collapse" id="add_course_form">
-						<div class="card card-body mb-2">
+						<div class="card card-body sharp-top-border border-top-0 mb-2">
 							<form @submit.prevent="addCourse">
 								<div class="row mb-2">
 									<div class="col">
@@ -117,7 +115,7 @@
 				<!--COLLAPSIBLE COURSE LIST-->
 				<div class="accordion accordion-flush">
 					<div class="accordion-item" v-for="course in courseList" :key="course.id">
-						<h2 class="accordion-header">
+						<h2 class="accordion-header border">
 							<button
 								class="accordion-button collapsed"
 								type="button" 
@@ -130,15 +128,15 @@
 
 						<!--NOTES LIST FOR EACH COURSE-->
 						<div :id="'courseID' + course.id" class="accordion-collapse collapse">
-							<div class="accordion-body pt-2 pb-0 ps-3 pe-0 fs-6 mb-2">
-								<div class="list-group">
+							<div class="accordion-body pt-0 pb-0 ps-3 pe-0 fs-6 mb-2">
+								<div class="list-group sharp-top-border border-top-0">
 									<!--ADD NOTE FORM TRIGGER-->
 									<button
 										type="button"
-										class="list-group-item list-group-item-action"
+										class="list-group-item list-group-item-action border-top-0"
 										data-bs-toggle="modal"
 										data-bs-target="#add_note_form"
-										@click="passCurrentCourse(course)"
+										v-on:click="passCurrentCourse(course)"
 									>
 										<i class="bi bi-plus-lg me-2"></i>Create new note
 									</button>
@@ -147,7 +145,7 @@
 										class="list-group-item list-group-item-action"
 										v-for="note in course.attached_notes"
 										v-bind:key="note.file_name"
-										@click="openNotes(course, note)"
+										v-on:click="openNotes(course, note)"
 									>
 										{{ note.file_name }}
 									</div>
@@ -202,41 +200,6 @@
 				</div>
 			</div>
 		</div>
-
-		<!--RIGHT SIDEBAR-->
-		<div
-			class="offcanvas offcanvas-end"
-			data-bs-scroll="true"
-			data-bs-backdrop="false"
-			tabindex="-1"
-			id="side_bar_right"
-		>
-			<div class="offcanvas-header">
-				<h5 class="offcanvas-title"><strong>Timers & Trackers</strong></h5>
-				<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
-			</div>
-			<div class="offcanvas-body">
-				<div class="card">
-					<div class="card-header y2l-red text-white text-start fs-5">
-						Pomodoro Timer
-					</div>
-					
-					<div class="card-body">
-						<h3>POMODORO GOES HERE</h3>
-					</div>
-				</div>
-
-				<div class="card mt-3">
-					<div class="card-header y2l-blue text-white text-start fs-5">
-						Goal Tracker
-					</div>
-					
-					<div class="card-body">
-						<h3>GOAL TRACKER (EVENTUALLY) GOES HERE</h3>
-					</div>
-				</div>
-			</div>
-		</div>
   </div>
 </template>
 
@@ -248,7 +211,7 @@ import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import bootstrap from "bootstrap/dist/js/bootstrap.bundle.js";
 
-const courseformInProgress = ref(false);
+const courseFormInProgress = ref(false);
 const currentCourse = ref("");
 const currentNote = ref("");
 const textEditor = ref();
@@ -279,14 +242,32 @@ async function addCourse(){
 		attached_notes: []
 	})
 
-	// Close the form programmatically
-	const form = document.querySelector('#add_course_form');
-	bootstrap.Collapse.getInstance(form).toggle()
-
 	// Reset important variables
+	closeCourseForm();
+}
+
+async function refreshCourseForm(){
+	courseFormInProgress.value = !courseFormInProgress.value;
+	resetCourseData();
+}
+
+async function closeCourseForm(){
+	const form = document.querySelector('#add_course_form');
+	bootstrap.Collapse.getInstance(form).hide();
+
+	courseFormInProgress.value = false;
+	resetCourseData();
+}
+
+async function resetCourseData(){
 	courseData.course_name = "";
 	courseData.is_major = "";
-	courseformInProgress.value = false;
+}
+
+async function passCurrentCourse(course){
+	currentCourse.value = course; // Allows modals to use the relevant data externally
+
+	resetNoteData(); // Clear the form to prepare for new input
 }
 
 async function addNote(){
@@ -302,16 +283,20 @@ async function addNote(){
 	course.attached_notes.unshift(note);
 
 	// Reset and close the form menu
-	noteData.file_name = "";
-	const form = document.querySelector('#add_note_form');
-	bootstrap.Modal.getInstance(form).hide();
+	toggleNoteForm();
+	resetNoteData();
 
 	// Update the text editor contents to the new note's
 	openNotes(course, note)
 }
 
-async function passCurrentCourse(course){
-	currentCourse.value = course; // Allows modals to use the relevant data externally
+async function toggleNoteForm(){
+	const form = document.querySelector('#add_note_form');
+	bootstrap.Modal.getInstance(form).hide();
+}
+
+async function resetNoteData(){
+	noteData.file_name = "";
 }
 
 async function openNotes(course, note){
@@ -329,3 +314,20 @@ async function openNotes(course, note){
 	currentNote.value = note;
 }
 </script>
+
+<style scoped>
+.sharp-top-border{
+	border-top-left-radius: 0px !important;
+	border-top-right-radius: 0px !important;
+}
+
+.accordion-button:focus{
+	outline: none !important;
+	box-shadow: none !important;
+}
+
+.btn-circle{
+	border-radius: 50%;
+	aspect-ratio: 1;
+}
+</style>
