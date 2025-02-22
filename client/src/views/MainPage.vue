@@ -382,7 +382,7 @@ async function openNotes(course, note){
 }
 </style>
 
-//! Below is Chika's and Nam's implementation 
+<!-- Below is the Chika's and Nam's implementation -->
 
 <script>
 // @ is an alias to /src
