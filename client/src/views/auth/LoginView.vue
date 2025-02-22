@@ -1,6 +1,6 @@
 <template>
   <div id="login">
-    <div class="container">
+    <div class="container navbar-offset">
       <div class="card card-body mt-4">
         <h5 class="card-title">Login</h5>
         <form @submit.prevent="submit">
