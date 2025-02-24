@@ -10,9 +10,12 @@
 
                 // General timer variables
                 time: 0,
+                timerID: "",
                 play: false,
                 end: false,
                 pomodoroMode: false,
+
+                // Reactive display variables
                 timeDisplayData: [  // [time string, time interval] tuples
                     ["", 3600],     // Hours
                     ["", 60],       // Minutes
@@ -24,23 +27,27 @@
         watch: {
            play(value) {
                 if (value) {
-                    setTimeout(() => {
+                    this.timerID = setInterval(() => {
                         this.time--;
                     }, 1000);
                 }
+                else{
+                    clearInterval(this.timerID);
+                }
+
                 this.outputDisplay()
             },
             time: {
                 handler(value) {
-                    if (value > 0 && this.play) { //increment down
-                        setTimeout(() => {
-                          this.time--;
-                        }, 1000);
-                    }
-                    if (value == 0 && this.play){ //indicate time is up
+                    if (value <= 0 && this.play){ //indicate time is up
+                        this.time = 0
                         this.end = true
+
+                        if(!this.pomodoroMode){
+                            this.play = false;
+                        }
                     }
-                    if (value < 0) {this.time = 0} //ensure we don't go to negative time
+                    
                     this.outputDisplay()
                 },
                 immediate: true
@@ -48,8 +55,6 @@
             end(value){
                 if(value) {
                     if(this.pomodoroMode){
-                        this.end = false
-
                         //next cycle
                         if (this.cycle % 2 == 0 && this.cycle != 6) {
                             this.time = this.intervalBreak * 60
@@ -63,9 +68,8 @@
                         }
                         this.cycle++
                     }
-                    else{
-                        this.end = false
-                    }
+
+                    this.end = false
                 }
             },
             pomodoroMode(){

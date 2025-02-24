@@ -10,7 +10,7 @@
 				</a>
 			</strong>
 
-			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+			<ul class="navbar-nav me-auto mb-2 mb-lg-0" v-if="isAuthenticated">
 				<li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
 				<li class="nav-item"><a class="nav-link active" href="#">Flash Cards</a></li>
 
