@@ -2,18 +2,18 @@
     export default {
         data() {
             return {
-                // Pomodoro Method variables
-                intervalStudy: 0.05,
-                intervalBreak: 0.033,
-                intervalBigBreak: 0.1,
-                cycle: 0,
-
                 // General timer variables
                 time: 0,
                 timerID: "",
                 play: false,
                 end: false,
                 pomodoroMode: false,
+
+                // Pomodoro Method variables
+                intervalStudy: 25,
+                intervalBreak: 5,
+                intervalBigBreak: 30,
+                cycle: 0,
 
                 // Reactive display variables
                 timeDisplayData: [  // [time string, time interval] tuples
@@ -69,6 +69,7 @@
                         this.cycle++
                     }
 
+                    clearInterval(this.timerID);
                     this.end = false
                 }
             },
@@ -116,6 +117,7 @@
                 this.time = this.pomodoroMode? this.intervalStudy * 60 : 0;
                 this.play = false;
                 this.end = false;
+                clearInterval(this.timerID);
             }
         }
     }
