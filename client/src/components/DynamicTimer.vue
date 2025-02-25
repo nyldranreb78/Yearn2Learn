@@ -4,6 +4,7 @@
             return {
                 // General timer variables
                 time: 0,
+                timeMax: 86400, // 24 hours in seconds
                 timerID: "",
                 play: false,
                 end: false,
@@ -46,6 +47,10 @@
                         if(!this.pomodoroMode){
                             this.play = false;
                         }
+                    }
+
+                    if (value > this.timeMax){
+                        this.time = this.timeMax;
                     }
                     
                     this.outputDisplay()
@@ -137,7 +142,7 @@
                 </label>
                 <select class="form-select form-select-sm mb-2" id="mode_select" v-model="pomodoroMode">
                     <option :value="false" selected>General</option>
-                    <option :value="true">Pomodoro</option>
+                    <option :value="true" class="danger">Pomodoro</option>
                 </select>
             </div>
         </div>
@@ -145,16 +150,30 @@
         <div class="row m-0">
             <div class="col-4 text-center p-0" v-for="timeDisplay in timeDisplayData" v-bind:key="timeDisplay[1]">
                 <div class="btn-group-vertical">
-                    <button type="button" class="btn btn-outline-dark px-2 py-0" v-on:click="increaseTime(timeDisplay[1])" :disabled="pomodoroMode">
+                    <button type="button" class="btn btn-sm btn-outline-dark px-2 py-0" v-on:click="increaseTime(timeDisplay[1])" :disabled="pomodoroMode || time >= timeMax" v-if="!pomodoroMode">
                         <i class="bi bi-caret-up-fill"></i>
                     </button>
 
                     <label type="button" class="btn btn-outline-dark time-display px-2 pe-none" disabled>{{ timeDisplay[0] }}</label>
 
-                    <button type="button" class="btn btn-outline-dark px-2 py-0" v-on:click="decreaseTime(timeDisplay[1])" :disabled="pomodoroMode">
+                    <button type="button" class="btn btn-sm btn-outline-dark px-2 py-0" v-on:click="decreaseTime(timeDisplay[1])" :disabled="pomodoroMode || time <= 0" v-if="!pomodoroMode">
                         <i class="bi bi-caret-down-fill"></i>
                     </button>
                 </div>
+            </div>
+        </div>
+
+        <div class="row mx-0 mt-2" v-if="!pomodoroMode">
+            <div class="col-6 d-grid px-1">
+                <button type="button" class="btn btn-sm btn-block btn-success px-0 py-1" v-on:click="increaseTime(5 * 60)">
+                    +5m
+                </button>
+            </div>
+
+            <div class="col-6 d-grid px-1">
+                <button type="button" class="btn btn-sm btn-block btn-success px-0 py-1" v-on:click="increaseTime(15 * 60)">
+                    +15m
+                </button>
             </div>
         </div>
 
@@ -179,6 +198,5 @@
     color:black;
     background-color: white;
     border-color: black;
-    border-bottom: 0;
 }
 </style>
