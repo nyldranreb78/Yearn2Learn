@@ -25,6 +25,9 @@ jobs:
   deploy:
     name: deploy
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
     needs: build
     steps:
       - uses: trstringer/manual-approval@v1
