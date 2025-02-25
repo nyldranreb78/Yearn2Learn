@@ -90,6 +90,7 @@ async function createInFolder(req, res){
             const note = new Note({
                 title: req.body.title,
                 content: req.body.content,
+                folder: folder._id
             })
     
             note.author = user._id
@@ -161,19 +162,25 @@ async function remove(req, res) {
         const id = auth.getUserID(req);
         if (!(await verifyID(id, res))) return;
 
-        Note.findOne({_id: req.params.id})
-        .then(note => {
-            if (!note) 
-                return res.status(404).json({message: 'Note not found'})
+        const note = await Note.findOne({ _id: req.params.id });
 
-            if (note.author != id) 
-                return res.status(403).json({message: 'Unauthorized'})
+        if (!note) {
+            return res.status(404).json({ message: "Note not found" });
+        }
 
-            Note.deleteOne({_id: req.params.id})
-            .then(note => {
-                return res.status(200).json({message: 'Note deleted'})
-            })
-        })
+        const folder = await Folder.findOne({ _id: note.folder });
+        
+        if (folder) {
+            await Folder.updateOne(
+                { _id: folder._id },
+                { $pull: { notes: note._id } }
+            )
+        }
+
+        await note.deleteOne({ _id: req.params.id });
+
+        return res.status(200).json({ message: "Note deleted" });
+    
     } catch (err){
         console.error("Error deleting note:", err.message);
         return res.status(500).json({message: err.message})
