@@ -10,22 +10,37 @@
 				</a>
 			</strong>
 
-			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-				<li class="nav-item">
-					<a class="nav-link active" href="#">Home</a>
+			<ul class="navbar-nav me-auto mb-2 mb-lg-0" v-if="isAuthenticated">
+				<li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
+				<li class="nav-item"><a class="nav-link active" href="#">Flash Cards</a></li>
+
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown">
+						Goal Management
+					</a>
+
+					<ul class="dropdown-menu">
+						<li><a class="dropdown-item" href="#">Task List</a></li>
+						<li><hr class="dropdown-divider"></li>
+						<li><a class="dropdown-item" href="#">Goal Tracker</a></li>
+					</ul>
 				</li>
 
 				<li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown">
-            Goal Management
-          </a>
+					<a
+						class="nav-link dropdown-toggle active"
+						href=""
+						role="button"
+						data-bs-toggle="dropdown"
+						data-bs-auto-close="outside"
+					>
+						Timer
+					</a>
 
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Pomodoro Timer</a></li>
-						<li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Goal Tracker</a></li>
-          </ul>
-        </li>
+					<ul class="dropdown-menu">
+						<li><div><DynamicTimer/></div></li>
+					</ul>
+				</li>
 			</ul>
 
 			<div class="d-flex justify-content-end">
@@ -57,6 +72,7 @@
 import { useAuthStore } from '../store/auth';
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
+import DynamicTimer from './DynamicTimer.vue';
 
 const authStore = useAuthStore()
 
