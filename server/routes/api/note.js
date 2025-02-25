@@ -3,10 +3,25 @@ const router = express.Router()
 const controller = require('../../controllers/noteController')
 const auth = require('../../middleware/auth-service')
 
-router.get('/', auth.requireLogin, controller.index)
-router.post('/create', auth.requireLogin ,controller.create)
-router.get('/:id', auth.requireLogin, controller.show)
-router.patch('/update/:id', auth.requireLogin, controller.update)
-router.post('/delete/:id', auth.requireLogin, controller.remove)
+// Get all notes
+router.get('/', auth.verifyToken, controller.index)
+
+// Get all notes in folder
+router.get('/:folderID/note', auth.verifyToken, controller.indexFolder)
+
+// Get a specific note
+router.get('/:id', auth.verifyToken, controller.show)
+
+// Create a new note in folder
+router.post('/:folderID/create', auth.verifyToken ,controller.createInFolder)
+
+// Create a free note
+router.post('/create', auth.verifyToken ,controller.create)
+
+// Update a specific note
+router.patch('/:id', auth.verifyToken, controller.update)
+
+// Delete a specific note
+router.delete('/:id', auth.verifyToken, controller.remove)
 
 module.exports = router
