@@ -194,11 +194,11 @@
 						</div>
 					</div>
 				</div>
-				<div class="d-flex">
+				<!-- <div class="d-flex">
 					<button @click="createFolder" class="btn btn-warning me-2">
 						New Folder
 					</button>
-				</div>
+				</div> -->
 			</div>
 		</div>
 
@@ -384,7 +384,7 @@ async function openNotes(course, note){
 
 <!-- Below is the Chika's and Nam's implementation -->
 
-<script>
+<!-- <script>
 // @ is an alias to /src
 import TextEditor from "@/components/TextEditor.vue";
 import { useAuthStore } from "@/store/auth";
@@ -426,5 +426,5 @@ export default {
 	}
   }
 };
-</script>
+</script> -->
 
