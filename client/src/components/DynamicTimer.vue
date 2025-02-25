@@ -131,7 +131,7 @@
 <template>
     <div class="container-fluid">
         <div class="row m-0">
-            <div class="col-12 p-0 text-start">
+            <div class="col-12 px-1 text-start">
                 <label for="mode_select">
                     <small>
                         Mode
@@ -177,7 +177,7 @@
             </div>
         </div>
 
-        <div class="row mx-0 mt-2">
+        <div class="row mx-0 mt-2 mb-2">
             <div class="col-8 d-grid px-1">
                 <button type="button" class="btn btn-block btn-primary px-0 py-1" v-on:click="togglePause()">
                     <i :class="play? 'bi bi-pause-fill' : 'bi bi-play-fill'"></i>
