@@ -1,7 +1,5 @@
 .DS_Store
 node_modules
-package-lock.json
-package.json
 /dist
 
 /tests/e2e/videos/
