@@ -48,6 +48,13 @@ async function submit(){
 </script>
 
 <style scoped>
+#login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* height: 100vh; */
+}
+
 #login .card{
   max-width: 40vw;
   margin: auto;
