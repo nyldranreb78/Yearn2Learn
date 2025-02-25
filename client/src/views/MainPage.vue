@@ -140,20 +140,21 @@
 
 				<!--COLLAPSIBLE COURSE LIST-->
 				<div class="accordion accordion-flush">
-					<div class="accordion-item" v-for="course in courseList" :key="course.id">
+					<div class="accordion-item" v-for="course in courseList" :key="course._id">
+					<!-- <div class="accordion-item" v-for="course in courseList" :key="course._id"> -->
 						<h2 class="accordion-header">
 							<button
 								class="accordion-button collapsed"
 								type="button" 
 								data-bs-toggle="collapse"
-								:data-bs-target="'#courseID' + course.id"
+								:data-bs-target="'#courseID' + course._id"
 							>
-								<strong>{{ course.course_name }}</strong>
+								<strong>{{ course.name }}</strong>
 							</button>
 						</h2>
 
 						<!--NOTES LIST FOR EACH COURSE-->
-						<div :id="'courseID' + course.id" class="accordion-collapse collapse">
+						<div :id="'courseID' + course._id" class="accordion-collapse collapse">
 							<div class="accordion-body pt-0 pb-0 ps-3 pe-0 fs-6 mb-2">
 								<div class="list-group sharp-top-border">
 									<!--ADD NOTE FORM TRIGGER-->
@@ -169,36 +170,17 @@
 
 									<div
 										class="list-group-item list-group-item-action"
-										v-for="note in course.attached_notes"
-										v-bind:key="note.file_name"
+										v-for="note in course.notes"
+										v-bind:key="note.title"
 										v-on:click="openNotes(course, note)"
 									>
-										{{ note.file_name }}
+										{{ note.title }}
 									</div>
-
-					<!--	<div id="class1" class="accordion-collapse collapse" data-bs-parent="#classList">
-							<div class="accordion-body pt-2 pb-0 ps-3 pe-0 fs-6">
-								<div class="list-group">
-									<a href="#" class="list-group-item list-group-item-action">Feb 13 Class</a>
-									<a href="#" class="list-group-item list-group-item-action">Feb 11 Class</a>
-									
-									<div class="d-flex">
-										<button @click="createNote" class="btn btn-warning me-2">
-											Create Note
-										</button>
-									</div> -->
-
-
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-				<!-- <div class="d-flex">
-					<button @click="createFolder" class="btn btn-warning me-2">
-						New Folder
-					</button>
-				</div> -->
 			</div>
 		</div>
 
@@ -251,11 +233,15 @@
 
 <script setup lang="js">
 // @ is an alias to /src
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { uuid } from "vue-uuid";
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import bootstrap from "bootstrap/dist/js/bootstrap.bundle.js";
+
+import { useAuthStore } from "@/store/auth";
+
+const authStore = useAuthStore();
 
 const courseFormInProgress = ref(false);
 const currentCourse = ref("");
@@ -278,6 +264,25 @@ const textEditorData = reactive({
 })
 
 const courseList = ref([]);
+
+async function fetchData() {
+	try {
+		const response = await authStore.getFolder();
+		console.log("Courses fetched successfully:", response);
+		if (response) {
+			courseList.value = response.folders;
+		}
+		
+	} catch (error) {
+		console.error("Error fetching courses:", error);
+	}
+}
+
+onMounted ( async () => {
+	await fetchData();
+})
+
+
 
 async function addCourse(){
 	// Add the new course to the list
@@ -381,50 +386,4 @@ async function openNotes(course, note){
 	aspect-ratio: 1;
 }
 </style>
-
-<!-- Below is the Chika's and Nam's implementation -->
-
-<!-- <script>
-// @ is an alias to /src
-import TextEditor from "@/components/TextEditor.vue";
-import { useAuthStore } from "@/store/auth";
-
-export default {
-  name: "MainPage",
-  components: {
-    TextEditor,
-  },
-  data() {
-    return {
-      authStore: useAuthStore(),
-    };
-  },
-  methods: {
-    async createNote() {
-		try {
-			const noteData = {
-			title: "New Note",
-			content: "This is a sample note."
-			};
-			const response = await this.authStore.createNote(noteData);
-			console.log("Note created successfully:", response);
-		} catch (error) {
-			console.error("Error creating note:", error);
-		}
-    },
-	
-	async createFolder() {
-		try {
-			const folderData = {
-			name: "New Folder"
-			};
-			const response = await this.authStore.createFolder(folderData);
-			console.log("Folder created successfully:", response);
-		} catch (error) {
-			console.error("Error creating folder:", error);
-		}
-	}
-  }
-};
-</script> -->
 

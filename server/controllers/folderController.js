@@ -25,6 +25,7 @@ async function create(req, res){
             
         const folder = new Folder({
             name: req.body.name,
+            priority: req.body.priority,
         })
 
         folder.author = user._id
@@ -68,6 +69,8 @@ async function update(req, res) {
             return res.status(403).json({message: 'Unauthorized'})
 
         folder.name = req.body.name
+        folder.priority = req.body.priorty
+
         folder.save()
         .then(folder => {
             return res.status(200).json({folder: folder})

@@ -74,12 +74,38 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
+    async getNoteByID(id) {
+      try {
+        const { data } = await useApiPrivate().get(`/api/note/${id}`);
+
+        console.log(data);
+
+        return data;
+      } catch (error) {
+        console.error("Error getting note:", error.response?.data || error.message);
+        throw error.message;
+      }
+    },
+
     async createNote(noteData) {
       try {
         const { data } = await useApiPrivate().post(`/api/note/create`, noteData);
         return data;
       } catch (error) {
         console.error("Error creating note:", error.response?.data || error.message);
+        throw error.message;
+      }
+    },
+
+    async getFolder(){
+      try {
+        const { data } = await useApiPrivate().get(`/api/folder`);
+        
+        console.log(data);  
+
+        return data;
+      } catch (error) {
+        console.error("Error getting folders:", error.response?.data || error.message);
         throw error.message;
       }
     },
