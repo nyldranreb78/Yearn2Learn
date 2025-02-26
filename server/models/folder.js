@@ -6,7 +6,7 @@ const folderSchema = new mongoose.Schema({
         required: true
     },
     priority: {
-        type: String,
+        type: Boolean,
         required: true,
     },
     author: {

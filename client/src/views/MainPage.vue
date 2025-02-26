@@ -234,7 +234,7 @@
 <script setup lang="js">
 // @ is an alias to /src
 import { ref, reactive, onMounted } from 'vue';
-import { uuid } from "vue-uuid";
+// import { uuid } from "vue-uuid";
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import bootstrap from "bootstrap/dist/js/bootstrap.bundle.js";
@@ -286,12 +286,23 @@ onMounted ( async () => {
 
 async function addCourse(){
 	// Add the new course to the list
-	courseList.value.unshift({
-		id: uuid.v1(),
-		course_name: courseData.course_name,
-		is_major: courseData.is_major,
-		attached_notes: []
-	})
+
+	const course = {
+		name: courseData.course_name,
+		priority: courseData.is_major,
+		notes: []
+	}
+
+	courseList.value.push(course);
+	await authStore.createFolder(course);
+
+
+	// courseList.value.unshift({
+	// 	id: uuid.v1(),
+	// 	course_name: courseData.course_name,
+	// 	is_major: courseData.is_major,
+	// 	attached_notes: []
+	// })
 
 	// Reset important variables
 	closeCourseForm();
@@ -367,13 +378,15 @@ async function resetNoteData(){
 async function openNotes(course, note){
 	// If moving to a new note, save the changes
 	if(currentNote.value){
-		currentNote.value.data = textEditorData.content;
+		console.log(currentNote.value); // It's printing the _id of the note
+		// console.log(note);
+		// currentNote.value.data = textEditorData.content;
 	}
 
 	// Update the data to be used by the text editor
-	textEditorData.course_name = course.course_name;
-	textEditorData.file_name = note.file_name;
-	textEditorData.content = note.data;
+	textEditorData.course_name = course.name;
+	textEditorData.file_name = note.title;
+	textEditorData.content = note.content;
 
 	// Allows us to save changes after switching files
 	currentNote.value = note;
