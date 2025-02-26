@@ -345,7 +345,6 @@ async function passCurrentCourse(course){
 async function addNote(){
 	// Find the course the note is going to be associated with
 	const course = courseList.value.find(course => course._id === currentCourse.value._id);
-
 	if (!course) {
 		console.error("Error: Course not found!");
 		return;
@@ -364,7 +363,7 @@ async function addNote(){
 
 	try {
 		const savedNote = await authStore.createNoteInFolder(course._id, note);
-		course.notes.push(savedNote);
+		course.notes.push(savedNote.note);
 	} catch (error) {
 		console.error("Error saving note to backend:", error);
 		return;
