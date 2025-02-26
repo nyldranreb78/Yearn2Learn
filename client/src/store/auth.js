@@ -77,9 +77,6 @@ export const useAuthStore = defineStore("auth", {
     async getNoteByID(id) {
       try {
         const { data } = await useApiPrivate().get(`/api/note/${id}`);
-
-        console.log(data);
-
         return data;
       } catch (error) {
         console.error("Error getting note:", error.response?.data || error.message);
@@ -121,7 +118,6 @@ export const useAuthStore = defineStore("auth", {
     },
 
     async createNoteInFolder(folderId, noteData) {
-      console.log(folderId, noteData);
       try {
         const { data } = await useApiPrivate().post(`/api/note/${folderId}/create`, noteData);
         return data;
@@ -129,6 +125,16 @@ export const useAuthStore = defineStore("auth", {
         console.error("Error creating note in folder:", error.response?.data || error.message);
         throw error.message;
       }
-    }
+    },
+
+    async getNotesInFolder(folderId) {
+      try {
+        const { data } = await useApiPrivate().get(`/api/note/${folderId}/notes`);
+        return data;
+      } catch (error) {
+        console.error("Error getting note in folder:", error.response?.data || error.message);
+        throw error.message;
+      }
+    },
   },
 });

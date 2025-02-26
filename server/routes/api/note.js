@@ -7,7 +7,7 @@ const auth = require('../../middleware/auth-service')
 router.get('/', auth.verifyToken, controller.index)
 
 // Get all notes in folder
-router.get('/:folderID/note', auth.verifyToken, controller.indexFolder)
+router.get('/:folderID/notes', auth.verifyToken, controller.getNotesInFolder)
 
 // Get a specific note
 router.get('/:id', auth.verifyToken, controller.show)

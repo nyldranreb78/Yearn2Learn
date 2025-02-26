@@ -174,7 +174,7 @@
 										v-bind:key="note.title"
 										v-on:click="openNotes(course, note)"
 									>
-										{{ note.title }}
+										{{ note }}
 									</div>
 								</div>
 							</div>
@@ -271,6 +271,13 @@ async function fetchData() {
 		console.log("Courses fetched successfully:", response);
 		if (response) {
 			courseList.value = response.folders;
+
+			for (const course of courseList.value) {
+                course.notes = await Promise.all(course.notes.map(async (noteId) => {
+                    const noteDetails = await authStore.getNoteByID(noteId);
+                    return noteDetails.note.title; 
+                }));
+            }
 		}
 		
 	} catch (error) {
@@ -281,7 +288,6 @@ async function fetchData() {
 onMounted ( async () => {
 	await fetchData();
 })
-
 
 
 async function addCourse(){
@@ -338,7 +344,7 @@ async function passCurrentCourse(course){
 
 async function addNote(){
 	// Find the course the note is going to be associated with
-	const course = courseList.value.find(course => course.id === currentCourse.value.id);
+	const course = courseList.value.find(course => course._id === currentCourse.value._id);
 
 	if (!course) {
 		console.error("Error: Course not found!");
@@ -355,8 +361,13 @@ async function addNote(){
 		content: "<p><br></p>"
 	}
 
-	course.notes.push(note);
-	await authStore.createNoteInFolder(course._id, note);
+	try {
+		const savedNote = await authStore.createNoteInFolder(course._id, note);
+		course.notes.push(savedNote);
+	} catch (error) {
+		console.error("Error saving note to backend:", error);
+		return;
+	}
 
 	// Reset and close the form menu
 	toggleNoteForm();

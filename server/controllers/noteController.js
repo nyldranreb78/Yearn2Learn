@@ -25,7 +25,7 @@ async function index(req, res){
     }
 }
 
-async function indexFolder(req, res){
+async function getNotesInFolder(req, res){
     const id = auth.getUserID(req)
 
     Folder.findOne({_id: req.params.folderID})
@@ -42,8 +42,11 @@ async function indexFolder(req, res){
         })
         .catch(err => {
             return res.status(500).json({message: err.message})
-        })
+        });
     })
+    .catch(err => {
+        return res.status(500).json({ message: err.message });
+    });
 }
 
 async function create(req, res){
@@ -184,4 +187,4 @@ async function remove(req, res) {
     }
 }
 
-module.exports = {index, indexFolder, create, createInFolder, show, update, remove}
+module.exports = {index, getNotesInFolder, create, createInFolder, show, update, remove}
