@@ -118,6 +118,17 @@ export const useAuthStore = defineStore("auth", {
         console.error("Error creating folder:", error.response?.data || error.message);
         throw error.message;
       }
+    },
+
+    async createNoteInFolder(folderId, noteData) {
+      console.log(folderId, noteData);
+      try {
+        const { data } = await useApiPrivate().post(`/api/note/${folderId}/create`, noteData);
+        return data;
+      } catch (error) {
+        console.error("Error creating note in folder:", error.response?.data || error.message);
+        throw error.message;
+      }
     }
   },
 });

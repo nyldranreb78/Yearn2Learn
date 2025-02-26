@@ -329,13 +329,23 @@ async function addNote(){
 	// Find the course the note is going to be associated with
 	const course = courseList.value.find(course => course.id === currentCourse.value.id);
 
-	// Add the new note to the course's list of notes
-	const note = {
-		file_name: noteData.file_name,
-		data: "<p><br></p>"
+	if (!course) {
+		console.error("Error: Course not found!");
+		return;
 	}
 
-	course.attached_notes.unshift(note);
+	if (!course.notes) {
+		course.notes = [];
+	}
+
+	// Add the new note to the course's list of notes
+	const note = {
+		title: noteData.file_name,
+		content: "<p><br></p>"
+	}
+
+	course.notes.push(note);
+	await authStore.createNoteInFolder(course._id, note);
 
 	// Reset and close the form menu
 	toggleNoteForm();

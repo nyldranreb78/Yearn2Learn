@@ -72,42 +72,39 @@ async function create(req, res){
     }
 }
 
-async function createInFolder(req, res){
-    const id = auth.getUserID(req)
+async function createInFolder(req, res) {
+    const id = auth.getUserID(req);
 
-    User.findOne({_id: id})
-    .then(user => {
-        if(!user) return res.status(500).json()
-        
-        Folder.findOne({_id: req.params.folderID})
-        .then(folder => {
-            if (!folder) 
-                return res.status(404).json({message: 'Folder not found'})
-            
-            if (folder.author != id) 
-                return res.status(403).json({message: 'Unauthorized'})
+    try {
+        const user = await User.findOne({ _id: id });
+        if (!user) return res.status(500).json({ message: "User not found" });
 
-            const note = new Note({
-                title: req.body.title,
-                content: req.body.content,
-                folder: folder._id
-            })
-    
-            note.author = user._id
-            note.save()
+        const folder = await Folder.findOne({ _id: req.params.folderID });
+        if (!folder) return res.status(404).json({ message: "Folder not found" });
 
-            folder.notes.push(note)
-            folder.save()
+        if (folder.author.toString() !== id) 
+            return res.status(403).json({ message: "Unauthorized" });
 
-            .then(note => {
-                return res.status(201).json({folder: note})
-            })
-            .catch(err => {
-                return res.status(500).json({message: err.message})
-            })
-        })
-            
-    })
+        if (!req.body.title || !req.body.content) {
+            return res.status(400).json({ message: "Title or content is missing" });
+        }
+
+        const note = new Note({
+            title: req.body.title,
+            content: req.body.content,
+            folder: folder._id,
+            author: user._id
+        });
+
+        await note.save();
+
+        folder.notes.push(note._id);
+        await folder.save();
+
+        res.status(201).json({ folder, note });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 }
 
 async function show(req, res){
