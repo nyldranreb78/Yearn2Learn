@@ -360,10 +360,11 @@ async function addNote(){
 		title: noteData.file_name,
 		content: "<p><br></p>"
 	}
+	console.log("Note to be added:", note);
 
 	try {
-		const savedNote = await authStore.createNoteInFolder(course._id, note);
-		course.notes.push(savedNote);
+		course.notes.push(note);
+		await authStore.createNoteInFolder(course._id, note);
 	} catch (error) {
 		console.error("Error saving note to backend:", error);
 		return;
