@@ -171,10 +171,10 @@
 									<div
 										class="list-group-item list-group-item-action"
 										v-for="note in course.notes"
-										v-bind:key="note.title"
+										v-bind:key="note._id"
 										v-on:click="openNotes(course, note)"
 									>
-										{{ note }}
+										{{ note.title }}
 									</div>
 								</div>
 							</div>
@@ -275,7 +275,7 @@ async function fetchData() {
 			for (const course of courseList.value) {
                 course.notes = await Promise.all(course.notes.map(async (noteId) => {
                     const noteDetails = await authStore.getNoteByID(noteId);
-                    return noteDetails.note.title; 
+                    return noteDetails.note; 
                 }));
             }
 		}
@@ -387,11 +387,11 @@ async function resetNoteData(){
 }
 
 async function openNotes(course, note){
+	console.log("Opening Note:", note);
 	// If moving to a new note, save the changes
 	if(currentNote.value){
-		console.log(currentNote.value); // It's printing the _id of the note
-		// console.log(note);
-		// currentNote.value.data = textEditorData.content;
+		console.log(currentNote.value); 
+		currentNote.value.content = textEditorData.content;
 	}
 
 	// Update the data to be used by the text editor
