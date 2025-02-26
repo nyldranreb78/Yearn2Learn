@@ -155,7 +155,7 @@
 				</div>
 
 				<!--PLACEHOLDER TEXT-->
-				<div class="muted px-5 py-4" v-show="!courseList.length && !courseFormInProgress"><i>No courses or notes to show. Click on the "Add Course" button to add a course and write cotes under it.</i></div>
+				<div class="muted px-5 py-4 text-center" v-show="!courseList.length && !courseFormInProgress"><i>No courses or notes to show. Click on the "Add Course" button to add a course and write cotes under it.</i></div>
 
 				<!--COLLAPSIBLE COURSE LIST-->
 				<div class="accordion accordion-flush" v-show="!courseEditMode">
