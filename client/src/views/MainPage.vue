@@ -106,7 +106,7 @@
 			<div class="offcanvas-body">
 
 				<!--ADD COURSE FORM-->
-				<div class="row p-0 m-0 mb-3" v-show="!courseEditMode">
+				<div class="row p-0 m-0 mb-3" v-if="!courseEditMode">
 					<button
 						class="btn"
 						:class="courseFormInProgress? 'btn-secondary' : 'btn-primary'"
@@ -155,7 +155,7 @@
 				</div>
 
 				<!--PLACEHOLDER TEXT-->
-				<div class="muted px-5 py-4 text-center" v-show="!courseList.length && !courseFormInProgress"><i>No courses or notes to show. Click on the "Add Course" button to add a course and write cotes under it.</i></div>
+				<div class="text-center text-muted px-5 py-4" v-show="!courseList.length && !courseFormInProgress"><i>No courses or notes to show. Click on the "Add Course" button to add a course and write cotes under it.</i></div>
 
 				<!--COLLAPSIBLE COURSE LIST-->
 				<div class="accordion accordion-flush" v-show="!courseEditMode">
@@ -196,26 +196,44 @@
 											<div class="col-10 text-start text-truncate"><span class="align-middle">{{ note.file_name }}</span></div>
 
 											<div class="col-2 text-end align-middle">
-												<button type="button" class="btn btn-sm shadow-none note-menu">
+												<button
+													type="button"
+													class="btn btn-sm shadow-none note-menu"
+													@mouseover="mouseOnMenu = true"
+													@mouseleave="mouseOnMenu = false"
+													data-bs-toggle="dropdown"
+												>
 													<i class="bi bi-three-dots-vertical"></i>
 												</button>
+
+												<ul class="dropdown-menu py-1">
+													<li>
+														<a
+															class="dropdown-item px-2"
+															v-on:click="passCurrentNote(course, note)"
+															data-bs-toggle="modal"
+															data-bs-target="#add_edit_note_form"
+														>
+															Rename
+														</a>
+													</li>
+
+													<li><hr class="dropdown-divider my-1"></li>
+
+													<li>
+														<a
+															class="dropdown-item px-2 text-danger"
+															v-on:click="passCurrentNote(course, note)"
+															data-bs-toggle="modal"
+															data-bs-target="#delete_form"
+														>
+															Delete
+														</a>
+													</li>
+												</ul>
 											</div>
 										</div>
 									</div>
-
-					<!--	<div id="class1" class="accordion-collapse collapse" data-bs-parent="#classList">
-							<div class="accordion-body pt-2 pb-0 ps-3 pe-0 fs-6">
-								<div class="list-group">
-									<a href="#" class="list-group-item list-group-item-action">Feb 13 Class</a>
-									<a href="#" class="list-group-item list-group-item-action">Feb 11 Class</a>
-									
-									<div class="d-flex">
-										<button @click="createNote" class="btn btn-warning me-2">
-											Create Note
-										</button>
-									</div> -->
-
-
 								</div>
 							</div>
 						</div>
@@ -223,7 +241,7 @@
 				</div>
 
 				<!--EDIT COURSE VIEW-->
-				<div class="accordion" id="course_edit_form" v-show="courseEditMode">
+				<div class="accordion" id="course_edit_form" v-if="courseEditMode">
 					<div class="accordion-item" v-for="course in courseList" :key="course.id">
 						<h2 class="accordion-header">
 							<button
@@ -314,25 +332,23 @@
 						</div>
 					</div>
 				</div>
-				<!-- <div class="d-flex">
-					<button @click="createFolder" class="btn btn-warning me-2">
-						New Folder
-					</button>
-				</div> -->
 			</div>
 		</div>
 
-		<!--ADD NOTE FORM-->
-		<!--Due to the nature of Bootstrap modals, this has to be close to the outermost HTML tag-->
+		<!--MODALS-->
+		<!--Due to the nature of Bootstrap modals, these have to be close to the outermost HTML tag-->
+
+		<!--ADD/EDIT NOTE FORM-->
 		<div class="modal modal-md fade" id="add_edit_note_form" tabindex="-1">
 			<div class="modal-dialog modal-dialog-centered">
 				<div class="modal-content">
 					<div class="modal-body">
-						<form @submit.prevent="addNote()">
+						<form @submit.prevent="currentNote? editNote() : addNote()">
 							<div class="row">
 								<div class="col text-start">
 									<label class="text-truncate" for="document_name">
-										Create new note for {{ currentCourse.course_name }}:
+										<span v-if="currentNote">Rename {{ currentNote.file_name }}:</span>
+										<span v-else>Create new note for {{ currentCourse.course_name }}:</span>
 									</label>
 								</div>
 
@@ -346,18 +362,19 @@
 									<input
 										type="text"
 										class="form-control"
-										placeholder="Write a name for this note"
+										placeholder="e.g. Midterm Notes"
 										v-model="noteData.file_name"
 										required
 									>
 
 									<button
 										type="submit"
-										class="btn btn-outline-secondary"
+										class="btn"
+										:class="currentNote? 'btn-success' : 'btn-secondary'"
 										id="document_name"
 										data-bs-dismiss="modal"
 									>
-										<i class="bi bi-check-lg"></i>
+										<i :class="currentNote? 'bi bi-floppy-fill' : 'bi bi-check-lg'"></i>
 									</button>
 								</div>
 							</div>
@@ -367,23 +384,26 @@
 			</div>
 		</div>
 
+		<!--DELETE COURSE/EDIT FORM-->
 		<div class="modal modal-md fade" id="delete_form" tabindex="-1">
 			<div class="modal-dialog modal-dialog-centered">
 				<div class="modal-content">
 					<div class="modal-header px-2 py-1">
-						<h5 class="modal-title">Confirm Course Deletion</h5>
+						<div class="modal-title fs-6">Confirm {{ courseEditMode? "Course" : "Note" }} Deletion</div>
 						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 					</div>
 
 					<div class="modal-body text-center">
 							<h6>
-								Are you sure you want to delete the Course
-								"<span class="d-inline block text-truncate truncated"><strong>{{ currentCourse.course_name }}</strong></span>"?
-								<br>This is irreversible!
+								Are you sure you want to delete the {{ courseEditMode? "course" : "note" }} named
+								<div class="row p-0 justify-content-md-center">
+									<div class="col-9 text-truncate"><strong>{{ courseEditMode? currentCourse.course_name : currentNote.file_name }}</strong></div>
+								</div>
+								from your {{ courseEditMode? "course list" : "note folder" }}? This is irreversible!
 							</h6>
 
-							<button class="btn btn-sm btn-secondary me-2" data-bs-dismiss="modal">Keep</button>
-							<button class="btn btn-sm btn-danger" v-on:click="deleteCourse()" data-bs-dismiss="modal">Delete</button>
+							<button class="btn btn-sm btn-secondary me-3" data-bs-dismiss="modal">Keep</button>
+							<button class="btn btn-sm btn-danger ms-3" v-on:click="courseEditMode? deleteCourse() : deleteNote()" data-bs-dismiss="modal">Delete</button>
 					</div>
 				</div>
 			</div>
@@ -409,6 +429,7 @@ const currentNote = ref("");
 const courseFormInProgress = ref(false);
 const courseEditMode = ref(false);
 const courseEditFormInProgress = ref(false);
+const mouseOnMenu = ref(false);
 
 // Required by Vue Quill for data binding
 const textEditor = ref();
@@ -514,6 +535,7 @@ async function toggleEditMode(){
 
 async function passCurrentCourse(course){
 	currentCourse.value = course; // Allows modals to use the relevant data externally
+	currentNote.value = ""; // Reset the currentNote since we are making a new one
 
 	resetNoteData(); // Clear the form to prepare for new input
 }
@@ -537,23 +559,44 @@ async function addNote(){
 	openNotes(course, note)
 }
 
+async function editNote(){
+	if(currentNote.value.file_name !== noteData.file_name){
+		currentNote.value.file_name = noteData.file_name;
+	}
+}
+
+async function deleteNote(){
+	currentCourse.value.attached_notes = currentCourse.value.attached_notes.filter(note => note !== currentNote.value);
+}
+
+async function passCurrentNote(course, note){
+	passCurrentCourse(course);
+
+	currentNote.value = note;
+	noteData.file_name = note.file_name;
+}
+
 async function resetNoteData(){
 	noteData.file_name = "";
 }
 
 async function openNotes(course, note){
-	// If moving to a new note, save the changes
-	if(currentNote.value){
-		currentNote.value.data = textEditorData.content;
+	// Do nothing if the mouse was inside the vertical menu button
+	if(!mouseOnMenu.value){
+		// If moving to a new note, save the changes
+		if(currentNote.value){
+			currentNote.value.data = textEditorData.content;
+		}
+
+		// Update the data to be used by the text editor
+		textEditorData.course_name = course.course_name;
+		textEditorData.file_name = note.file_name;
+		textEditorData.content = note.data;
+
+		// Allows us to save changes after switching files
+		currentNote.value = note;
 	}
-
-	// Update the data to be used by the text editor
-	textEditorData.course_name = course.course_name;
-	textEditorData.file_name = note.file_name;
-	textEditorData.content = note.data;
-
-	// Allows us to save changes after switching files
-	currentNote.value = note;
+	
 }
 </script>
 
@@ -588,10 +631,6 @@ async function openNotes(course, note){
 .accordion-edit:not(.collapsed)::after,
 .accordion-edit::after {
   background-image: unset !important;
-}
-
-.truncated{
-	max-width: 150px !important;
 }
 </style>
 
