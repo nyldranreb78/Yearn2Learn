@@ -387,11 +387,12 @@ async function resetNoteData(){
 }
 
 async function openNotes(course, note){
-	console.log("Opening Note:", note);
 	// If moving to a new note, save the changes
 	if(currentNote.value){
-		console.log(currentNote.value); 
-		currentNote.value.content = textEditorData.content;
+		if (currentNote.value.content !== textEditorData.content) {
+            await saveNoteChanges(currentNote.value);
+        }
+		// currentNote.value.content = textEditorData.content;
 	}
 
 	// Update the data to be used by the text editor
@@ -401,6 +402,20 @@ async function openNotes(course, note){
 
 	// Allows us to save changes after switching files
 	currentNote.value = note;
+}
+
+async function saveNoteChanges(note) {
+    try {
+        const updatedNote = {
+            title: note.title,
+            content: textEditorData.content,
+        };
+
+        await authStore.updateNote(note._id, updatedNote);
+        console.log("Note updated successfully:", updatedNote);
+    } catch (error) {
+        console.error("Error updating note:", error.response?.data || error.message);
+    }
 }
 </script>
 

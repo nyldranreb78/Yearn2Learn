@@ -136,5 +136,15 @@ export const useAuthStore = defineStore("auth", {
         throw error.message;
       }
     },
+
+    async updateNote(noteId, noteData) {
+      try {
+        const { data } = await useApiPrivate().patch(`/api/note/${noteId}`, noteData);
+        return data;
+      } catch (error) {
+        console.error("Error getting note in folder:", error.response?.data || error.message);
+        throw error.message;
+      }
+    },
   },
 });
