@@ -299,9 +299,9 @@ async function addCourse(){
 		notes: []
 	}
 
-	courseList.value.push(course);
-	await authStore.createFolder(course);
-
+	const response = await authStore.createFolder(course);
+	courseList.value.push(response.folder);
+	
 
 	// courseList.value.unshift({
 	// 	id: uuid.v1(),
@@ -363,8 +363,8 @@ async function addNote(){
 	console.log("Note to be added:", note);
 
 	try {
-		course.notes.push(note);
-		await authStore.createNoteInFolder(course._id, note);
+		const savedNote = await authStore.createNoteInFolder(course._id, note);
+		course.notes.push(savedNote);
 	} catch (error) {
 		console.error("Error saving note to backend:", error);
 		return;
