@@ -27,7 +27,7 @@ watch(isPlaying, (newValue) => {
             timeRemaining.value--;
         }, 1000);
     }
-    else{
+    else {
         clearInterval(timerID.value);
     }
 
@@ -36,7 +36,6 @@ watch(isPlaying, (newValue) => {
 
 watch(timeRemaining, (newValue) => {
     if (newValue <= 0 && isPlaying.value){ //indicate timeRemaining is up
-        timeRemaining.value = 0
         hasEnded.value = true
 
         if(!isPomodoroMode.value){
@@ -46,6 +45,10 @@ watch(timeRemaining, (newValue) => {
 
     if (newValue > timeMax.value){
         timeRemaining.value = timeMax.value;
+    }
+
+    if (newValue < 0){
+        timeRemaining.value = 0;
     }
     
     outputDisplay()
@@ -57,21 +60,24 @@ watch(timeRemaining, (newValue) => {
 watch(hasEnded, (newValue) => {
     if(newValue) {
         if(isPomodoroMode.value){
-            //next cycleCount
+            // Start the next cycle
+            cycleCount.value++
+
             if (cycleCount.value % 2 == 0 && cycleCount.value != 6) {
-                timeRemaining.value = intervalBreak.value * 60
+                timeRemaining.value = intervalStudy.value * 60
             }
             else if (cycleCount.value % 2 != 0){
-                timeRemaining.value = intervalStudy.value * 60
+                timeRemaining.value = intervalBreak.value * 60
             }
             else {
                 cycleCount.value = -2
                 timeRemaining.value = intervalBigBreak.value * 60
             }
-            cycleCount.value++
         }
-
-        clearInterval(timerID.value);
+        else{
+            clearInterval(timerID.value);
+        }
+        
         hasEnded.value = false
     }
 })
@@ -92,9 +98,9 @@ async function togglePause(){
 
 async function outputDisplay(){
     //calculate appropriate hours, minutes, and seconds
-    var hrs = Math.floor(timeRemaining.value / 3600) % 3600; 
-    var min = Math.floor(timeRemaining.value / 60) % 60;
-    var sec = timeRemaining.value % 60;
+    const hrs = Math.floor(timeRemaining.value / 3600) % 3600; 
+    const min = Math.floor(timeRemaining.value / 60) % 60;
+    const sec = timeRemaining.value % 60;
 
     timeDisplayData.value[0][0] = String(hrs).padStart(2, '0');
     timeDisplayData.value[1][0] = String(min).padStart(2, '0');
@@ -122,7 +128,6 @@ async function resetTime(){
     timeRemaining.value = isPomodoroMode.value? intervalStudy.value * 60 : 0;
     isPlaying.value = false;
     hasEnded.value = false;
-    clearInterval(timerID.value);
 }
 </script>
 
