@@ -100,7 +100,9 @@ await authStore.logout()
 // Forces a refresh to simulate going Home
 // TODO: replace on sprint 3 once routes are established
 async function refresh(){
-	window.location.reload();
+	if(window.location.pathname === "/"){
+		window.location.reload();
+	}
 }
 </script>
 
