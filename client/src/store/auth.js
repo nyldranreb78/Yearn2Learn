@@ -114,6 +114,16 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
+    async updateFolder(courseId, courseData) {
+      try {
+        const { data } = await useApiPrivate().patch(`/api/folder/${courseId}`, courseData);
+        return data;
+      } catch (error) {
+        console.error("Error updating folder:", error.response?.data || error.message);
+        throw error.message;
+      }
+    },
+
     async createNoteInFolder(folderId, noteData) {
       try {
         const { data } = await useApiPrivate().post(`/api/note/${folderId}/create`, noteData);

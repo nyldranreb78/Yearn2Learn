@@ -58,27 +58,31 @@ async function show(req, res){
 }
 
 async function update(req, res) {
-    const id = auth.getUserID(req)
+    try {
+        const id = auth.getUserID(req);
+        
+        // Find the folder
+        const folder = await Folder.findOne({ _id: req.params.id });
 
-    Folder.findOne({_id: req.params.id})
-    .then(folder => {
-        if (!folder) 
-            return res.status(404).json({message: 'Folder not found'})
+        if (!folder) {
+            return res.status(404).json({ message: 'Folder not found' });
+        }
 
-        if (folder.author != id) 
-            return res.status(403).json({message: 'Unauthorized'})
+        if (folder.author.toString() !== id) {
+            return res.status(403).json({ message: 'Unauthorized' });
+        }
 
-        folder.name = req.body.name
-        folder.priority = req.body.priorty
+        // Update only if new values are provided
+        if (req.body.name) folder.name = req.body.name;
+        if (req.body.priority !== undefined) folder.priority = req.body.priority;
 
-        folder.save()
-        .then(folder => {
-            return res.status(200).json({folder: folder})
-        })
-        .catch(err => {
-            return res.status(500).json({message: err.message})
-        })
-    })
+        const updatedFolder = await folder.save();
+        return res.status(200).json({ folder: updatedFolder });
+
+    } catch (err) {
+        console.error("Error updating folder:", err);
+        return res.status(500).json({ message: err.message });
+    }
 }
 
 async function remove(req, res) {

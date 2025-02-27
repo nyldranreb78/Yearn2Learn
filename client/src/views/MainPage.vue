@@ -289,7 +289,7 @@
               >
                 <div class="row">
                   <div class="col text-start align-middle text-truncate">
-                    <strong>{{ course.course_name }}</strong>
+                    <strong>{{ course.name }}</strong>
                   </div>
 
                   <div class="col text-end align-middle">
@@ -334,6 +334,8 @@
             <div
               :id="'courseID' + course.id + 'edit'"
               class="accordion-collapse collapse"
+				:class="{'show': currentEditingCourseId === course._id}"
+				v-if="currentEditingCourseId === course._id"
               data-bs-parent="#course_edit_form"
             >
               <div class="accordion-body px-3 py-2 fs-6 mb-2">
@@ -518,6 +520,7 @@ const currentNote = ref("");
 const courseFormInProgress = ref(false);
 const courseEditMode = ref(false);
 const courseEditFormInProgress = ref(false);
+const currentEditingCourseId = ref(null);
 const mouseOnMenu = ref(false);
 
 // Required by Vue Quill for data binding
@@ -526,7 +529,7 @@ const textEditor = ref();
 
 const courseData = reactive({
 	course_name: "",
-	is_major: ""
+	is_major: false
 });
 
 const noteData = reactive({
@@ -581,15 +584,28 @@ async function addCourse(){
 }
 
 async function editCourse(){
-	if(currentCourse.value.course_name !== courseData.course_name){
-		currentCourse.value.course_name = courseData.course_name;
-	}
+	if (!currentCourse.value) {
+        console.error("No course selected for editing.");
+        return;
+    }
 
-	if(currentCourse.value.is_major !== courseData.is_major){
-		currentCourse.value.is_major = courseData.is_major;
-	}
+    try {
+        const updatedCourse = {
+            name: courseData.course_name,
+            priority: courseData.is_major,
+        };
 
-	closeEditCourseForm();
+        await authStore.updateFolder(currentCourse.value._id, updatedCourse);
+
+        const courseIndex = courseList.value.findIndex(course => course._id === currentCourse.value._id);
+        if (courseIndex !== -1) {
+            courseList.value[courseIndex] = { ...courseList.value[courseIndex], ...updatedCourse };
+        }
+
+        closeEditCourseForm();
+    } catch (error) {
+        console.error("Error updating course:", error.response?.data || error.message);
+    }
 }
 
 async function deleteCourse(courseId){
@@ -631,15 +647,21 @@ async function closeCourseForm(){
 }
 
 async function openEditCourseForm(course){
+	// Close if clicking on the already opened form
+	if (currentEditingCourseId.value === course._id) {
+        currentEditingCourseId.value = null; // Close the form
+        return;
+    }
 	courseEditFormInProgress.value = true;
-
+	currentEditingCourseId.value = course._id;
 	currentCourse.value = course;
-	courseData.course_name = course.course_name;
+	courseData.course_name = course.name;
 	courseData.is_major = course.is_major;
 }
 
 async function closeEditCourseForm(){
 	courseEditFormInProgress.value = false;
+	currentEditingCourseId.value = null;
 
 	if(courseFormInProgress.value){
 		courseFormInProgress.value = false;
