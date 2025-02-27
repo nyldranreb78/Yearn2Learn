@@ -132,7 +132,7 @@ async function show(req, res){
             return res.status(404).json({ message: "Note not found" });
         }
 
-        if (note.author !== id) {
+        if (note.author != id) {
             return res.status(403).json({ message: "Unauthorized" });
         }
 
@@ -154,7 +154,7 @@ async function update(req, res) {
             return res.status(404).json({ message: "Note not found" });
         }
 
-        if (note.author.toString() !== id) {
+        if (note.author != id) {
             return res.status(403).json({ message: "Unauthorized" });
         }
 
@@ -183,7 +183,8 @@ async function remove(req, res) {
             return res.status(404).json({ message: "Note not found" });
         }
 
-        if (note.author.toString() !== id) {
+
+        if (note.author != id) {
             return res.status(403).json({ message: "Unauthorized" });
         }
 
