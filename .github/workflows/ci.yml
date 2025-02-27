@@ -34,7 +34,7 @@ jobs:
       - uses: trstringer/manual-approval@v1
         with:
           secret: ${{ github.TOKEN }}
-          approvers: nyldranreb78,Esbanana
+          approvers: Esbanana
           minimum-approvals: 1
       - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
