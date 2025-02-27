@@ -1,10 +1,10 @@
 <template>
   <div
-    class="container-fluid text-start h-100 d-flex flex-column navbar-offset"
+    class="container-fluid text-start d-flex flex-column navbar-offset main-body-height"
   >
     <!--MAIN SCREEN-->
     <!--The table grid divides the screen into three with the text editor in the middle-->
-    <div class="row bg-light vh-100">
+    <div class="row bg-light">
       <div class="col-3">
         <button
           class="btn btn-secondary btn-circle mt-3 ms-1 position-fixed"
@@ -16,49 +16,42 @@
         </button>
       </div>
 
-      <div class="col-6 bg-white p-0">
-        <!-- FILE NAME & TEXT EDITOR TOOLBAR -->
-        <div class="row border border-top-0 m-0">
-          <div class="col-6">
-            <div class="fs-5 mt-1 text-truncate">
-              {{ textEditorData.course_name }} / {{ textEditorData.file_name }}
-            </div>
-          </div>
+      <div class="col-6 p-0">
+        <!-- TEXT EDITOR TOOLBAR -->
+        <div class="row border border-top-0 bg-light m-0">
+          <div id="fixed_toolbar" class="border-0">
+            <!-- Font size selector -->
+            <select class="ql-size me-4">
+              <option value="small"></option>
+              <option selected></option>
+              <option value="large"></option>
+              <option value="huge"></option>
+            </select>
 
-          <div class="col-6">
-            <div id="fixed_toolbar" class="border-0 d-flex justify-content-end">
-              <!-- Font size selector -->
-              <select class="ql-size me-4">
-                <option value="small"></option>
-                <option selected></option>
-                <option value="large"></option>
-                <option value="huge"></option>
-              </select>
+            <!-- Common text modifiers -->
+            <button class="ql-bold"></button>
+            <button class="ql-italic"></button>
+            <button class="ql-underline"></button>
+            <button class="ql-strike"></button>
+            <button class="ql-script" value="sub"></button>
+            <button class="ql-script me-4" value="super"></button>
 
-              <!-- Common text modifiers -->
-              <button class="ql-bold"></button>
-              <button class="ql-italic"></button>
-              <button class="ql-underline"></button>
-              <button class="ql-strike"></button>
-              <button class="ql-script" value="sub"></button>
-              <button class="ql-script me-4" value="super"></button>
+            <!-- Lists -->
+            <button class="ql-list" value="bullet"></button>
+            <button class="ql-list me-4" value="ordered"></button>
 
-              <!-- Lists -->
-              <button class="ql-list" value="bullet"></button>
-              <button class="ql-list me-4" value="ordered"></button>
-
-              <!-- Niche tools -->
-              <button class="ql-blockquote"></button>
-              <button class="ql-code-block"></button>
-            </div>
+            <!-- Niche tools -->
+            <button class="ql-blockquote"></button>
+            <button class="ql-code-block"></button>
           </div>
         </div>
+      </div>
 
-        <div class="row border border-top-0 bg-white m-0">
+      <div class="row justify-content-center p-0 m-0 flex-grow-1">
+        <div class="col-6 bg-white p-0">
           <QuillEditor
             theme="snow"
             toolbar="#fixed_toolbar"
-            class="vh-100 border-top-0"
             v-model:content="textEditorData.content"
             content-type="html"
             ref="textEditor"
@@ -66,7 +59,17 @@
         </div>
       </div>
 
-      <div class="col-3 text-center"></div>
+      <div class="row justify-content-center bottom-toolbar fixed-bottom p-0 m-0">
+        <div class="col-6 bg-light border p-0">
+          <div class="row m-0">
+            <div class="col-auto">
+              <div class="fs-6 mt-1 text-truncate">
+                <span class="align-middle" v-if="currentNote">{{ textEditorData.name }} / {{ textEditorData.title }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!--SIDEBAR-->
@@ -141,7 +144,7 @@
                       type="text"
                       class="form-control"
                       placeholder="e.g. COMP 4350"
-                      v-model="courseData.course_name"
+                      v-model="courseData.name"
                       required
                     />
                   </div>
@@ -152,7 +155,7 @@
                   <div class="col-9">
                     <select
                       class="form-select"
-                      v-model="courseData.is_major"
+                      v-model="courseData.priority"
                       required
                     >
                       <option value selected disabled>Select</option>
@@ -236,12 +239,17 @@
                           class="btn btn-sm shadow-none note-menu"
                           @mouseover="mouseOnMenu = true"
                           @mouseleave="mouseOnMenu = false"
+                          v-on:click="passCurrentNote(course, note)"
                           data-bs-toggle="dropdown"
                         >
                           <i class="bi bi-three-dots-vertical"></i>
                         </button>
 
-                        <ul class="dropdown-menu py-1">
+                        <ul
+                          class="dropdown-menu py-1"
+                          @mouseover="mouseOnMenu = true"
+                          @mouseleave="mouseOnMenu = false"
+                        >
                           <li>
                             <a
                               class="dropdown-item px-2"
@@ -347,7 +355,7 @@
                         type="text"
                         class="form-control"
                         placeholder="e.g. COMP 4350"
-                        v-model="courseData.course_name"
+                        v-model="courseData.name"
                         required
                       />
                     </div>
@@ -358,7 +366,7 @@
                     <div class="col-9">
                       <select
                         class="form-select"
-                        v-model="courseData.is_major"
+                        v-model="courseData.priority"
                         required
                       >
                         <option :value="true">Major Requirement</option>
@@ -422,7 +430,7 @@
                     type="text"
                     class="form-control"
                     placeholder="e.g. Midterm Notes"
-                    v-model="noteData.file_name"
+                    v-model="noteData.title"
                     required
                   />
 
@@ -462,36 +470,44 @@
             ></button>
           </div>
 
-          <div class="modal-body text-center">
-            <h6>
+          <div class="modal-body">
+            <h6 class="text-center">
               Are you sure you want to delete the
               {{ courseEditMode ? "course" : "note" }} named
-              <div class="row p-0 justify-content-md-center">
+              <div class="row justify-content-center p-0 my-2">
                 <div class="col-9 text-truncate">
                   <strong>{{
                     courseEditMode
-                      ? currentCourse.course_name
-                      : currentNote.file_name
+                      ? currentCourse.name
+                      : currentNote.title
                   }}</strong>
                 </div>
               </div>
               from your {{ courseEditMode ? "course list" : "note folder" }}?
-              This is irreversible!
+              <br><br>
+              <u>This {{ courseEditMode ? "will also delete all the Notes attached to it" : "is irreversible" }}!</u>
             </h6>
 
-            <button
-              class="btn btn-sm btn-secondary me-3"
-              data-bs-dismiss="modal"
-            >
-              Keep
-            </button>
-            <button
-              class="btn btn-sm btn-danger ms-3"
-              v-on:click="courseEditMode ? deleteCourse(currentCourse._id) : deleteNote(currentNote._id)"
-              data-bs-dismiss="modal"
-            >
-              Delete
-            </button>
+            <div class="row p-0 align-middle mt-3">
+              <div class="col text-start">
+                <button
+                  class="btn btn-sm btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Keep
+                </button>
+              </div>
+
+              <div class="col text-end">
+                <button
+                  class="btn btn-sm btn-danger ms-3"
+                  v-on:click="courseEditMode ? deleteCourse(currentCourse._id) : deleteNote(currentNote._id)"
+                  data-bs-dismiss="modal"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -528,17 +544,17 @@ const textEditor = ref();
 
 
 const courseData = reactive({
-	course_name: "",
-	is_major: ""
+	name: "",
+	priority: ""
 });
 
 const noteData = reactive({
-	file_name: "",
+	title: "",
 });
 
 const textEditorData = reactive({
-	course_name: "",
-	file_name: "",
+	name: "",
+	title: "",
 	content: ""
 })
 
@@ -571,8 +587,8 @@ async function addCourse(){
 	// Add the new course to the list
 
 	const course = {
-		name: courseData.course_name,
-		priority: courseData.is_major,
+		name: courseData.name,
+		priority: courseData.priority,
 		notes: []
 	}
 
@@ -591,8 +607,8 @@ async function editCourse(){
 
     try {
         const updatedCourse = {
-            name: courseData.course_name,
-            priority: courseData.is_major,
+            name: courseData.name,
+            priority: courseData.priority,
         };
 
         await authStore.updateFolder(currentCourse.value._id, updatedCourse);
@@ -655,8 +671,8 @@ async function openEditCourseForm(course){
 	courseEditFormInProgress.value = true;
 	currentEditingCourseId.value = course._id;
 	currentCourse.value = course;
-	courseData.course_name = course.name;
-	courseData.is_major = course.is_major;
+	courseData.name = course.name;
+	courseData.priority = course.priority;
 }
 
 async function closeEditCourseForm(){
@@ -669,8 +685,8 @@ async function closeEditCourseForm(){
 }
 
 async function resetCourseData(){
-	courseData.course_name = "";
-	courseData.is_major = "";
+	courseData.name = "";
+	courseData.priority = "";
 }
 
 async function toggleEditMode(){
@@ -685,7 +701,7 @@ async function toggleEditMode(){
 
 async function passCurrentCourse(course){
 	currentCourse.value = course; // Allows modals to use the relevant data externally
-	currentNote.value = ""; // Reset the currentNote since we are making a new one
+	currentNote.value = ""; // Reset the currentNote since we are making a new course
 
 	resetNoteData(); // Clear the form to prepare for new input
 }
@@ -704,7 +720,7 @@ async function addNote(){
 
 	// Add the new note to the course's list of notes
 	const note = {
-		title: noteData.file_name,
+		title: noteData.title,
 		content: "<p><br></p>" // Quill editor's definition of an "empty" editor
 	}
 
@@ -724,8 +740,14 @@ async function addNote(){
 }
 
 async function editNote(){
-	if(currentNote.value.file_name !== noteData.file_name){
-		currentNote.value.file_name = noteData.file_name;
+	if(currentNote.value.title !== noteData.title){
+		currentNote.value.title = noteData.title;
+
+    const noteToUpdate = currentCourse.value.notes.find(note => note._id === currentNote.value._id);
+
+    if(noteToUpdate){
+      noteToUpdate.title = noteData.title;
+    }
 	}
 }
 
@@ -751,14 +773,14 @@ async function deleteNote(noteId){
 }
 
 async function passCurrentNote(course, note){
-	passCurrentCourse(course);
-
+  currentCourse.value = course;
 	currentNote.value = note;
-	noteData.file_name = note.file_name;
+  
+	noteData.title = note.title;
 }
 
 async function resetNoteData(){
-	noteData.file_name = "";
+	noteData.title = "";
 }
 
 async function openNotes(course, note) {
@@ -773,8 +795,8 @@ async function openNotes(course, note) {
 		}
 
 		// Update the data to be used by the text editor
-		textEditorData.course_name = course.name;
-		textEditorData.file_name = note.title;
+		textEditorData.name = course.name;
+		textEditorData.title = note.title;
 		textEditorData.content = note.content;
 
 		// Allows us to save changes after switching files
@@ -803,6 +825,14 @@ onBeforeUnmount(async () => {
 </script>
 
 <style scoped>
+body {
+  overflow-y:hidden;
+}
+
+.main-body-height {
+  height: 100vh - 70px;
+}
+
 .sharp-top-border {
   border-top-left-radius: 0px !important;
   border-top-right-radius: 0px !important;
@@ -828,6 +858,10 @@ onBeforeUnmount(async () => {
 
 .btn-edit-form:hover {
   background-color: lightgray;
+}
+
+.bottom-toolbar {
+  height: 40px;
 }
 
 .accordion-edit:not(.collapsed)::after,

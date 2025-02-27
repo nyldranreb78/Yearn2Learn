@@ -2,7 +2,7 @@
   <nav class="navbar navbar-expand-lg navbar-fixed-size fixed-top bg-white border-bottom">
     <div class="container-fluid">
 			<strong>
-				<a class="navbar-brand fs-3" href="#">
+				<a class="navbar-brand fs-3 ms-2 me-4" href="#">
 					<img :src="require(`@/assets/img/Y2L_Logo.png`)" width="40" class="me-2" />
 					<span class="txt-y2l-yellow">Yearn</span>
 					<span class="txt-y2l-red">2</span>
@@ -101,7 +101,7 @@ await authStore.logout()
 
 <style scoped>
 .navbar-fixed-size{
-    height: 75px;
+    height: 70px;
 }
 
 .nav-item {
