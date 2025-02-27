@@ -214,7 +214,12 @@ describe('create', () => {
     it('should return 201 with new note', async () => {
         const mockID = 'validID';
         const mockUser = { _id: mockID };
-        const mockNote = { title: 'Note 1', content: 'Content of note 1', author: mockID };
+        const mockNote = { 
+            title: 'Note 1', 
+            content: 'Content of note 1', 
+            author: mockID, 
+            save: jest.fn().mockResolvedValue() // mock save method
+        };
 
         auth.getUserID = jest.fn().mockReturnValue(mockID);
         User.findOne.mockResolvedValue(mockUser);
@@ -238,4 +243,108 @@ describe('create', () => {
         expect(res.json).toHaveBeenCalledWith({ message: mockError.message });
     });
 
+});
+
+describe('createInFolder', () => {
+    let req, res;
+
+    beforeEach (() => {
+        req = {
+            header: {
+                authorization: "Bearer token"
+            }, 
+            params: {
+                folderID: 'folderID'
+            },
+            body: {
+                title: 'Note 1',
+                content: 'Content of note 1'
+            }
+        }
+        res = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn().mockReturnThis()
+        }
+
+        auth.getUserID = jest.fn()
+        User.findOne.mockReset();
+        Folder.findOne.mockReset();
+        Note.prototype.save = jest.fn().mockResolvedValue();
+        Folder.prototype.save = jest.fn().mockResolvedValue();
+    });
+
+    it('should return 401 if ID is not valid', async () => {
+        auth.getUserID = jest.fn().mockReturnValue(undefined);
+
+        await createInFolder(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.json).toHaveBeenCalledWith({ message: 'Unauthorized: Invalid token' });
+    });
+
+    it('should return 500 if user is not found', async () => {
+        const mockID = 'validID';
+        auth.getUserID = jest.fn().mockReturnValue(mockID);
+        User.findOne.mockResolvedValue(null);
+
+        await createInFolder(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.json).toHaveBeenCalledWith({ message: 'User not found' });
+    });
+
+    it('should return 404 if folder is not found', async () => {
+        const mockID = 'validID';
+        auth.getUserID = jest.fn().mockReturnValue(mockID);
+        User.findOne.mockResolvedValue({ _id: mockID });
+        Folder.findOne.mockResolvedValue(undefined);
+
+        await createInFolder(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(404);
+        expect(res.json).toHaveBeenCalledWith({ message: 'Folder not found' });
+    });
+
+    it('should return 403 if user is not the author of the folder', async () => {
+        const mockID = 'validID';
+        const mockFolder = { author: 'anotherID' };
+
+        auth.getUserID = jest.fn().mockReturnValue(mockID);
+        User.findOne.mockResolvedValue({ _id: mockID });
+        Folder.findOne.mockResolvedValue(mockFolder);
+
+        await createInFolder(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(403);
+        expect(res.json).toHaveBeenCalledWith({ message: 'Unauthorized' });
+    });
+
+    it('should return 201 if all conditions are met', async () => {
+        const mockID = 'validID';
+        const mockFolder = { 
+            author: mockID, 
+            notes: [], 
+            _id: 'folderID', 
+            save: jest.fn().mockResolvedValue() // mock save method
+        };
+        const mockUser = { _id: mockID };
+        const mockNote = { 
+            title: 'Note 1', 
+            content: 'Content of note 1', 
+            folder: mockFolder._id, 
+            author: mockID, 
+            save: jest.fn().mockResolvedValue() // mock save method
+        };
+
+        auth.getUserID = jest.fn().mockReturnValue(mockID);
+        User.findOne.mockResolvedValue(mockUser);
+        Folder.findOne.mockResolvedValue(mockFolder);
+        Note.mockImplementation(() => mockNote);
+
+
+        await createInFolder(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(201);
+        expect(res.json).toHaveBeenCalledWith({ folder: mockFolder, note: mockNote });
+    });
 });

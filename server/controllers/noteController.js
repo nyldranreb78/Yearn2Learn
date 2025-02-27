@@ -56,22 +56,6 @@ async function create(req, res){
         const id = auth.getUserID(req)
         if (!(await verifyID(id, res))) return;
 
-        // User.findOne({_id: id})
-        // .then(user => {
-        //     if(!user) return res.status(500).json()
-                
-        //     const note = new Note({
-        //         title: req.body.title,
-        //         content: req.body.content,
-        //     })
-
-        //     note.author = user._id
-        //     note.save()
-        //     .then(note => {
-        //         return res.status(201).json({note: note})
-        //     })
-        // })
-
         const user = await User.findOne({ _id: id});
 
         if (!user) 
@@ -83,21 +67,23 @@ async function create(req, res){
         });
 
         note.author = user._id;
-        // await note.save();
+        await note.save();
 
         return res.status(201).json({note: note});
     } catch (err){
-        console.error("Error creating note:", err.message);
+        // console.error("Error creating note:", err.message);
         return res.status(500).json({message: err.message})
     }
 }
 
 async function createInFolder(req, res) {
     const id = auth.getUserID(req);
+    if (!(await verifyID(id, res))) return;
 
     try {
         const user = await User.findOne({ _id: id });
-        if (!user) return res.status(500).json({ message: "User not found" });
+        if (!user) 
+            return res.status(500).json({ message: "User not found" });
 
         const folder = await Folder.findOne({ _id: req.params.folderID });
         if (!folder) return res.status(404).json({ message: "Folder not found" });
@@ -119,6 +105,7 @@ async function createInFolder(req, res) {
 
         res.status(201).json({ folder, note });
     } catch (error) {
+        console.error("Error creating note:", error.message);
         res.status(500).json({ message: error.message });
     }
 }
