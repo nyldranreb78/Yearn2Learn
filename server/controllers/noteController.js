@@ -115,18 +115,31 @@ async function show(req, res){
         const id = auth.getUserID(req);
         if (!(await verifyID(id, res))) return;
 
-        Note.findOne({_id: req.params.id})
-        .then(note => {
-            if (!note) 
-                return res.status(404).json({message: 'Note not found'})
+        // Note.findOne({_id: req.params.id})
+        // .then(note => {
+        //     if (!note) 
+        //         return res.status(404).json({message: 'Note not found'})
 
-            if (note.author != id) 
-                return res.status(403).json({message: 'Unauthorized'})
+        //     if (note.author != id) 
+        //         return res.status(403).json({message: 'Unauthorized'})
 
-            return res.status(200).json({note: note})
-        })
+        //     return res.status(200).json({note: note})
+        // })
+
+        const note = await Note.findOne({ _id: req.params.id });
+
+        if (!note) {
+            return res.status(404).json({ message: "Note not found" });
+        }
+
+        if (note.author !== id) {
+            return res.status(403).json({ message: "Unauthorized" });
+        }
+
+        return res.status(200).json({ note });
+
     } catch(error){
-        console.error("Error fetching note:", error.message);
+        // console.error("Error fetching note:", error.message);
         return res.status(500).json({message: error.message})
     }
 }
@@ -149,10 +162,12 @@ async function update(req, res) {
         if (req.body.content) note.content = req.body.content;
         note.lastSaved = Date.now();
 
-        const updatedNote = await note.save();
-        return res.status(200).json({ note: updatedNote });
+        // const updatedNote = await note.save();
+        await note.save();
+
+        return res.status(200).json({ note: note });
     } catch (err) {
-        console.error("Error updating note:", err.message);
+        // console.error("Error updating note:", err.message);
         return res.status(500).json({message: err.message})
     }
 }
@@ -166,6 +181,10 @@ async function remove(req, res) {
 
         if (!note) {
             return res.status(404).json({ message: "Note not found" });
+        }
+
+        if (note.author.toString() !== id) {
+            return res.status(403).json({ message: "Unauthorized" });
         }
 
         const folder = await Folder.findOne({ _id: note.folder });
@@ -182,7 +201,7 @@ async function remove(req, res) {
         return res.status(200).json({ message: "Note deleted" });
     
     } catch (err){
-        console.error("Error deleting note:", err.message);
+        // console.error("Error deleting note:", err.message);
         return res.status(500).json({message: err.message})
     }
 }

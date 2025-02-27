@@ -14,7 +14,7 @@ describe('index', () => {
    
    beforeEach (() => {
         req = {
-            headers: {
+            header: {
                 authorization: 'Bearer token'
             }
         }
@@ -346,5 +346,231 @@ describe('createInFolder', () => {
 
         expect(res.status).toHaveBeenCalledWith(201);
         expect(res.json).toHaveBeenCalledWith({ folder: mockFolder, note: mockNote });
+    });
+});
+
+describe('show', () => {
+    let req, res;
+    
+        beforeEach (() => {
+            req = {
+                params: {
+                    noteID: 'noteID'
+                }
+            }
+            res = {
+                status: jest.fn().mockReturnThis(),
+                json: jest.fn().mockReturnThis()
+            }
+        });
+
+    it('should return 401 if ID is not valid', async () => {
+        auth.getUserID = jest.fn().mockReturnValue(undefined);
+
+        await show(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.json).toHaveBeenCalledWith({ message: 'Unauthorized: Invalid token' });
+    });
+        
+    it('should return 404 if note is not found', async () => {
+        const mockID = 'validID';
+        auth.getUserID = jest.fn().mockReturnValue(mockID);
+        Note.findOne.mockResolvedValue(null);
+
+        await show(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(404);
+        expect(res.json).toHaveBeenCalledWith({ message: 'Note not found' });
+    });
+
+    it('should return 403 if user is not the author of the note', async () => {
+        const mockID = 'validID';
+        const mockNote = { author: 'anotherID' };
+
+        auth.getUserID = jest.fn().mockReturnValue(mockID);
+        Note.findOne.mockResolvedValue(mockNote);
+
+        await show(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(403);
+        expect(res.json).toHaveBeenCalledWith({ message: 'Unauthorized' });
+    });
+
+    it('should return 200 when all condition are met', async () => {
+        const mockID = 'validID';
+        const mockNote = { author: mockID };
+
+        auth.getUserID = jest.fn().mockReturnValue(mockID);
+        Note.findOne.mockResolvedValue(mockNote);
+
+        await show(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith({ note: mockNote });
+    });
+
+    it('should handle errors', async () => {
+        const mockError = new Error('Error fetching note');
+        auth.getUserID = jest.fn().mockReturnValue('validID');
+        Note.findOne.mockImplementation(() => { throw mockError });
+
+        await show(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.json).toHaveBeenCalledWith({ message: mockError.message });
+    });
+});
+
+describe('update', () => {
+    beforeEach(() => {
+        req = {
+            params: {
+                noteID: 'noteID'
+            },
+            body: {
+                title: 'Note 1',
+                content: 'Content of note 1'
+            }
+        }
+        res = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn().mockReturnThis()
+        }
+    });
+
+    it('should return 401 if ID is not valid', async () => {
+        auth.getUserID = jest.fn().mockReturnValue(undefined);
+
+        await update(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.json).toHaveBeenCalledWith({ message: 'Unauthorized: Invalid token' });
+    });
+
+    it('should return 404 if note is not found', async () => {
+        const mockID = 'validID';
+
+        auth.getUserID = jest.fn().mockReturnValue(mockID);
+        Note.findOne.mockResolvedValue(null);
+
+        await update(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(404);
+        expect(res.json).toHaveBeenCalledWith({ message: 'Note not found' });
+    });
+
+    it('should return 403 if user is not the author of the note', async () => {
+        const mockID = 'validID';
+        const mockNote = { author: 'anotherID' };
+
+        auth.getUserID = jest.fn().mockReturnValue(mockID);
+        Note.findOne.mockResolvedValue(mockNote);
+
+        await update(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(403);
+        expect(res.json).toHaveBeenCalledWith({ message: 'Unauthorized' });
+    });
+
+    it('should return 200 if all conditions are met and update the note', async () => {
+        const mockID = 'validID';
+        const mockNote = { 
+            author: mockID, 
+            save: jest.fn().mockResolvedValue(), 
+            title: 'Note', 
+            content: 'Content' 
+        };
+
+        auth.getUserID = jest.fn().mockReturnValue(mockID);
+        Note.findOne.mockResolvedValue(mockNote);
+
+        await update(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith({ note: mockNote });
+    });
+
+    it('should handle errors', async () => {
+        const mockError = new Error('Error updating note');
+        auth.getUserID = jest.fn().mockReturnValue('validID');
+        Note.findOne.mockImplementation(() => { throw mockError });
+
+        await update(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.json).toHaveBeenCalledWith({ message: mockError.message });
+    });
+});
+
+describe('remove', () => {
+    beforeEach(() => {
+        req = {
+            params: {
+                noteID: 'noteID'
+            }
+        }
+        res = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn().mockReturnThis()
+        }
+    });
+
+    it('should return 401 if ID is not valid', async () => {
+        auth.getUserID = jest.fn().mockReturnValue(undefined);
+
+        await remove(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.json).toHaveBeenCalledWith({ message: 'Unauthorized: Invalid token' });
+    });
+
+    it('should return 404 if note is not found', async () => {
+        const mockID = 'validID';
+
+        auth.getUserID = jest.fn().mockReturnValue(mockID);
+        Note.findOne.mockResolvedValue(null);
+
+        await remove(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(404);
+        expect(res.json).toHaveBeenCalledWith({ message: 'Note not found' });
+    });
+
+    it('should return 403 if user is not the author of the note', async () => {
+        const mockID = 'validID';
+        const mockNote = { author: 'anotherID' };
+
+        auth.getUserID = jest.fn().mockReturnValue(mockID);
+        Note.findOne.mockResolvedValue(mockNote);
+
+        await remove(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(403);
+        expect(res.json).toHaveBeenCalledWith({ message: 'Unauthorized' });
+    });
+
+    it('should return 200 if all conditions are met and remove the note', async () => {
+        const mockID = 'validID';
+        const mockNote = { author: mockID, deleteOne: jest.fn().mockResolvedValue() };
+
+        auth.getUserID = jest.fn().mockReturnValue(mockID);
+        Note.findOne.mockResolvedValue(mockNote);
+
+        await remove(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith({ message: 'Note deleted' });
+    });
+
+    it('should handle errors', async () => {
+        const mockError = new Error('Error deleting note');
+        auth.getUserID = jest.fn().mockReturnValue('validID');
+        Note.findOne.mockImplementation(() => { throw mockError });
+
+        await remove(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.json).toHaveBeenCalledWith({ message: mockError.message });
     });
 });
