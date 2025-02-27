@@ -149,7 +149,7 @@ export const useAuthStore = defineStore("auth", {
         const { data } = await useApiPrivate().patch(`/api/note/${noteId}`, noteData);
         return data;
       } catch (error) {
-        console.error("Error getting note in folder:", error.response?.data || error.message);
+        console.error("Error updating note in folder:", error.response?.data || error.message);
         throw error.message;
       }
     },

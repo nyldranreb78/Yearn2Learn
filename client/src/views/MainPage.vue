@@ -502,7 +502,7 @@
 <script setup lang="js">
 // @ is an alias to /src
 import bootstrap from "bootstrap/dist/js/bootstrap.bundle.js";
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, onBeforeUnmount } from 'vue';
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 
@@ -529,7 +529,7 @@ const textEditor = ref();
 
 const courseData = reactive({
 	course_name: "",
-	is_major: false
+	is_major: ""
 });
 
 const noteData = reactive({
@@ -769,7 +769,7 @@ async function openNotes(course, note) {
 			if (currentNote.value.content !== textEditorData.content) {
 				await saveNoteChanges(currentNote.value);
 			}
-			//currentNote.value.content = textEditorData.content;
+			currentNote.value.content = textEditorData.content;
 		}
 
 		// Update the data to be used by the text editor
@@ -786,7 +786,7 @@ async function saveNoteChanges(note) {
 	try {
 		const updatedNote = {
 			title: note.title,
-			content: note.content,
+			content: textEditorData.content,
 		};
 
 		await authStore.updateNote(note._id, updatedNote);
@@ -794,6 +794,12 @@ async function saveNoteChanges(note) {
 		console.error("Error updating note:", error.response?.data || error.message);
 	}
 }
+
+onBeforeUnmount(async () => {
+	if (currentNote.value && textEditorData.content !== currentNote.value.content) {
+		await saveNoteChanges(currentNote.value);
+	}
+});
 </script>
 
 <style scoped>
