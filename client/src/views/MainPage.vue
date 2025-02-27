@@ -1,6 +1,6 @@
 <template>
   <div
-    class="container-fluid text-start d-flex flex-column navbar-offset main-body-height"
+    class="container-fluid text-start d-flex flex-column navbar-offset vh-navbar-offset"
   >
     <!--MAIN SCREEN-->
     <!--The table grid divides the screen into three with the text editor in the middle-->
@@ -11,15 +11,174 @@
           type="button"
           data-bs-toggle="offcanvas"
           data-bs-target="#side_bar_left"
+          v-on:click="courseEditMode = false"
+          v-show="currentNote"
         >
           <i class="bi bi-list"></i>
         </button>
       </div>
 
       <div class="col-6 p-0">
+        <!-- TEXT EDITOR -->
+        <div class="row justify-content-center p-0 m-0 vh-100" v-if="currentNote">
+          <div class="p-0">
+            <QuillEditor
+              class="bg-white border-top-0"
+              theme="snow"
+              toolbar="#fixed_toolbar"
+              content-type="html"
+              ref="textEditor"
+              v-model:content="textEditorData.content"
+              @textChange="autoSaveNoteChanges(currentNote)"
+            />
+          </div>
+        </div>
+
+        <div class="row justify-content-center p-0 m-0" v-if="!currentNote">
+        <!--COME BACK HERE-->
+          <!--COLLAPSIBLE COURSE LIST-->
+          <div class="row border-bottom">
+            <div class="col text-start">
+              <h2 class="mt-5">Course List</h2>
+            </div>
+
+            <div class="col text-end">
+
+            </div>
+          </div>
+
+          <div class="accordion accordion-flush border-0">
+            <div
+              class="accordion-item bg-transparent border-0"
+            >
+              <h2 class="accordion-header">
+                <button
+                  type="button"
+                  class="accordion-button collapsed fs-5 border-bottom"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#add_course_form"
+                  v-on:click="toggleCourseForm()"
+                >
+                  <i
+                    :class="courseFormInProgress ? 'bi bi-x-lg' : 'bi bi-plus-lg'"
+                  ></i>
+                  <span class="ms-2">{{
+                    courseFormInProgress ? "Cancel" : "Add Course"
+                  }}</span>
+                </button>
+              </h2>
+
+              <div class="collapse p-0 m-0" id="add_course_form">
+                <div class="card card-body sharp-top-border border-top-0 mb-2">
+                  <form @submit.prevent="addCourse">
+                    <div class="row mb-2">
+                      <div class="col-6">
+                        <small>Course Name</small>
+                        <input
+                          type="text"
+                          class="form-control"
+                          placeholder="e.g. COMP 4350"
+                          v-model="courseData.name"
+                          required
+                        />
+                      </div>
+
+                      <div class="col-4">
+                        <small>Priority</small>
+                        <select
+                          class="form-select"
+                          v-model="courseData.priority"
+                          required
+                        >
+                          <option value selected disabled>Select</option>
+                          <option :value="true">Major Requirement</option>
+                          <option :value="false">Elective</option>
+                        </select>
+                      </div>
+
+                      <div class="col-2 mt-auto">
+                        <button type="submit" class="btn btn-primary w-100 align-self-bottom">
+                          Add
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="accordion-item bg-transparent border-0"
+              v-for="course in courseList"
+              :key="course._id"
+            >
+              <h2 class="accordion-header">
+                <button
+                  type="button"
+                  class="accordion-button collapsed fs-5 border-bottom"
+                  data-bs-toggle="collapse"
+                  :data-bs-target="'#courseID' + course._id + 'dashboard'"
+                >
+                  <span class="text-truncate">{{ course.name }}</span>
+                </button>
+              </h2>
+
+              <!--NOTES LIST FOR EACH COURSE-->
+              <div
+                :id="'courseID' + course._id + 'dashboard'"
+                class="accordion-collapse collapse"
+              >
+                <div class="accordion-body bg-transparent pt-0 pb-0 ps-3 pe-0 fs-6 mb-2">
+                  <div class="list-group sharp-top-border">
+                    <!--ADD NOTE FORM TRIGGER-->
+                    <button
+                      type="button"
+                      class="list-group-item list-group-item-action ps-3 py-2 border-top-0"
+                      data-bs-toggle="modal"
+                      data-bs-target="#add_edit_note_form"
+                      v-on:click="passCurrentCourse(course)"
+                    >
+                      <i class="bi bi-plus-lg me-1"></i> Create new note
+                    </button>
+
+                    <div
+                      class="list-group-item list-group-item-action px-3 py-2"
+                      v-for="note in course.notes"
+                      v-bind:key="note._id"
+                      v-on:click="openNotes(course, note)"
+                    >
+                      <div class="row p-0">
+                        <div class="col-6 text-start text-truncate">
+                          <span class="align-middle">{{ note.title }}</span>
+                        </div>
+
+                        <div class="col-6 text-start text-truncate text-end">
+                          <span class="align-middle" v-if="note.createdAt === note.updatedAt">Created {{ new Date(note.createdAt).toLocaleString()}}</span>
+                          <span class="align-middle" v-else>Last updated {{ new Date(note.createdAt).toLocaleString() }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+
         <!-- TEXT EDITOR TOOLBAR -->
-        <div class="row border border-top-0 bg-light m-0">
-          <div id="fixed_toolbar" class="border-0">
+        <div
+          class="row border bg-light 
+                bottom-toolbar fixed-bottom m-0 p-0"
+          v-show="currentNote"
+        >
+          <div class="col-3">
+            <div class="fs-6 text-truncate ms-1 me-5 mt-1 pe-5">
+              <span class="align-middle" v-show="currentNote">{{ textEditorData.name }} / {{ textEditorData.title }}</span>
+            </div>
+          </div>
+
+          <div id="fixed_toolbar" class="col-6 border-0 mx-auto">
             <!-- Font size selector -->
             <select class="ql-size me-4">
               <option value="small"></option>
@@ -44,28 +203,10 @@
             <button class="ql-blockquote"></button>
             <button class="ql-code-block"></button>
           </div>
-        </div>
-      </div>
 
-      <div class="row justify-content-center p-0 m-0 flex-grow-1">
-        <div class="col-6 bg-white p-0">
-          <QuillEditor
-            theme="snow"
-            toolbar="#fixed_toolbar"
-            v-model:content="textEditorData.content"
-            content-type="html"
-            ref="textEditor"
-          />
-        </div>
-      </div>
-
-      <div class="row justify-content-center bottom-toolbar fixed-bottom p-0 m-0">
-        <div class="col-6 bg-light border p-0">
-          <div class="row m-0">
-            <div class="col-auto">
-              <div class="fs-6 mt-1 text-truncate">
-                <span class="align-middle" v-if="currentNote">{{ textEditorData.name }} / {{ textEditorData.title }}</span>
-              </div>
+          <div class="col-3">
+            <div class="fs-6 text-truncate text-end me-1 ms-5 mt-1 se-5">
+              <span class="align-middle" v-show="currentNote"> {{ saveStatus }}</span>
             </div>
           </div>
         </div>
@@ -214,7 +355,7 @@
                   <!--ADD NOTE FORM TRIGGER-->
                   <button
                     type="button"
-                    class="list-group-item list-group-item-action ps-3 border-top-0"
+                    class="list-group-item list-group-item-action ps-3 py-1 border-top-0"
                     data-bs-toggle="modal"
                     data-bs-target="#add_edit_note_form"
                     v-on:click="passCurrentCourse(course)"
@@ -296,11 +437,11 @@
                 class="accordion-button d-inline-block accordion-edit collapsed bg-light"
               >
                 <div class="row">
-                  <div class="col text-start align-middle text-truncate">
+                  <div class="col-9 text-start align-middle text-truncate">
                     <strong>{{ course.name }}</strong>
                   </div>
 
-                  <div class="col text-end align-middle">
+                  <div class="col-3 text-end align-middle">
                     <div
                       v-if="courseEditFormInProgress && currentCourse == course"
                     >
@@ -401,21 +542,15 @@
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-body">
-            <form @submit.prevent="currentNote ? editNote() : addNote()">
+            <form @submit.prevent="currentNote ? renameNote() : addNote()">
               <div class="row">
-                <div class="col text-start">
-                  <label class="text-truncate" for="document_name">
-                    <span v-if="currentNote"
-                      >Rename {{ currentNote.title }}:</span
-                    >
-                    <span v-else
-                      >Create new note for
-                      {{ currentCourse.name }}:</span
-                    >
-                  </label>
+                <div class="col-10 text-start text-truncate">
+                  <span v-if="currentNote">Rename {{ currentNote.title }}</span>
+
+                  <span v-else>Create new note for {{ currentCourse.name }}</span>
                 </div>
 
-                <div class="col text-end">
+                <div class="col-2 text-end">
                   <button
                     type="button"
                     class="btn-close"
@@ -425,7 +560,7 @@
               </div>
 
               <div class="row">
-                <div class="input-group mb-3">
+                <div class="input-group mb-2">
                   <input
                     type="text"
                     class="form-control"
@@ -438,7 +573,6 @@
                     type="submit"
                     class="btn"
                     :class="currentNote ? 'btn-success' : 'btn-secondary'"
-                    id="document_name"
                     data-bs-dismiss="modal"
                   >
                     <i
@@ -532,6 +666,7 @@ const courseList = ref([]);
 const currentCourse = ref("");
 const currentNote = ref("");
 
+
 // Course form variables
 const courseFormInProgress = ref(false);
 const courseEditMode = ref(false);
@@ -539,8 +674,11 @@ const courseEditFormInProgress = ref(false);
 const currentEditingCourseId = ref(null);
 const mouseOnMenu = ref(false);
 
-// Required by Vue Quill for data binding
-const textEditor = ref();
+// Text editor variables
+const textEditor = ref(); // Required by Vue Quill for data binding
+const saveStatus = ref("");
+const saveStatusTimeoutID = ref("");
+const autoSaveTimeoutID = ref("");
 
 
 const courseData = reactive({
@@ -741,7 +879,7 @@ async function addNote(){
 	openNotes(course, note)
 }
 
-async function editNote(){
+async function renameNote(){
 	if(currentNote.value.title !== noteData.title){
 		currentNote.value.title = noteData.title;
 
@@ -821,6 +959,29 @@ async function saveNoteChanges(note) {
 	}
 }
 
+async function autoSaveNoteChanges(note) {
+	try { 
+    saveStatus.value = "Saving...";
+
+    // Auto-save 2 seconds after changes are made
+		clearTimeout(autoSaveTimeoutID.value);
+    autoSaveTimeoutID.value = setTimeout(async () => {
+      await saveNoteChanges(note);
+      saveStatus.value = "Saved!";
+    }, 2000)
+
+    // Let the user know changes have been saved for 3 seconds
+    clearTimeout(saveStatusTimeoutID.value)
+    saveStatusTimeoutID.value = setTimeout(async () => {
+      if(autoSaveTimeoutID.value){
+        saveStatus.value = "";
+      }
+    }, 3000)
+	} catch (error) {
+		console.error("Error updating note:", error.response?.data || error.message);
+	}
+}
+
 onBeforeUnmount(async () => {
 	if (currentNote.value && textEditorData.content !== currentNote.value.content) {
 		await saveNoteChanges(currentNote.value);
@@ -829,12 +990,8 @@ onBeforeUnmount(async () => {
 </script>
 
 <style scoped>
-body {
-  overflow-y:hidden;
-}
-
-.main-body-height {
-  height: 100vh - 70px;
+.vh-navbar-offset {
+  height: calc(100% - 70px);
 }
 
 .sharp-top-border {

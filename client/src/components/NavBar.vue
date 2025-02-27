@@ -3,7 +3,7 @@
     <div class="container-fluid">
 			<strong>
 				<a class="navbar-brand fs-3 ms-2 me-4" href="#">
-					<img :src="require(`@/assets/img/Y2L_Logo.png`)" width="40" class="me-2" />
+					<img :src="require(`@/assets/img/Y2L_Logo.png`)" width="40" class="object-fit-scale me-2" />
 					<span class="txt-y2l-yellow">Yearn</span>
 					<span class="txt-y2l-red">2</span>
 					<span class="txt-y2l-blue">Learn</span>
@@ -11,11 +11,11 @@
 			</strong>
 
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0" v-if="isAuthenticated">
-				<li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
-				<li class="nav-item"><a class="nav-link active" href="#">Flash Cards</a></li>
+				<li class="nav-item"><a class="nav-link active" href="#" v-on:click="refresh">Home</a></li>
+				<li class="nav-item"><a class="nav-link disabled" href="#">Flash Cards</a></li>
 
 				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown">
+					<a class="nav-link dropdown-toggle disabled" href="#" role="button" data-bs-toggle="dropdown">
 						Goal Management
 					</a>
 
@@ -97,6 +97,11 @@ await authStore.logout()
     })
 }
 
+// Forces a refresh to simulate going Home
+// TODO: replace on sprint 3 once routes are established
+async function refresh(){
+	window.location.reload();
+}
 </script>
 
 <style scoped>
