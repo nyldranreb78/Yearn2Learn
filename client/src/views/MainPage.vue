@@ -603,7 +603,7 @@ async function editCourse(){
 	if (!currentCourse.value) {
         console.error("No course selected for editing.");
         return;
-    }
+  }
 
     try {
         const updatedCourse = {
@@ -619,6 +619,8 @@ async function editCourse(){
         }
 
         closeEditCourseForm();
+
+        textEditorData.name = courseData.name;
     } catch (error) {
         console.error("Error updating course:", error.response?.data || error.message);
     }
@@ -747,6 +749,8 @@ async function editNote(){
 
     if(noteToUpdate){
       noteToUpdate.title = noteData.title;
+
+      textEditorData.title = noteData.title;
     }
 	}
 }
