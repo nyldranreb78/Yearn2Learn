@@ -1,3 +1,9 @@
+/*General*/
+body {
+	background-color: #f8f9fa; /* Same as Bootstrap's "bg-light" */
+}
+
+/*Brand-related*/
 .y2l-blue {
 	background-color: #2f5597;
 }
@@ -22,10 +28,7 @@
 	color: #ea4d21;
 }
 
-/* Bootstrap overrides */
-.btn-hanging {
-	border-top-left-radius: 0px !important;
-	border-top-right-radius: 0px !important;
-	border-bottom-left-radius: 16px !important;
-	border-bottom-right-radius: 16px !important;
+/*Custom*/
+.navbar-offset{
+	margin-top: 70px !important;
 }

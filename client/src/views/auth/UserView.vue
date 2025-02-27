@@ -1,6 +1,6 @@
 <template>
   <div id="user">
-    <div class="container">
+    <div class="container navbar-offset">
       <Suspense>
         <template #default>
           <div v-if="user" class="card card-body mt-4">

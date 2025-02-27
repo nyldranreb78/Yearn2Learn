@@ -1,6 +1,6 @@
 <template>
   <div id="login">
-    <div class="container">
+    <div class="container navbar-offset">
       <div class="card card-body mt-4">
         <h5 class="card-title">Login</h5>
         <form @submit.prevent="submit">
@@ -48,6 +48,13 @@ async function submit(){
 </script>
 
 <style scoped>
+#login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* height: 100vh; */
+}
+
 #login .card{
   max-width: 40vw;
   margin: auto;

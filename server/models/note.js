@@ -15,6 +15,10 @@ const noteSchema = new mongoose.Schema({
     author : {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'user'
+    },
+    folder : {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'folder'
     }
 });
 

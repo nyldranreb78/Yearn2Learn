@@ -1,6 +1,6 @@
 <template>
   <div id="register">
-    <div class="container">
+    <div class="container navbar-offset">
       <div class="card card-body mt-4">
         <h5 class="card-title">Register</h5>
         <form @submit.prevent="submit">
@@ -59,7 +59,7 @@ async function submit(){
   await authStore.register(registerData)
     .then(res => {
       console.log("Registration successful:", res);
-      router.replace({name: "login"})
+      router.replace({name: "home"})
     })
     .catch(err => {
       errorMessage.value = err.message
@@ -69,6 +69,13 @@ async function submit(){
 </script>
 
 <style scoped>
+#register {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* height: 100vh; */
+}
+
 #register .card{
   max-width: 40vw;
   margin: auto;
