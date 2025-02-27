@@ -963,20 +963,20 @@ async function autoSaveNoteChanges(note) {
 	try { 
     saveStatus.value = "Saving...";
 
-    // Auto-save 2 seconds after changes are made
+    // Auto-save 1 second after changes are made
 		clearTimeout(autoSaveTimeoutID.value);
     autoSaveTimeoutID.value = setTimeout(async () => {
       await saveNoteChanges(note);
       saveStatus.value = "Saved!";
-    }, 2000)
+    }, 1000)
 
-    // Let the user know changes have been saved for 3 seconds
+    // Let the user know changes have been saved for 5 seconds
     clearTimeout(saveStatusTimeoutID.value)
     saveStatusTimeoutID.value = setTimeout(async () => {
       if(autoSaveTimeoutID.value){
         saveStatus.value = "";
       }
-    }, 3000)
+    }, 5000)
 	} catch (error) {
 		console.error("Error updating note:", error.response?.data || error.message);
 	}
