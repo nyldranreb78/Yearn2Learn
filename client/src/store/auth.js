@@ -96,10 +96,7 @@ export const useAuthStore = defineStore("auth", {
 
     async getFolder(){
       try {
-        const { data } = await useApiPrivate().get(`/api/folder`);
-        
-        console.log(data);  
-
+        const { data } = await useApiPrivate().get(`/api/folder`);  
         return data;
       } catch (error) {
         console.error("Error getting folders:", error.response?.data || error.message);

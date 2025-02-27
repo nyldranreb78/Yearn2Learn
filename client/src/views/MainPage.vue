@@ -402,7 +402,6 @@
                       >Create new note for
                       {{ currentCourse.name }}:</span
                     >
-					{{ console.log(currentNote) }}
                   </label>
                 </div>
 
@@ -421,7 +420,7 @@
                     type="text"
                     class="form-control"
                     placeholder="e.g. Midterm Notes"
-                    v-model="noteData.name"
+                    v-model="noteData.file_name"
                     required
                   />
 
@@ -543,7 +542,7 @@ const textEditorData = reactive({
 async function fetchData() {
 	try {
 		const response = await authStore.getFolder();
-		console.log("Courses fetched successfully:", response);
+		
 		if (response) {
 			courseList.value = response.folders;
 
@@ -686,11 +685,9 @@ async function addNote(){
 		title: noteData.file_name,
 		content: "<p><br></p>" // Quill editor's definition of an "empty" editor
 	}
-	console.log("Note to be added:", note);
 
 	try {
 		const savedNote = await authStore.createNoteInFolder(course._id, note);
-		console.log("Note saved successfully:", savedNote.note);
 		course.notes.push(savedNote.note);
 	} catch (error) {
 		console.error("Error saving note to backend:", error);
@@ -771,7 +768,6 @@ async function saveNoteChanges(note) {
 		};
 
 		await authStore.updateNote(note._id, updatedNote);
-		console.log("Note updated successfully:", updatedNote);
 	} catch (error) {
 		console.error("Error updating note:", error.response?.data || error.message);
 	}
