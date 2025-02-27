@@ -35,14 +35,6 @@ watch(isPlaying, (newValue) => {
 })
 
 watch(timeRemaining, (newValue) => {
-    if (newValue <= 0 && isPlaying.value){ //indicate timeRemaining is up
-        hasEnded.value = true
-
-        if(!isPomodoroMode.value){
-            isPlaying.value = false;
-        }
-    }
-
     if (newValue > timeMax.value){
         timeRemaining.value = timeMax.value;
     }
@@ -51,6 +43,14 @@ watch(timeRemaining, (newValue) => {
         timeRemaining.value = 0;
     }
     
+    if (newValue == 0 && isPlaying.value){ //indicate timeRemaining is up
+        hasEnded.value = true
+
+        if(!isPomodoroMode.value){
+            isPlaying.value = false;
+        }
+    }
+
     outputDisplay()
 },
 {
@@ -135,17 +135,11 @@ async function resetTime(){
     <div class="container-fluid">
         <div class="row m-0">
             <div class="col-12 px-1 text-start">
-                <label for="mode_select">
-                    <small>
-                        Mode
-                        <a href="#" class="text-dark" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Tooltip on right">
-                            <i class="bi bi-info-circle"></i>
-                        </a>
-                    </small>
-                </label>
+                <label for="mode_select"><small>Mode</small></label>
+
                 <select class="form-select form-select-sm mb-2" id="mode_select" v-model="isPomodoroMode">
                     <option :value="false" selected>General</option>
-                    <option :value="true" class="danger">Pomodoro</option>
+                    <option :value="true">Pomodoro</option>
                 </select>
             </div>
         </div>
@@ -153,13 +147,32 @@ async function resetTime(){
         <div class="row m-0">
             <div class="col-4 text-center p-0" v-for="timeDisplay in timeDisplayData" v-bind:key="timeDisplay[1]">
                 <div class="btn-group-vertical">
-                    <button type="button" class="btn btn-sm btn-outline-dark px-2 py-0" v-on:click="increaseTime(timeDisplay[1])" :disabled="isPomodoroMode || timeRemaining >= timeMax" v-if="!isPomodoroMode">
+                    <button
+                        type="button"
+                        class="btn btn-sm btn-outline-dark px-2 py-0"
+                        v-on:click="increaseTime(timeDisplay[1])"
+                        :disabled="isPomodoroMode || timeRemaining >= timeMax"
+                        v-if="!isPomodoroMode"
+                    >
                         <i class="bi bi-caret-up-fill"></i>
                     </button>
 
-                    <label type="button" class="btn btn-outline-dark time-display px-2 pe-none" disabled>{{ timeDisplay[0] }}</label>
+                    <label
+                        type="button"
+                        :id="'timeDisplay' + timeDisplay[1]"
+                        class="btn btn-outline-dark time-display px-2 pe-none"
+                        disabled
+                    >
+                        {{ timeDisplay[0] }}
+                    </label>
 
-                    <button type="button" class="btn btn-sm btn-outline-dark px-2 py-0" v-on:click="decreaseTime(timeDisplay[1])" :disabled="isPomodoroMode || timeRemaining <= 0" v-if="!isPomodoroMode">
+                    <button
+                        type="button"
+                        class="btn btn-sm btn-outline-dark px-2 py-0"
+                        v-on:click="decreaseTime(timeDisplay[1])"
+                        :disabled="isPomodoroMode || timeRemaining <= 0"
+                        v-if="!isPomodoroMode"
+                    >
                         <i class="bi bi-caret-down-fill"></i>
                     </button>
                 </div>
@@ -182,13 +195,13 @@ async function resetTime(){
 
         <div class="row mx-0 mt-2 mb-2">
             <div class="col-8 d-grid px-1">
-                <button type="button" class="btn btn-block btn-primary px-0 py-1" v-on:click="togglePause()">
+                <button type="button" id="btnPlayToggle" class="btn btn-block btn-primary px-0 py-1" v-on:click="togglePause()">
                     <i :class="isPlaying? 'bi bi-pause-fill' : 'bi bi-play-fill'"></i>
                 </button>
             </div>
 
             <div class="col-4 d-grid px-1">
-                <button type="button" class="btn btn-block btn-secondary px-0 py-1" v-on:click="resetTime()">
+                <button type="button" id="btnReset" class="btn btn-block btn-secondary px-0 py-1" v-on:click="resetTime()">
                     <i class="bi bi-arrow-counterclockwise"></i>
                 </button>
             </div>
