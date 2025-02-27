@@ -88,10 +88,6 @@ async function createInFolder(req, res) {
         if (folder.author.toString() !== id) 
             return res.status(403).json({ message: "Unauthorized" });
 
-        if (!req.body.title || !req.body.content) {
-            return res.status(400).json({ message: "Title or content is missing" });
-        }
-
         const note = new Note({
             title: req.body.title,
             content: req.body.content,

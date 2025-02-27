@@ -146,5 +146,25 @@ export const useAuthStore = defineStore("auth", {
         throw error.message;
       }
     },
+
+    async deleteNote(noteId) {
+      try {
+        const { data } = await useApiPrivate().delete(`/api/note/${noteId}`);
+        return data;
+      } catch (error) {
+        console.error("Error getting note in folder:", error.response?.data || error.message);
+        throw error.message;
+      }
+    },
+
+    async deleteCourse(courseId) {
+      try {
+        const { data } = await useApiPrivate().delete(`/api/folder/${courseId}`);
+        return data;
+      } catch (error) {
+        console.error("Error getting note in folder:", error.response?.data || error.message);
+        throw error.message;
+      }
+    },
   },
 });
