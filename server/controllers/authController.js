@@ -1,6 +1,7 @@
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
+const { hashPassword, comparePassword } = require("../utils/helpers");
 
 
 async function register(req, res){
@@ -12,12 +13,12 @@ async function register(req, res){
 
   if(password !== password_confirm) return res.status(422).json({'message': 'Passwords do not match'})
 
-  const userExists = await User.exists({email}).exec()
+  const userExists = await User.exists({email})
 
   if(userExists) return res.sendStatus(409)
 
   try {
-    hashedPassword = await bcrypt.hash(password, 10)
+    const hashedPassword = await hashPassword(password); 
 
     await User.create({email, username, password: hashedPassword, first_name, last_name})
 
@@ -32,11 +33,11 @@ async function login(req, res){
 
   if(!email || !password) return res.status(422).json({message: 'Missing fields'})
   
-  const user = await User.findOne({email}).exec()
+  const user = await User.findOne({email})
 
   if(!user) return res.status(401).json({message: "Email or password is incorrect"})
 
-  const match = await bcrypt.compare(password, user.password)
+  const match = await comparePassword(password, user.password)
 
   if(!match) return res.status(401).json({message: "Email or password is incorrect"})
 
@@ -73,7 +74,7 @@ async function logout(req, res){
   if(!cookies.refresh_token) return res.sendStatus(204)
 
   const refreshToken = cookies.refresh_token
-  const user = await User.findOne({refresh_token: refreshToken}).exec()
+  const user = await User.findOne({refresh_token: refreshToken})
 
   if(!user){
     res.clearCookie('refresh_token', {httpOnly: true, sameSite: 'None', secure: true})
@@ -93,7 +94,7 @@ async function refresh(req, res){
 
   const refreshToken = cookies.refresh_token
 
-  const user = await User.findOne({refresh_token: refreshToken}).exec()
+  const user = await User.findOne({refresh_token: refreshToken})
 
   if(!user) return res.sendStatus(403)
 
