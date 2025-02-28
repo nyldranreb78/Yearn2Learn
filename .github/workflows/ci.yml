@@ -1,5 +1,10 @@
 name: main
-on: [push]
+on: 
+  push:
+  pull_request:
+    branches:
+      - develop
+      - staging
   #workflow_dispatch:
   #pull_request:
     #branches: ["main"]
@@ -47,7 +52,7 @@ jobs:
           minimum-approvals: 1
           issue-title: "Running CI pipline"
           issue-body: "Please look over code to see if it meets coding standards"
-          exclude-workflow-initiator-as-approver: true
+          exclude-workflow-initiator-as-approver: false
       - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
