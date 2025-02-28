@@ -43,8 +43,11 @@ jobs:
       - uses: trstringer/manual-approval@v1
         with:
           secret: ${{ github.TOKEN }}
-          approvers: Esbanana
+          approvers: Esbanana,nyldranreb78
           minimum-approvals: 1
+          issue-title: "Running CI pipline"
+          issue-body: "Please look over code to see if it meets coding standards"
+          exclude-workflow-initiator-as-approver: true
       - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
