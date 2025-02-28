@@ -16,34 +16,39 @@ async function index(req, res){
         if (!(await verifyID(id, res))) return;
 
         const notes = await Note.find({ author: id })
-            .populate("author", "username");
+        .populate("author", "username");
 
         return res.status(200).json({ notes });
     } catch (err) {
-        console.error("Error fetching notes:", err.message);
+        // console.error("Error fetching notes:", err.message);
         return res.status(500).json({message: err.message})
     }
 }
 
-async function indexFolder(req, res){
-    const id = auth.getUserID(req)
+async function getNotesInFolder(req, res){
+    try {
+        const id = auth.getUserID(req);
+        if (!(await verifyID(id, res))) return;
 
-    Folder.findOne({_id: req.params.folderID})
-    .then(folder => {
+        const folder = await Folder.findOne({ _id: req.params.folderID });
+
         if (!folder) 
-            return res.status(404).json({message: 'Folder not found'})
+            return res.status(404).json({ message: "Folder not found" });
+        
+        if (folder.author != id)
+            return res.status(403).json({ message: "Unauthorized" });
 
-        if (folder.author != id) 
-            return res.status(403).json({message: 'Unauthorized'})
+        const notes = await Note.find({ folder: folder._id });
 
-        Note.find({_id: folder.notes})
-        .then(notes => {
-            return res.status(200).json({notes: notes})
-        })
-        .catch(err => {
-            return res.status(500).json({message: err.message})
-        })
-    })
+        if (!notes) 
+            return res.status(404).json({ message: "Notes not found" });
+        
+        return res.status(200).json({ notes: notes });
+    }
+    catch (err) {
+        // console.error("Error fetching notes:", err.message);
+        return res.status(500).json({message: err.message})
+    }
 }
 
 async function create(req, res){
@@ -51,62 +56,58 @@ async function create(req, res){
         const id = auth.getUserID(req)
         if (!(await verifyID(id, res))) return;
 
-        User.findOne({_id: id})
-        .then(user => {
-            if(!user) return res.status(500).json()
-                
-            const note = new Note({
-                title: req.body.title,
-                content: req.body.content,
-            })
+        const user = await User.findOne({ _id: id});
 
-            note.author = user._id
-            note.save()
-            .then(note => {
-                return res.status(201).json({note: note})
-            })
-        })
+        if (!user) 
+            return res.status(500).json({message: "User not found"});
+
+        const note = new Note({
+            title: req.body.title,
+            content: req.body.content,
+        });
+
+        note.author = user._id;
+        await note.save();
+
+        return res.status(201).json({note: note});
     } catch (err){
-        console.error("Error creating note:", err.message);
+        // console.error("Error creating note:", err.message);
         return res.status(500).json({message: err.message})
     }
 }
 
-async function createInFolder(req, res){
-    const id = auth.getUserID(req)
+async function createInFolder(req, res) {
+    const id = auth.getUserID(req);
+    if (!(await verifyID(id, res))) return;
 
-    User.findOne({_id: id})
-    .then(user => {
-        if(!user) return res.status(500).json()
-        
-        Folder.findOne({_id: req.params.folderID})
-        .then(folder => {
-            if (!folder) 
-                return res.status(404).json({message: 'Folder not found'})
-            
-            if (folder.author != id) 
-                return res.status(403).json({message: 'Unauthorized'})
+    try {
+        const user = await User.findOne({ _id: id });
+        if (!user) 
+            return res.status(500).json({ message: "User not found" });
 
-            const note = new Note({
-                title: req.body.title,
-                content: req.body.content,
-            })
-    
-            note.author = user._id
-            note.save()
+        const folder = await Folder.findOne({ _id: req.params.folderID });
+        if (!folder) return res.status(404).json({ message: "Folder not found" });
 
-            folder.notes.push(note)
-            folder.save()
+        if (folder.author.toString() !== id) 
+            return res.status(403).json({ message: "Unauthorized" });
 
-            .then(note => {
-                return res.status(201).json({folder: note})
-            })
-            .catch(err => {
-                return res.status(500).json({message: err.message})
-            })
-        })
-            
-    })
+        const note = new Note({
+            title: req.body.title,
+            content: req.body.content,
+            folder: folder._id,
+            author: user._id
+        });
+
+        await note.save();
+
+        folder.notes.push(note._id);
+        await folder.save();
+
+        res.status(201).json({ folder, note });
+    } catch (error) {
+        console.error("Error creating note:", error.message);
+        res.status(500).json({ message: error.message });
+    }
 }
 
 async function show(req, res){
@@ -114,18 +115,31 @@ async function show(req, res){
         const id = auth.getUserID(req);
         if (!(await verifyID(id, res))) return;
 
-        Note.findOne({_id: req.params.id})
-        .then(note => {
-            if (!note) 
-                return res.status(404).json({message: 'Note not found'})
+        // Note.findOne({_id: req.params.id})
+        // .then(note => {
+        //     if (!note) 
+        //         return res.status(404).json({message: 'Note not found'})
 
-            if (note.author != id) 
-                return res.status(403).json({message: 'Unauthorized'})
+        //     if (note.author != id) 
+        //         return res.status(403).json({message: 'Unauthorized'})
 
-            return res.status(200).json({note: note})
-        })
+        //     return res.status(200).json({note: note})
+        // })
+
+        const note = await Note.findOne({ _id: req.params.id });
+
+        if (!note) {
+            return res.status(404).json({ message: "Note not found" });
+        }
+
+        if (note.author !== id) {
+            return res.status(403).json({ message: "Unauthorized" });
+        }
+
+        return res.status(200).json({ note });
+
     } catch(error){
-        console.error("Error fetching note:", error.message);
+        // console.error("Error fetching note:", error.message);
         return res.status(500).json({message: error.message})
     }
 }
@@ -148,10 +162,12 @@ async function update(req, res) {
         if (req.body.content) note.content = req.body.content;
         note.lastSaved = Date.now();
 
-        const updatedNote = await note.save();
-        return res.status(200).json({ note: updatedNote });
+        // const updatedNote = await note.save();
+        await note.save();
+
+        return res.status(200).json({ note: note });
     } catch (err) {
-        console.error("Error updating note:", err.message);
+        // console.error("Error updating note:", err.message);
         return res.status(500).json({message: err.message})
     }
 }
@@ -161,23 +177,33 @@ async function remove(req, res) {
         const id = auth.getUserID(req);
         if (!(await verifyID(id, res))) return;
 
-        Note.findOne({_id: req.params.id})
-        .then(note => {
-            if (!note) 
-                return res.status(404).json({message: 'Note not found'})
+        const note = await Note.findOne({ _id: req.params.id });
 
-            if (note.author != id) 
-                return res.status(403).json({message: 'Unauthorized'})
+        if (!note) {
+            return res.status(404).json({ message: "Note not found" });
+        }
 
-            Note.deleteOne({_id: req.params.id})
-            .then(note => {
-                return res.status(200).json({message: 'Note deleted'})
-            })
-        })
+        if (note.author.toString() !== id) {
+            return res.status(403).json({ message: "Unauthorized" });
+        }
+
+        const folder = await Folder.findOne({ _id: note.folder });
+        
+        if (folder) {
+            await Folder.updateOne(
+                { _id: folder._id },
+                { $pull: { notes: note._id } }
+            )
+        }
+
+        await note.deleteOne({ _id: req.params.id });
+
+        return res.status(200).json({ message: "Note deleted" });
+    
     } catch (err){
-        console.error("Error deleting note:", err.message);
+        // console.error("Error deleting note:", err.message);
         return res.status(500).json({message: err.message})
     }
 }
 
-module.exports = {index, indexFolder, create, createInFolder, show, update, remove}
+module.exports = {verifyID, index, getNotesInFolder, create, createInFolder, show, update, remove}

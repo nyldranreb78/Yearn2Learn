@@ -1,0 +1,76 @@
+name: main
+on: 
+  push:
+  pull_request:
+    branches:
+      - develop
+      - staging
+  #workflow_dispatch:
+  #pull_request:
+    #branches: ["main"]
+  
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        #node-version: [18.x, 20.x, 22.x]
+        node-version: [22.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - working-directory: ./client
+      run: npm ci
+    - working-directory: ./client
+      run: npm run build --if-present
+    - working-directory: ./server
+      run: npm ci
+    - working-directory: ./server
+      run: npm run build --if-present
+    #- run: npm run build --if-present
+    
+  deploy:
+    name: deploy
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        #node-version: [18.x, 20.x, 22.x]
+        node-version: [22.x]
+    needs: build
+    steps:
+      - uses: trstringer/manual-approval@v1
+        with:
+          secret: ${{ github.TOKEN }}
+          approvers: Esbanana,nyldranreb78
+          minimum-approvals: 1
+          issue-title: "Running CI pipline"
+          issue-body: "Please look over code to see if it meets coding standards"
+          exclude-workflow-initiator-as-approver: false
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: echo deploying
+      #- run: npm ci
+      #- run: npm run build --if-present
+      - working-directory: ./client
+        run: npm ci
+      - working-directory: ./client
+        run: npm run build --if-present
+      - working-directory: ./server
+        run: npm ci
+      - working-directory: ./server
+        run: npm run build --if-present
+      - working-directory: ./client
+        run: npm test
+      - working-directory: ./server
+        run: npm test

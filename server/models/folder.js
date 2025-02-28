@@ -3,7 +3,11 @@ const mongoose = require('mongoose');
 const folderSchema = new mongoose.Schema({
     name: {
         type: String,
-        default: "Untitled"
+        required: true
+    },
+    priority: {
+        type: Boolean,
+        required: true,
     },
     author: {
         type: mongoose.Schema.Types.ObjectId,
