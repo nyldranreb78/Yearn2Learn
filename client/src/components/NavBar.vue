@@ -10,7 +10,7 @@
 				</a>
 			</strong>
 
-			<div class="vr ms-2 me-3"></div>
+			<div class="vr ms-2 me-3" v-if="isAuthenticated"></div>
 
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0" v-if="isAuthenticated">
 				<li class="nav-item"><a class="nav-link active" href="#" v-on:click="refresh">Home</a></li>
