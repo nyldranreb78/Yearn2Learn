@@ -71,12 +71,13 @@
 <script setup lang="js">
 import { useAuthStore } from '../store/auth';
 import { computed } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import DynamicTimer from './DynamicTimer.vue';
 
 const authStore = useAuthStore()
 
 const router = useRouter()
+const route = useRoute()
 
 const user = computed(()=>{
 return authStore.user
@@ -100,7 +101,7 @@ await authStore.logout()
 // Forces a refresh to simulate going Home
 // TODO: replace on sprint 3 once routes are established
 async function refresh(){
-	if(window.location.pathname === "/"){
+	if(route.name === "home"){
 		window.location.reload();
 	}
 }
