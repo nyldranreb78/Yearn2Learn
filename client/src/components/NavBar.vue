@@ -2,7 +2,7 @@
   <nav class="navbar navbar-expand-lg navbar-fixed-size fixed-top bg-white border-bottom">
     <div class="container-fluid">
 			<strong>
-				<a class="navbar-brand fs-3 ms-2 me-4" href="#" v-on:click="refresh">
+				<a class="navbar-brand fs-3 ms-2" href="#" v-on:click="refresh">
 					<img :src="require(`@/assets/img/Y2L_Logo.png`)" width="40" class="object-fit-scale me-2" />
 					<span class="txt-y2l-yellow">Yearn</span>
 					<span class="txt-y2l-red">2</span>
@@ -10,8 +10,11 @@
 				</a>
 			</strong>
 
+			<div class="vr ms-2 me-3"></div>
+
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0" v-if="isAuthenticated">
 				<li class="nav-item"><a class="nav-link active" href="#" v-on:click="refresh">Home</a></li>
+				<li class="nav-item"><a class="nav-link active" href="#" v-on:click="refresh">Notes</a></li>
 				<li class="nav-item"><a class="nav-link disabled" href="#">Flash Cards</a></li>
 
 				<li class="nav-item dropdown">
