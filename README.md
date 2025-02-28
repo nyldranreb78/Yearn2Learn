@@ -9,7 +9,7 @@ Project Proposal: [ProjectProposal_Ver2.pdf](https://github.com/user-attachments
 1. Earl Alminana | [email@myumanitoba.ca](mailto:email@myumanitoba.ca) | 7880997
 2. Evan James | [jamese1@myumanitoba.ca](mailto:jamese1@myumanitoba.ca) | 7901799
 3. Chikamnaele (Chika) Ngene | [ngenec@myumanitoba.ca](mailto:ngenec@myumanitoba.ca) | 7918889
-4. Nyl Salvador | [email@myumanitoba.ca](mailto:email@myumanitoba.ca) | 7887825
+4. Nyl Salvador | [salvadon@myumanitoba.ca](mailto:email@myumanitoba.ca) | 7887825
 5. Thanh Nam Nguyen | [nguyen89@myumanitoba.ca](mailto:nguyen89@myumanitoba.ca) | 7952436
 
 ## Project Summary and Vision: **Yearn2Learn**
