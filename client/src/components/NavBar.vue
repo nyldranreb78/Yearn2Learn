@@ -44,7 +44,7 @@
 			</ul>
 
 			<div class="d-flex justify-content-end">
-				<li v-if="isAuthenticated" class="nav-item dropdown">
+				<li v-if="isAuthenticated" class="nav-item dropdown me-2">
 						<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
 						{{ user.username }}
 						</a>
