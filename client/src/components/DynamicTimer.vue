@@ -9,10 +9,13 @@ const hasEnded = ref(false)
 const isPomodoroMode = ref(false)
 
 // Pomodoro Method variables
-const intervalStudy = ref(25)
-const intervalBreak = ref(5)
-const intervalBigBreak = ref(30)
+const intervalStudy = ref(25) //default = 25
+const intervalBreak = ref(5) //default = 5
+const intervalBigBreak = ref(30) //default = 30
 const cycleCount = ref(0)
+
+//timer notification variables
+const emit = defineEmits(['timeUp'])
 
 // Reactive display variables
 const timeDisplayData = ref([  // [time string, timeRemaining interval] tuples
@@ -77,6 +80,7 @@ watch(hasEnded, (newValue) => {
         else{
             clearInterval(timerID.value);
         }
+        emitTimer()
         
         hasEnded.value = false
     }
@@ -128,6 +132,14 @@ async function resetTime(){
     timeRemaining.value = isPomodoroMode.value? intervalStudy.value * 60 : 0;
     isPlaying.value = false;
     hasEnded.value = false;
+}
+
+//emitTimer - emit to parent that timer is up
+async function emitTimer(){
+    var timerType = 0
+    if (isPomodoroMode.value) {timerType = 1}
+
+    emit('timeUp', timerType)
 }
 </script>
 
@@ -207,6 +219,8 @@ async function resetTime(){
             </div>
         </div>
     </div>
+
+    
 </template>
 
 <style scoped>
@@ -214,5 +228,6 @@ async function resetTime(){
     color:black;
     background-color: white;
     border-color: black;
+    
 }
 </style>

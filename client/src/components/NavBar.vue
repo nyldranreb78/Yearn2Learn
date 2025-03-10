@@ -41,11 +41,11 @@
 					</a>
 
 					<ul class="dropdown-menu">
-						<li><div><DynamicTimer/></div></li>
+						<li><div><DynamicTimer @timeUp="(n) => timerNotificaction(n)"/></div></li>
 					</ul>
 				</li>
 			</ul>
-
+			
 			<div class="d-flex justify-content-end">
 				<li v-if="isAuthenticated" class="nav-item dropdown me-2">
 						<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
@@ -68,12 +68,13 @@
 				</div>
 			</div>
     </div>
-   </nav> 
+   </nav>
+   
 </template>
   
 <script setup lang="js">
 import { useAuthStore } from '../store/auth';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import DynamicTimer from './DynamicTimer.vue';
 
@@ -108,6 +109,19 @@ async function refresh(){
 		window.location.reload();
 	}
 }
+
+const timerNotif = ref(false)
+async function timerNotificaction(timerType){
+	timerNotif.value = !timerNotif.value
+
+	if (timerType == 0){
+		alert("Time's Up!")
+	}
+	else {
+		alert("Pomodorro Cycled!")
+	}
+}
+
 </script>
 
 <style scoped>
