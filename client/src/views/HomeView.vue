@@ -1,129 +1,36 @@
 <template>
-	<div class="row justify-content-center p-0 m-0" v-if="!currentNote">
-		<!--COLLAPSIBLE FOLDER LIST-->
-		<div class="row border-bottom">
-			<div class="col text-start">
-				<h2 class="mt-5">Folder List</h2>
-			</div>
-
-			<div class="col text-end">
-
-			</div>
-		</div>
-
-		<div class="accordion accordion-flush border-0">
-			<div
-				class="accordion-item bg-transparent border-0"
-			>
-				<h2 class="accordion-header">
-					<button
-						type="button"
-						class="accordion-button collapsed fs-5 border-bottom"
-						data-bs-toggle="collapse"
-						data-bs-target="#add_folder_form"
-						v-on:click="toggleFolderForm()"
-					>
-						<i
-							:class="folderFormInProgress ? 'bi bi-x-lg' : 'bi bi-folder-plus'"
-						></i>
-						<span class="ms-2">{{
-							folderFormInProgress ? "Cancel" : "Add New Folder"
-						}}</span>
-					</button>
-				</h2>
-
-				<div class="collapse p-0 m-0" id="add_folder_form">
-					<div class="card card-body sharp-top-border border-top-0 mb-2">
-						<form @submit.prevent="addFolder">
-							<div class="row mb-2">
-								<div class="col-6">
-									<small>Folder Name</small>
-									<input
-										type="text"
-										class="form-control"
-										placeholder="e.g. COMP 4350"
-										v-model="folderData.name"
-										required
-									/>
-								</div>
-
-								<div class="col-4">
-									<small>Priority</small>
-									<select
-										class="form-select"
-										v-model="folderData.priority"
-										required
-									>
-										<option value selected disabled>Select</option>
-										<option :value="true">Major Requirement</option>
-										<option :value="false">Elective</option>
-									</select>
-								</div>
-
-								<div class="col-2 mt-auto">
-									<button type="submit" class="btn btn-primary w-100 align-self-bottom">
-										Add
-									</button>
-								</div>
-							</div>
-						</form>
+	<div class="container-fluid text-start d-flex flex-column navbar-offset vh-navbar-offset">
+		<div class="row justify-content-md-center mt-4">
+			<div class="col-6">
+				<div class="row"><div class="col ps-0"><h4>Features</h4></div></div>
+				<div class="row mb-5">
+					<div class="col" v-for="feature in featureInfo" v-bind:key="feature[2]">
+						<FeatureCard
+							:bootstrap-icon-code="feature[0]"
+							:feature-name="feature[1]"
+							:route-name="feature[2]"
+							:description="feature[3]"
+							v-on:click="feature[2]? null : showTimer('false')"
+							@mouseleave="feature[2]? null : showTimer('outside')"
+						/>
 					</div>
 				</div>
-			</div>
 
-			<div
-				class="accordion-item bg-transparent border-0"
-				v-for="folder in folderList"
-				:key="folder._id"
-			>
-				<h2 class="accordion-header">
-					<button
-						type="button"
-						class="accordion-button collapsed fs-5 border-bottom"
-						data-bs-toggle="collapse"
-						:data-bs-target="'#folderID' + folder._id + 'dashboard'"
-					>
-						<span class="text-truncate">{{ folder.name }}</span>
-					</button>
-				</h2>
+				<div class="row"><div class="col ps-0"><h4>Quick Access</h4></div></div>
 
-				<!--NOTES LIST FOR EACH FOLDER-->
-				<div
-					:id="'folderID' + folder._id + 'dashboard'"
-					class="accordion-collapse collapse"
-				>
-					<div class="accordion-body bg-transparent pt-0 pb-0 ps-3 pe-0 fs-6 mb-2">
-						<div class="list-group sharp-top-border">
-							<!--ADD NOTE FORM TRIGGER-->
-							<button
-								type="button"
-								class="list-group-item list-group-item-action ps-3 py-2 border-top-0"
-								data-bs-toggle="modal"
-								data-bs-target="#add_edit_note_form"
-								v-on:click="passCurrentFolder(folder)"
-							>
-								<i class="bi bi-plus-lg me-1"></i> Create new note
-							</button>
+				<div class="row mb-5 pe-2">
+					<div class="col-auto"><h6><i class="bi bi-calendar2 me-1"></i> Upcoming Tasks</h6></div>
+					<div class="col border-bottom border-card mb-3"></div>
+				</div>
 
-							<div
-								class="list-group-item list-group-item-action px-3 py-2"
-								v-for="note in folder.notes"
-								v-bind:key="note._id"
-								v-on:click="openNotes(folder, note)"
-							>
-								<div class="row p-0">
-									<div class="col-6 text-start text-truncate">
-										<span class="align-middle">{{ note.title }}</span>
-									</div>
+				<div class="row mb-5 pe-2">
+					<div class="col-auto"><h6><i class="bi bi-journal-text me-1"></i> Recent Notes</h6></div>
+					<div class="col border-bottom border-card mb-3"></div>
+				</div>
 
-									<div class="col-6 text-start text-truncate text-end">
-										<span class="align-middle" v-if="note.createdAt === note.updatedAt">Created {{ new Date(note.createdAt).toLocaleString() }}</span>
-										<span class="align-middle" v-else>Last updated {{ new Date(note.createdAt).toLocaleString() }}</span>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
+				<div class="row mb-5 pe-2">
+					<div class="col-auto"><h6><i class="bi bi-card-heading me-1"></i> Flash Cards</h6></div>
+					<div class="col border-bottom border-card mb-3"></div>
 				</div>
 			</div>
 		</div>
@@ -132,10 +39,36 @@
 
 
 <script setup>
+import FeatureCard from '@/components/FeatureCard.vue';
+import bootstrap from "bootstrap/dist/js/bootstrap.bundle.js";
+//import { ref } from 'vue'; // reactive, computed, onMounted, onBeforeUnmount
 
+const noteDesc = "Write and edit your notes, organized by folders."
+const flashcardDesc = "Create your own set of Q&A cards and test yourself with them."
+const goalDesc = "Keep track of your tasks, goals, and grade progress."
+const timerDesc = "Choose between a generic or Pomodoro Method timer."
+
+const featureInfo = [ // [Bootstrap Icon Code, Feature Name, Vue Route] 
+	["journal-text", "Notes", "notes", noteDesc],
+	["card-heading", "Flash Cards", "flashcards", flashcardDesc],
+	["calendar2-check", "Goal Management", "home", goalDesc], // TODO: change this later
+	["stopwatch", "Timer", null, timerDesc]
+];
+
+async function showTimer(autoCloseAttribute){
+  const timerMenu = document.querySelector("#timerFeature");
+  timerMenu.setAttribute("data-bs-auto-close", autoCloseAttribute);
+
+  const dropdown = new bootstrap.Dropdown(timerMenu)
+  if(autoCloseAttribute === "false") {
+	dropdown.show();
+  }
+}
 </script>
 
 
 <style>
-
+.border-card{
+	border-color: #d2d2d2 !important;
+}
 </style>

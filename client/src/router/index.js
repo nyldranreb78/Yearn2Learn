@@ -6,7 +6,7 @@ const routes = [
     path: "/",
     name: "home",
     component: () =>
-      import("../views/features/NoteView.vue"),
+      import("../views/HomeView.vue"),
     meta: { requiresAuth: true },
   },
   {

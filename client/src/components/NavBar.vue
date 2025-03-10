@@ -2,7 +2,7 @@
   <nav class="navbar navbar-expand-lg navbar-fixed-size fixed-top bg-white border-bottom">
     <div class="container-fluid">
 			<strong>
-				<router-link :to="{ name: 'home' }" class="navbar-brand fs-3 ms-2" href="#" v-on:click="refresh">
+				<router-link :to="{ name: 'home' }" class="navbar-brand fs-3 ms-2" href="#">
 					<img :src="require(`@/assets/img/Y2L_Logo.png`)" width="40" class="object-fit-scale me-2" />
 					<span class="txt-y2l-yellow">Yearn</span>
 					<span class="txt-y2l-red">2</span>
@@ -13,9 +13,9 @@
 			<div class="vr ms-2 me-3" v-if="isAuthenticated"></div>
 
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0" v-if="isAuthenticated">
-				<li class="nav-item"><router-link :to="{ name: 'home' }" class="nav-link active" href="#" v-on:click="refresh">Home</router-link></li>
-				<li class="nav-item"><router-link :to="{ name: 'notes' }" class="nav-link active" href="#" v-on:click="refresh">Notes</router-link></li>
-				<li class="nav-item"><router-link :to="{ name: 'flashcards' }" class="nav-link" href="#">Flash Cards</router-link></li>
+				<li class="nav-item"><router-link :to="{ name: 'home' }" class="nav-link active" href="#">Home</router-link></li>
+				<li class="nav-item"><router-link :to="{ name: 'notes' }" class="nav-link active" href="#">Notes</router-link></li>
+				<li class="nav-item"><router-link :to="{ name: 'flashcards' }" class="nav-link active" href="#">Flash Cards</router-link></li>
 
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle disabled" href="#" role="button" data-bs-toggle="dropdown">
@@ -31,8 +31,9 @@
 
 				<li class="nav-item dropdown">
 					<a
+						id="timerFeature"
 						class="nav-link dropdown-toggle active"
-						href=""
+						href="#"
 						role="button"
 						data-bs-toggle="dropdown"
 						data-bs-auto-close="outside"
@@ -74,39 +75,30 @@
 <script setup lang="js">
 import { useAuthStore } from '../store/auth';
 import { computed } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 import DynamicTimer from './DynamicTimer.vue';
 
 const authStore = useAuthStore()
 
 const router = useRouter()
-const route = useRoute()
 
 const user = computed(()=>{
-return authStore.user
+	return authStore.user
 })
 
 const isAuthenticated = computed(()=>{
-return authStore.isAuthenticated
+	return authStore.isAuthenticated
 })
 
 async function logout(){
-await authStore.logout()
-    .then( res => {
-    console.log("Logout successful:", res);
-    router.push({name: 'login'})
-    })
-    .catch(err => {
-    console.log(err.message)
-    })
-}
-
-// Forces a refresh to simulate going Home
-// TODO: replace on sprint 3 once routes are established
-async function refresh(){
-	if(route.name === "home"){
-		window.location.reload();
-	}
+	await authStore.logout()
+		.then( res => {
+		console.log("Logout successful:", res);
+		router.push({name: 'login'})
+		})
+		.catch(err => {
+		console.log(err.message)
+		})
 }
 </script>
 

@@ -97,6 +97,7 @@
                 type="button"
                 class="btn btn-secondary btn-circle me-3"
                 data-bs-dismiss="offcanvas"
+                data-bs-target="#side_bar_left"
                 v-on:click="closeFolderForm()"
               >
                 <i class="bi bi-arrow-left"></i>
@@ -158,21 +159,39 @@
                   </div>
                 </div>
 
-                <div class="row">
+                <div class="row mb-2">
+                  <div class="col">
+                    <div class="form-check form-switch">
+                      <input
+                        type="checkbox"
+                        role="switch"
+                        class="form-check-input"
+                        id="classToggle"
+                        v-model="isAClass"
+                        v-on:click='folderData.priority = ""'
+                      >
+                      <label class="form-check-label" for="classToggle">Does this folder represent a class?</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row mb-2" v-if="isAClass">
                   <small>Priority</small>
-                  <div class="col-9">
+                  <div class="col">
                     <select
                       class="form-select"
                       v-model="folderData.priority"
                       required
                     >
-                      <option value selected disabled>Select</option>
+                      <option value disabled>Select</option>
                       <option :value="true">Major Requirement</option>
                       <option :value="false">Elective</option>
                     </select>
                   </div>
+                </div>
 
-                  <div class="col-3 ps-0">
+                <div class="row">
+                  <div class="col">
                     <button type="submit" class="btn btn-primary w-100">
                       Add
                     </button>
@@ -536,6 +555,7 @@ const folderEditMode = ref(false);
 const folderEditFormInProgress = ref(false);
 const currentEditingFolderId = ref(null);
 const mouseOnMenu = ref(false);
+const isAClass = ref(false)
 
 // Text editor variables
 const textEditor = ref(); // Required by Vue Quill for data binding
@@ -569,12 +589,17 @@ async function fetchData() {
 
 onMounted ( async () => {
 	await fetchData();
+
+  const sidebar = document.querySelector('#side_bar_left')
+  bootstrap.Offcanvas.getOrCreateInstance(sidebar).show();
 })
 
 
 async function addFolder(){
 	// Add the new folder to the list
-	await coreStore.addFolder(folderData.name, folderData.priority);
+  const priority = isAClass.value? folderData.priority : null;
+
+	await coreStore.addFolder(folderData.name, priority);
 
 	// Reset important variables
 	closeFolderForm();
@@ -649,7 +674,7 @@ async function closeEditFolderForm(){
 
 async function resetFolderData(){
 	folderData.name = "";
-	folderData.priority = "";
+	folderData.priority = ""
 }
 
 async function toggleEditMode(){
