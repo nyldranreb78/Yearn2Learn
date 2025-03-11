@@ -1,6 +1,6 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-fixed-size fixed-top bg-white border-bottom">
-    <div class="container-fluid">
+	<nav class="navbar navbar-expand-lg navbar-fixed-size fixed-top bg-white border-bottom">
+	<div class="container-fluid">
 			<strong>
 				<router-link :to="{ name: 'home' }" class="navbar-brand fs-3 ms-2" href="#">
 					<img :src="require(`@/assets/img/Y2L_Logo.png`)" width="40" class="object-fit-scale me-2" />
@@ -42,7 +42,7 @@
 					</a>
 
 					<ul class="dropdown-menu">
-						<li><div><DynamicTimer @timeUp="(n) => timerNotificaction(n)"/></div></li>
+						<li><div><DynamicTimer class="z-3" @timeUp="(n) => timerNotification(n)"/></div></li>
 					</ul>
 				</li>
 			</ul>
@@ -68,19 +68,38 @@
 						</router-link>
 				</div>
 			</div>
-    </div>
-   </nav>
+	</div>
+	</nav>
    
+	<div class="d-flex justify-content-end fixed-top navbar-offset z-0">
+		<div id="timerAlert" :class="'toast align-items-center border-0 mt-3 me-4 text-bg-' + toastColor" role="alert">
+			<div class="d-flex">
+				<div class="toast-body">
+					<span v-if="isPomodoro">
+						Pomodoro cycle started: <b>{{ toastMessage }}</b> for the next <u>{{ toastTime }} minutes</u>.
+					</span>
+
+					<span v-else>{{ toastMessage }}</span>
+				</div>
+				<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+			</div>
+		</div>
+	</div>
 </template>
   
 <script setup lang="js">
 import { useAuthStore } from '../store/auth';
-import { computed, ref } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import DynamicTimer from './DynamicTimer.vue';
+import bootstrap from "bootstrap/dist/js/bootstrap.bundle.js";
+
+const isPomodoro = ref("")
+const toastColor = ref("")
+const toastMessage = ref("")
+const toastTime = ref("")
 
 const authStore = useAuthStore()
-
 const router = useRouter()
 
 const user = computed(()=>{
@@ -89,6 +108,11 @@ const user = computed(()=>{
 
 const isAuthenticated = computed(()=>{
 	return authStore.isAuthenticated
+})
+
+onMounted ( async () => {
+  const sidebar = document.querySelector('#timerAlert');
+  bootstrap.Toast.getOrCreateInstance(sidebar);
 })
 
 async function logout(){
@@ -102,16 +126,34 @@ async function logout(){
 		})
 }
 
-const timerNotif = ref(false)
-async function timerNotificaction(timerType){
-	timerNotif.value = !timerNotif.value
-
-	if (timerType == 0){
-		alert("Time's Up!")
+async function timerNotification(timerInfo){
+	if (timerInfo[0] == 0){
+		isPomodoro.value = false;
+		setToast("primary", "Time's up!", 0);
 	}
 	else {
-		alert("Pomodorro Cycled!")
+		isPomodoro.value = true;
+
+		if(timerInfo[1] < 6){
+			if(timerInfo[1] % 2 == 0) {
+				setToast("danger", "Focus", 25);
+			} else {
+				setToast("success", "Take a break", 5);
+			}
+		} else{
+			setToast("primary", "Time for a big break! Rest up", 30);
+		}
+		//alert("Pomodorro Cycled!")
 	}
+
+	const timerToast = document.querySelector("#timerAlert");
+	bootstrap.Toast.getInstance(timerToast).show();
+}
+
+async function setToast(color, message, time){
+	toastColor.value = color;
+	toastMessage.value = message;
+	toastTime.value = time;
 }
 
 </script>
