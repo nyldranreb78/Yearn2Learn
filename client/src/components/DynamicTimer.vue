@@ -172,11 +172,11 @@ watch(isPomodoroMode, () => {
 
 async function togglePause(){
     if(timeRemaining.value > 0){
-        isPlaying.value = !isPlaying.value
-
-        if(cycleCount.value == 0 && timeRemaining.value == intervalStudy.value * 60){
+        if(!isPlaying.value && cycleCount.value == 0 && timeRemaining.value == intervalStudy.value * 60){
             emitTimer();
         }
+
+        isPlaying.value = !isPlaying.value
     }
     
     else if(isPomodoroMode.value && cycleCount.value != 6){

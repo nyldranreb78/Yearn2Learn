@@ -89,7 +89,7 @@
   
 <script setup lang="js">
 import { useAuthStore } from '../store/auth';
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import DynamicTimer from './DynamicTimer.vue';
 import bootstrap from "bootstrap/dist/js/bootstrap.bundle.js";
@@ -110,11 +110,6 @@ const isAuthenticated = computed(()=>{
 	return authStore.isAuthenticated
 })
 
-onMounted ( async () => {
-  const sidebar = document.querySelector('#timerAlert');
-  bootstrap.Toast.getOrCreateInstance(sidebar);
-})
-
 async function logout(){
 	await authStore.logout()
 		.then( res => {
@@ -127,6 +122,9 @@ async function logout(){
 }
 
 async function timerNotification(timerInfo){
+	const timerToast = document.querySelector("#timerAlert");
+	const notification = bootstrap.Toast.getOrCreateInstance(timerToast)
+	
 	if (timerInfo[0] == 0){
 		isPomodoro.value = false;
 		setToast("primary", "Time's up!", 0);
@@ -134,7 +132,7 @@ async function timerNotification(timerInfo){
 	else {
 		isPomodoro.value = true;
 
-		if(timerInfo[1] < 6){
+		if(timerInfo[1] < 5){
 			if(timerInfo[1] % 2 == 0) {
 				setToast("danger", "Focus", 25);
 			} else {
@@ -143,11 +141,11 @@ async function timerNotification(timerInfo){
 		} else{
 			setToast("primary", "Time for a big break! Rest up", 30);
 		}
-		//alert("Pomodorro Cycled!")
 	}
 
-	const timerToast = document.querySelector("#timerAlert");
-	bootstrap.Toast.getInstance(timerToast).show();
+	setTimeout(() => {
+		notification.show();
+	}, 10);
 }
 
 async function setToast(color, message, time){
