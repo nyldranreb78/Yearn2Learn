@@ -114,9 +114,9 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
-    async updateFolder(courseId, courseData) {
+    async updateFolder(folderId, folderData) {
       try {
-        const { data } = await useApiPrivate().patch(`/api/folder/${courseId}`, courseData);
+        const { data } = await useApiPrivate().patch(`/api/folder/${folderId}`, folderData);
         return data;
       } catch (error) {
         console.error("Error updating folder:", error.response?.data || error.message);
@@ -164,9 +164,9 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
-    async deleteCourse(courseId) {
+    async deleteFolder(folderId) {
       try {
-        const { data } = await useApiPrivate().delete(`/api/folder/${courseId}`);
+        const { data } = await useApiPrivate().delete(`/api/folder/${folderId}`);
         return data;
       } catch (error) {
         console.error("Error getting note in folder:", error.response?.data || error.message);

@@ -1,42 +1,47 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import { useAuthStore } from "@/store/auth";
-import MainPage from "../views/MainPage.vue";
 
 const routes = [
   {
     path: "/",
     name: "home",
-    component: MainPage,
+    component: () =>
+      import("../views/HomeView.vue"),
     meta: { requiresAuth: true },
   },
   {
     path: "/login",
     name: "login",
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/auth/LoginView.vue"),
+      import("../views/auth/LoginView.vue"),
   },
   {
     path: "/register",
     name: "register",
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/auth/RegisterView.vue"),
+      import("../views/auth/RegisterView.vue"),
   },
   {
     path: "/user",
     name: "user",
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/auth/UserView.vue"),
+      import("../views/auth/UserView.vue"),
     meta: { requiresAuth: true }
   },
-  // {
-  //   path: "/about",
-  //   name: "about",
-  //   // route level code-splitting
-  //   // this generates a separate chunk (about.[hash].js) for this route
-  //   // which is lazy-loaded when the route is visited.
-  //   component: () =>
-  //     import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
-  // },
+  {
+    path: "/flashcards",
+    name: "flashcards",
+    component: () =>
+      import("../views/features/FlashcardView.vue"),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: "/notes",
+    name: "notes",
+    component: () =>
+      import("../views/features/NoteView.vue"),
+    meta: { requiresAuth: true }
+  },
 ];
 
 const router = createRouter({
