@@ -7,6 +7,9 @@ RUN mkdir -p /server
 # Set /back-end as the working directory
 WORKDIR /server
 
+#Create a docker volume so that changes made to the db persists througout all users
+VOLUME /server
+
 # Copy the local back-end package.json files into the current directory of our docker image (/back-end)
 COPY server/package*.json ./
 
