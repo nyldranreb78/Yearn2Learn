@@ -24,6 +24,6 @@ ENV PORT=$PORT
 
 # Set the PROXY_API environement variable
 #ENV PROXY_API=$PROXY_API
-
+ENV API_BASE_URL = $API_BASE_URL
 # Start App
 CMD ["npm", "run","build"]
