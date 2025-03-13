@@ -20,7 +20,7 @@ COPY server/ .
 EXPOSE $PORT
 
 #Set environment variable
-ENV MONGO_URI = $MONGO_URI
+ENV DATABASE_URI = $DATABASE_URI
 
 # Start the backend
 CMD ["npm", "run","dev"]
