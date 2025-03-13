@@ -23,4 +23,4 @@ EXPOSE $PORT
 ENV MONGO_URI = $MONGO_URI
 
 # Start the backend
-CMD ["npm", "start"]
+CMD ["npm", "run","dev"]
