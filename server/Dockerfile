@@ -17,10 +17,10 @@ RUN npm ci
 COPY server/ .
 
 # Expose the port
-#EXPOSE $PORT
+EXPOSE $PORT
 
 #Set environment variable
-#ENV MONGO_URI = $MONGO_URI
+ENV MONGO_URI = $MONGO_URI
 
 # Start the backend
 CMD ["npm", "start"]
