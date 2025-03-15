@@ -1,5 +1,4 @@
 const Flashcard = require('../models/flashcards');
-// const User = require('../models/user');
 const auth = require('../middleware/auth-service');
 
 async function verifyID(id, res) {
@@ -64,7 +63,7 @@ async function updateFlashcard (req, res) {
             return res.status(404).json({ message: 'Flashcard not found' });
         }
 
-        if (flashcard.author.toString() !== id) {
+        if (flashcard.author != id) {
             return res.status(403).json({ message: 'Unauthorized' });
         }
 
@@ -91,12 +90,16 @@ async function deleteFlashcard (req, res) {
         const id = auth.getUserID(req)
         if (!(await verifyID(id, res))) return;
 
-        const flashcard = await Flashcard.findById(req.params.id);
-        if (!flashcard || flashcard.user.toString() !== id) {
+        const flashcard = await Flashcard.findOne({ _id: req.params.id });
+        if (!flashcard) {
+            return res.status(404).json({ message: 'Flashcard not found' });
+        }
+
+        if (flashcard.author != id) {
             return res.status(403).json({ message: 'Unauthorized' });
         }
 
-        await flashcard.deleteOne();
+        await flashcard.deleteOne({ _id: req.params.id });
         return res.status(204).send();
     } catch (error) {
         return res.status(500).json({message: 'Error deleting flashcard'})
