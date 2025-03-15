@@ -8,7 +8,7 @@ RUN mkdir -p /client
 WORKDIR /client
 
 ## Copy the local front-end package.json files into the current directory of our docker image (/front-end)
-#COPY client/package*.json ./
+COPY client/package*.json ./
 
 # Install dependencies
 RUN npm ci

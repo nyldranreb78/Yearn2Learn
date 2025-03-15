@@ -11,7 +11,7 @@ WORKDIR /server
 VOLUME /server
 
 # Copy the local back-end package.json files into the current directory of our docker image (/back-end)
-#COPY server/package*.json ./
+COPY server/package*.json ./
 
 
 
