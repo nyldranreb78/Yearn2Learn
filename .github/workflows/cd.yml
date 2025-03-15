@@ -30,7 +30,17 @@ jobs:
                 run: |
                     docker build -t esbanana/yearn2learn:server volume:v1
             -
+                name: Docker Server img push
+                working-directory: ./server
+                run: |
+                    docker push esbanana/yearn2learn:server
+            -
                 name: Docker Client build
                 working-directory: ./client
                 run: |
                     docker build -t esbanana/yearn2learn:server
+            -
+                name: Docker Client img push
+                working-directory: ./client
+                run: |
+                    docker push esbanana/yearn2learn:client
