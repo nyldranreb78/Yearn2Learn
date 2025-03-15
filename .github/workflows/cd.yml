@@ -16,7 +16,7 @@ jobs:
                 name: Login to Docker Hub
                 uses: docker/login-action@v3
                 with:
-                    username: ${{ vars.DOCKERHUB_USERNAME }}
+                    username: ${{ secrets.DOCKERHUB_USERNAME }}
                     password: ${{ secrets.DOCKERHUB_TOKEN }}
             -
                 name: Set up QEMU
@@ -25,8 +25,12 @@ jobs:
                 name: Set up Docker Buildx
                 uses: docker/setup-buildx-action@v3
             -
-                name: Build and push
-                uses: docker/build-push-actoin@v6
-                with:
-                    push: true
-                    tags: user/app:latest
+                name: Docker Server build
+                working-directory: ./server
+                run: |
+                    docker build -t esbanana/yearn2learn:server volume:v1
+            -
+                name: Docker Client build
+                working-directory: ./client
+                run: |
+                    docker build -t esbanana/yearn2learn:server
