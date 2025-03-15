@@ -31,7 +31,7 @@ jobs:
                 name: Docker Server build
                
                 run: |
-                    docker build -f ./server/server.dockerfile  -t esbanana/yearn2learn:server .
+                    docker build ./server  -t esbanana/yearn2learn:server 
             -
                 name: Docker Server img push
                 
@@ -41,7 +41,7 @@ jobs:
                 name: Docker Client build
                 
                 run: |
-                    docker build -f ./client/client.dockerfile -t esbanana/yearn2learn:client .
+                    docker build ./client -t esbanana/yearn2learn:client 
             -
                 name: Docker Client img push
                 
