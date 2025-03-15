@@ -8,14 +8,14 @@ RUN mkdir -p /client
 WORKDIR /client
 
 ## Copy the local front-end package.json files into the current directory of our docker image (/front-end)
-COPY client/package*.json ./
-
+#COPY client/package*.json ./
+COPY . .
 # Install dependencies
 RUN npm ci
 
 # Copy the rest of the front-end files into the working directory
 #COPY front-end/ .
-COPY . .
+#COPY . .
 
 # Expose the port 3000, the port that we are using for the front end
 EXPOSE 3000
