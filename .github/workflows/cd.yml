@@ -28,16 +28,16 @@ jobs:
                 name: Docker Server build
                 working-directory: ./server
                 run: |
-                    docker build -t esbanana/yearn2learn:server volume:v1
+                    docker build ./server -t esbanana/yearn2learn:server volume:v1
             -
                 name: Docker Server img push
                 run: |
                     docker push esbanana/yearn2learn:server
             -
                 name: Docker Client build
-                working-directory: ./client
+                
                 run: |
-                    docker build -t esbanana/yearn2learn:server
+                    docker build ./client -t esbanana/yearn2learn:client
             -
                 name: Docker Client img push
                 run: |
