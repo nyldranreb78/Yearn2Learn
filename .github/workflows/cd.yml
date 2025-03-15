@@ -38,7 +38,7 @@ jobs:
                 name: Docker Client build
                 
                 run: |
-                    docker build ./client -t esbanana/yearn2learn:server
+                    docker build ./client -t esbanana/yearn2learn:client
             -
                 name: Docker Client img push
                 
