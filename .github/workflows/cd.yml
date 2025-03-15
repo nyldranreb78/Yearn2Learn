@@ -27,7 +27,7 @@ jobs:
             -
                 name: Docker Server build
                 run: |
-                    docker build ./server -t esbanana/yearn2learn:server volume:v1
+                    docker build ./server -t esbanana/yearn2learn:server
             -
                 name: Docker Server img push
                 run: |
