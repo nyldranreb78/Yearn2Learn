@@ -25,22 +25,17 @@ jobs:
                 name: Set up Docker Buildx
                 uses: docker/setup-buildx-action@v3
             -
-                name: Docker Server build
-               
-                run: |
-                    docker build -f ./server/server.dockerfile  -t esbanana/yearn2learn:server .
+                name: Docker Server build and push
+                uses: docker/build-push-action@v6
+                with:
+                    context: ./server
+                    push: true
+                    tags: esbanana/yearn2learn:server
             -
-                name: Docker Server img push
+                name: Docker client build and push
+                uses: docker/build-push-action@v6
+                with:
+                    context: ./client
+                    push: true
+                    tags: esbanana/yearn2learn:client
                 
-                run: |
-                    docker push esbanana/yearn2learn:server
-            -
-                name: Docker Client build
-                
-                run: |
-                    docker build -f ./client/client.dockerfile -t esbanana/yearn2learn:client .
-            -
-                name: Docker Client img push
-                
-                run: |
-                    docker push esbanana/yearn2learn:client
