@@ -26,7 +26,6 @@ jobs:
                 uses: docker/setup-buildx-action@v3
             -
                 name: Docker Server build
-                working-directory: ./server
                 run: |
                     docker build ./server -t esbanana/yearn2learn:server volume:v1
             -
