@@ -11,7 +11,7 @@ WORKDIR /client
 #COPY client/package*.json ./
 COPY . .
 # Install dependencies
-RUN npm i
+RUN npm ci
 
 # Copy the rest of the front-end files into the working directory
 #COPY front-end/ .
