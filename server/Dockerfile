@@ -31,6 +31,6 @@ EXPOSE 3000
 #Set environment variable
 #ENV DATABASE_URI = $DATABASE_URI
 #Taken from server/.env
-ENV DATABASE_URI = "mongodb+srv://dbUser:dbUserPassword@cluster0.ca67m.mongodb.net/Yearn2Learn?retryWrites=true&w=majority"
+#ENV DATABASE_URI = "mongodb+srv://dbUser:dbUserPassword@cluster0.ca67m.mongodb.net/Yearn2Learn?retryWrites=true&w=majority"
 # Start the backend
 CMD ["npm", "run","dev"]
