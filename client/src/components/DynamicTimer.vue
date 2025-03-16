@@ -1,3 +1,83 @@
+<template>
+    <div class="container-fluid">
+        <div class="row m-0">
+            <div class="col-12 px-1 text-start">
+                <label for="mode_select"><small>Mode</small></label>
+
+                <select class="form-select form-select-sm mb-2" id="mode_select" v-model="isPomodoroMode">
+                    <option :value="false" selected>General</option>
+                    <option :value="true">Pomodoro</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row m-0">
+            <div class="col-4 text-center p-0" v-for="timeDisplay in timeDisplayData" v-bind:key="timeDisplay[1]">
+                <div class="btn-group-vertical">
+                    <button
+                        type="button"
+                        class="btn btn-sm btn-outline-dark px-2 py-0"
+                        v-on:click="increaseTime(timeDisplay[1])"
+                        :disabled="isPomodoroMode || timeRemaining >= timeMax"
+                        v-if="!isPomodoroMode"
+                    >
+                        <i class="bi bi-caret-up-fill"></i>
+                    </button>
+
+                    <label
+                        type="button"
+                        :id="'timeDisplay' + timeDisplay[1]"
+                        class="btn btn-outline-dark time-display px-2 pe-none"
+                        disabled
+                    >
+                        {{ timeDisplay[0] }}
+                    </label>
+
+                    <button
+                        type="button"
+                        class="btn btn-sm btn-outline-dark px-2 py-0"
+                        v-on:click="decreaseTime(timeDisplay[1])"
+                        :disabled="isPomodoroMode || timeRemaining <= 0"
+                        v-if="!isPomodoroMode"
+                    >
+                        <i class="bi bi-caret-down-fill"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mx-0 mt-2" v-if="!isPomodoroMode">
+            <div class="col-6 d-grid px-1">
+                <button type="button" class="btn btn-sm btn-block btn-success px-0 py-1" v-on:click="increaseTime(5 * 60)">
+                    +5m
+                </button>
+            </div>
+
+            <div class="col-6 d-grid px-1">
+                <button type="button" class="btn btn-sm btn-block btn-success px-0 py-1" v-on:click="increaseTime(15 * 60)">
+                    +15m
+                </button>
+            </div>
+        </div>
+
+        <div class="row mx-0 mt-2 mb-2">
+            <div class="col-8 d-grid px-1">
+                <button type="button" id="btnPlayToggle" class="btn btn-block btn-primary px-0 py-1" v-on:click="togglePause()">
+                    <i :class="isPlaying? 'bi bi-pause-fill' : 'bi bi-play-fill'"></i>
+                </button>
+            </div>
+
+            <div class="col-4 d-grid px-1">
+                <button type="button" id="btnReset" class="btn btn-block btn-secondary px-0 py-1" v-on:click="resetTime()">
+                    <i class="bi bi-arrow-counterclockwise"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    
+</template>
+
 <script setup>
 import { ref, watch } from 'vue';
 // General timer variables
@@ -92,6 +172,10 @@ watch(isPomodoroMode, () => {
 
 async function togglePause(){
     if(timeRemaining.value > 0){
+        if(!isPlaying.value && cycleCount.value == 0 && timeRemaining.value == intervalStudy.value * 60){
+            emitTimer();
+        }
+
         isPlaying.value = !isPlaying.value
     }
     
@@ -139,89 +223,9 @@ async function emitTimer(){
     var timerType = 0
     if (isPomodoroMode.value) {timerType = 1}
 
-    emit('timeUp', timerType)
+    emit('timeUp', [timerType, cycleCount.value])
 }
 </script>
-
-<template>
-    <div class="container-fluid">
-        <div class="row m-0">
-            <div class="col-12 px-1 text-start">
-                <label for="mode_select"><small>Mode</small></label>
-
-                <select class="form-select form-select-sm mb-2" id="mode_select" v-model="isPomodoroMode">
-                    <option :value="false" selected>General</option>
-                    <option :value="true">Pomodoro</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="row m-0">
-            <div class="col-4 text-center p-0" v-for="timeDisplay in timeDisplayData" v-bind:key="timeDisplay[1]">
-                <div class="btn-group-vertical">
-                    <button
-                        type="button"
-                        class="btn btn-sm btn-outline-dark px-2 py-0"
-                        v-on:click="increaseTime(timeDisplay[1])"
-                        :disabled="isPomodoroMode || timeRemaining >= timeMax"
-                        v-if="!isPomodoroMode"
-                    >
-                        <i class="bi bi-caret-up-fill"></i>
-                    </button>
-
-                    <label
-                        type="button"
-                        :id="'timeDisplay' + timeDisplay[1]"
-                        class="btn btn-outline-dark time-display px-2 pe-none"
-                        disabled
-                    >
-                        {{ timeDisplay[0] }}
-                    </label>
-
-                    <button
-                        type="button"
-                        class="btn btn-sm btn-outline-dark px-2 py-0"
-                        v-on:click="decreaseTime(timeDisplay[1])"
-                        :disabled="isPomodoroMode || timeRemaining <= 0"
-                        v-if="!isPomodoroMode"
-                    >
-                        <i class="bi bi-caret-down-fill"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <div class="row mx-0 mt-2" v-if="!isPomodoroMode">
-            <div class="col-6 d-grid px-1">
-                <button type="button" class="btn btn-sm btn-block btn-success px-0 py-1" v-on:click="increaseTime(5 * 60)">
-                    +5m
-                </button>
-            </div>
-
-            <div class="col-6 d-grid px-1">
-                <button type="button" class="btn btn-sm btn-block btn-success px-0 py-1" v-on:click="increaseTime(15 * 60)">
-                    +15m
-                </button>
-            </div>
-        </div>
-
-        <div class="row mx-0 mt-2 mb-2">
-            <div class="col-8 d-grid px-1">
-                <button type="button" id="btnPlayToggle" class="btn btn-block btn-primary px-0 py-1" v-on:click="togglePause()">
-                    <i :class="isPlaying? 'bi bi-pause-fill' : 'bi bi-play-fill'"></i>
-                </button>
-            </div>
-
-            <div class="col-4 d-grid px-1">
-                <button type="button" id="btnReset" class="btn btn-block btn-secondary px-0 py-1" v-on:click="resetTime()">
-                    <i class="bi bi-arrow-counterclockwise"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    
-</template>
 
 <style scoped>
 .time-display[disabled] {

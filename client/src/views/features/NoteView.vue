@@ -11,8 +11,7 @@
           type="button"
           data-bs-toggle="offcanvas"
           data-bs-target="#side_bar_left"
-          v-on:click="courseEditMode = false"
-          v-show="currentNote"
+          v-on:click="folderEditMode = false"
         >
           <i class="bi bi-list"></i>
         </button>
@@ -20,7 +19,7 @@
 
       <div class="col-6 p-0">
         <!-- TEXT EDITOR -->
-        <div class="row justify-content-center p-0 m-0 vh-100" v-if="currentNote">
+        <div class="row justify-content-center p-0 m-0 vh-100">
           <div class="p-0">
             <QuillEditor
               class="bg-white border-top-0"
@@ -29,141 +28,9 @@
               content-type="html"
               ref="textEditor"
               v-model:content="textEditorData.content"
-              @textChange="autoSaveNoteChanges(currentNote)"
+              @textChange="autoSaveNoteChanges()"
             />
           </div>
-        </div>
-
-        <div class="row justify-content-center p-0 m-0" v-if="!currentNote">
-        <!--COME BACK HERE-->
-          <!--COLLAPSIBLE COURSE LIST-->
-          <div class="row border-bottom">
-            <div class="col text-start">
-              <h2 class="mt-5">Course List</h2>
-            </div>
-
-            <div class="col text-end">
-
-            </div>
-          </div>
-
-          <div class="accordion accordion-flush border-0">
-            <div
-              class="accordion-item bg-transparent border-0"
-            >
-              <h2 class="accordion-header">
-                <button
-                  type="button"
-                  class="accordion-button collapsed fs-5 border-bottom"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#add_course_form"
-                  v-on:click="toggleCourseForm()"
-                >
-                  <i
-                    :class="courseFormInProgress ? 'bi bi-x-lg' : 'bi bi-plus-lg'"
-                  ></i>
-                  <span class="ms-2">{{
-                    courseFormInProgress ? "Cancel" : "Add Course"
-                  }}</span>
-                </button>
-              </h2>
-
-              <div class="collapse p-0 m-0" id="add_course_form">
-                <div class="card card-body sharp-top-border border-top-0 mb-2">
-                  <form @submit.prevent="addCourse">
-                    <div class="row mb-2">
-                      <div class="col-6">
-                        <small>Course Name</small>
-                        <input
-                          type="text"
-                          class="form-control"
-                          placeholder="e.g. COMP 4350"
-                          v-model="courseData.name"
-                          required
-                        />
-                      </div>
-
-                      <div class="col-4">
-                        <small>Priority</small>
-                        <select
-                          class="form-select"
-                          v-model="courseData.priority"
-                          required
-                        >
-                          <option value selected disabled>Select</option>
-                          <option :value="true">Major Requirement</option>
-                          <option :value="false">Elective</option>
-                        </select>
-                      </div>
-
-                      <div class="col-2 mt-auto">
-                        <button type="submit" class="btn btn-primary w-100 align-self-bottom">
-                          Add
-                        </button>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </div>
-
-            <div
-              class="accordion-item bg-transparent border-0"
-              v-for="course in courseList"
-              :key="course._id"
-            >
-              <h2 class="accordion-header">
-                <button
-                  type="button"
-                  class="accordion-button collapsed fs-5 border-bottom"
-                  data-bs-toggle="collapse"
-                  :data-bs-target="'#courseID' + course._id + 'dashboard'"
-                >
-                  <span class="text-truncate">{{ course.name }}</span>
-                </button>
-              </h2>
-
-              <!--NOTES LIST FOR EACH COURSE-->
-              <div
-                :id="'courseID' + course._id + 'dashboard'"
-                class="accordion-collapse collapse"
-              >
-                <div class="accordion-body bg-transparent pt-0 pb-0 ps-3 pe-0 fs-6 mb-2">
-                  <div class="list-group sharp-top-border">
-                    <!--ADD NOTE FORM TRIGGER-->
-                    <button
-                      type="button"
-                      class="list-group-item list-group-item-action ps-3 py-2 border-top-0"
-                      data-bs-toggle="modal"
-                      data-bs-target="#add_edit_note_form"
-                      v-on:click="passCurrentCourse(course)"
-                    >
-                      <i class="bi bi-plus-lg me-1"></i> Create new note
-                    </button>
-
-                    <div
-                      class="list-group-item list-group-item-action px-3 py-2"
-                      v-for="note in course.notes"
-                      v-bind:key="note._id"
-                      v-on:click="openNotes(course, note)"
-                    >
-                      <div class="row p-0">
-                        <div class="col-6 text-start text-truncate">
-                          <span class="align-middle">{{ note.title }}</span>
-                        </div>
-
-                        <div class="col-6 text-start text-truncate text-end">
-                          <span class="align-middle" v-if="note.createdAt === note.updatedAt">Created {{ new Date(note.createdAt).toLocaleString()}}</span>
-                          <span class="align-middle" v-else>Last updated {{ new Date(note.createdAt).toLocaleString() }}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          
         </div>
 
         <!-- TEXT EDITOR TOOLBAR -->
@@ -174,7 +41,7 @@
         >
           <div class="col-3">
             <div class="fs-6 text-truncate ms-1 me-5 mt-1 pe-5">
-              <span class="align-middle" v-show="currentNote">{{ textEditorData.name }} / {{ textEditorData.title }}</span>
+              <span class="align-middle" v-show="currentNote">{{ textEditorData.folderName }} / {{ textEditorData.noteTitle }}</span>
             </div>
           </div>
 
@@ -230,14 +97,15 @@
                 type="button"
                 class="btn btn-secondary btn-circle me-3"
                 data-bs-dismiss="offcanvas"
-                v-on:click="closeCourseForm()"
+                data-bs-target="#side_bar_left"
+                v-on:click="closeFolderForm()"
               >
                 <i class="bi bi-arrow-left"></i>
               </button>
             </div>
 
             <div class="col text-start align-middle pt-1">
-              <strong>Course List</strong>
+              <strong>Folders</strong>
             </div>
 
             <div class="col text-end align-middle pt-1">
@@ -245,10 +113,10 @@
                 type="button"
                 class="btn btn-edit-form py-0 px-1 ms-2"
                 v-on:click="toggleEditMode()"
-                v-show="courseList.length"
+                v-show="folderList.length"
               >
-                <span v-show="courseEditMode">Finish Editing</span>
-                <i class="bi bi-pencil-square" v-show="!courseEditMode"></i>
+                <span v-show="folderEditMode">Finish Editing</span>
+                <i class="bi bi-pencil-square" v-show="!folderEditMode"></i>
               </button>
             </div>
           </div>
@@ -257,55 +125,73 @@
 
       <!--SIDEBAR BODY-->
       <div class="offcanvas-body">
-        <!--ADD COURSE FORM-->
-        <div class="row p-0 m-0 mb-3" v-if="!courseEditMode">
+        <!--ADD FOLDER FORM-->
+        <div class="row p-0 m-0 mb-3" v-if="!folderEditMode">
           <button
             class="btn"
-            :class="courseFormInProgress ? 'btn-secondary' : 'btn-primary'"
+            :class="folderFormInProgress ? 'btn-secondary' : 'btn-primary'"
             type="button"
             data-bs-toggle="collapse"
-            data-bs-target="#add_course_form"
-            v-on:click="toggleCourseForm()"
+            data-bs-target="#add_folder_form"
+            v-on:click="toggleFolderForm()"
           >
             <i
-              :class="courseFormInProgress ? 'bi bi-x-lg' : 'bi bi-plus-lg'"
+              :class="folderFormInProgress ? 'bi bi-x-lg' : 'bi bi-folder-plus'"
             ></i>
             <span class="ms-2">{{
-              courseFormInProgress ? "Cancel" : "Add Course"
+              folderFormInProgress ? "Cancel" : "Add New Folder"
             }}</span>
           </button>
 
-          <div class="collapse p-0 m-0" id="add_course_form">
+          <div class="collapse p-0 m-0" id="add_folder_form">
             <div class="card card-body sharp-top-border border-top-0 mb-2">
-              <form @submit.prevent="addCourse">
+              <form @submit.prevent="addFolder">
                 <div class="row mb-2">
                   <div class="col">
-                    <small>Course Name</small>
+                    <small>Folder Name</small>
                     <input
                       type="text"
                       class="form-control"
                       placeholder="e.g. COMP 4350"
-                      v-model="courseData.name"
+                      v-model="folderData.name"
                       required
                     />
                   </div>
                 </div>
 
-                <div class="row">
+                <div class="row mb-2">
+                  <div class="col">
+                    <div class="form-check form-switch">
+                      <input
+                        type="checkbox"
+                        role="switch"
+                        class="form-check-input"
+                        id="classToggle"
+                        v-model="isAClass"
+                        v-on:click='folderData.priority = ""'
+                      >
+                      <label class="form-check-label" for="classToggle">Does this folder represent a class?</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row mb-2" v-if="isAClass">
                   <small>Priority</small>
-                  <div class="col-9">
+                  <div class="col">
                     <select
                       class="form-select"
-                      v-model="courseData.priority"
+                      v-model="folderData.priority"
                       required
                     >
-                      <option value selected disabled>Select</option>
+                      <option value disabled>Select</option>
                       <option :value="true">Major Requirement</option>
                       <option :value="false">Elective</option>
                     </select>
                   </div>
+                </div>
 
-                  <div class="col-3 ps-0">
+                <div class="row">
+                  <div class="col">
                     <button type="submit" class="btn btn-primary w-100">
                       Add
                     </button>
@@ -319,35 +205,35 @@
         <!--PLACEHOLDER TEXT-->
         <div
           class="text-center text-muted px-5 py-4"
-          v-show="!courseList.length && !courseFormInProgress"
+          v-show="!folderList.length && !folderFormInProgress"
         >
           <i
-            >No courses or notes to show. Click on the "Add Course" button to
-            add a course and write cotes under it.</i
+            >No folders or notes to show. Click on the "Add New Folder" button to
+            add a folder and write cotes under it.</i
           >
         </div>
 
-        <!--COLLAPSIBLE COURSE LIST-->
-        <div class="accordion accordion-flush" v-show="!courseEditMode">
+        <!--COLLAPSIBLE FOLDER LIST-->
+        <div class="accordion accordion-flush" v-show="!folderEditMode">
           <div
             class="accordion-item"
-            v-for="course in courseList"
-            :key="course._id"
+            v-for="folder in folderList"
+            :key="folder._id"
           >
             <h2 class="accordion-header">
               <button
                 type="button"
                 class="accordion-button collapsed"
                 data-bs-toggle="collapse"
-                :data-bs-target="'#courseID' + course._id"
+                :data-bs-target="'#folderID' + folder._id"
               >
-                <strong class="text-truncate">{{ course.name }}</strong>
+                <strong class="text-truncate">{{ folder.name }}</strong>
               </button>
             </h2>
 
-            <!--NOTES LIST FOR EACH COURSE-->
+            <!--NOTES LIST FOR EACH FOLDER-->
             <div
-              :id="'courseID' + course._id"
+              :id="'folderID' + folder._id"
               class="accordion-collapse collapse"
             >
               <div class="accordion-body pt-0 pb-0 ps-3 pe-0 fs-6 mb-2">
@@ -358,16 +244,16 @@
                     class="list-group-item list-group-item-action ps-3 py-1 border-top-0"
                     data-bs-toggle="modal"
                     data-bs-target="#add_edit_note_form"
-                    v-on:click="passCurrentCourse(course)"
+                    v-on:click="passCurrentFolder(folder)"
                   >
                     <i class="bi bi-plus-lg me-1"></i> Create new note
                   </button>
 
                   <div
                     class="list-group-item list-group-item-action ps-3 pe-2 py-1"
-                    v-for="note in course.notes"
+                    v-for="note in [...folder.notes].sort((noteA, noteB) => {return new Date(noteB.updatedAt) - new Date(noteA.updatedAt)})"
                     v-bind:key="note._id"
-                    v-on:click="openNotes(course, note)"
+                    v-on:click="openNotes(folder, note)"
                   >
                     <div class="row p-0">
                       <div class="col-10 text-start text-truncate">
@@ -380,7 +266,7 @@
                           class="btn btn-sm shadow-none note-menu"
                           @mouseover="mouseOnMenu = true"
                           @mouseleave="mouseOnMenu = false"
-                          v-on:click="passCurrentNote(course, note)"
+                          v-on:click="passCurrentNote(folder, note)"
                           data-bs-toggle="dropdown"
                         >
                           <i class="bi bi-three-dots-vertical"></i>
@@ -394,7 +280,7 @@
                           <li>
                             <a
                               class="dropdown-item px-2"
-                              v-on:click="passCurrentNote(course, note)"
+                              v-on:click="passCurrentNote(folder, note)"
                               data-bs-toggle="modal"
                               data-bs-target="#add_edit_note_form"
                             >
@@ -407,7 +293,7 @@
                           <li>
                             <a
                               class="dropdown-item px-2 text-danger"
-                              v-on:click="passCurrentNote(course, note)"
+                              v-on:click="passCurrentNote(folder, note)"
                               data-bs-toggle="modal"
                               data-bs-target="#delete_form"
                             >
@@ -424,12 +310,12 @@
           </div>
         </div>
 
-        <!--EDIT COURSE VIEW-->
-        <div class="accordion" id="course_edit_form" v-if="courseEditMode">
+        <!--EDIT FOLDER VIEW-->
+        <div class="accordion" id="folder_edit_form" v-if="folderEditMode">
           <div
             class="accordion-item"
-            v-for="course in courseList"
-            :key="course.id"
+            v-for="folder in folderList"
+            :key="folder._id"
           >
             <h2 class="accordion-header">
               <button
@@ -438,19 +324,19 @@
               >
                 <div class="row">
                   <div class="col-9 text-start align-middle text-truncate">
-                    <strong>{{ course.name }}</strong>
+                    <strong>{{ folder.name }}</strong>
                   </div>
 
                   <div class="col-3 text-end align-middle">
                     <div
-                      v-if="courseEditFormInProgress && currentCourse == course"
+                      v-if="folderEditFormInProgress && currentFolder == folder"
                     >
                       <button
                         type="button"
                         class="btn btn-close"
-                        v-on:click="closeEditCourseForm()"
+                        v-on:click="closeEditFolderForm()"
                         data-bs-toggle="collapse"
-                        :data-bs-target="'#courseID' + course._id + 'edit'"
+                        :data-bs-target="'#folderID' + folder._id + 'edit'"
                       ></button>
                     </div>
 
@@ -458,9 +344,9 @@
                       <button
                         type="button"
                         class="btn btn-edit-form py-0 px-1 me-2"
-                        v-on:click="openEditCourseForm(course)"
+                        v-on:click="openEditFolderForm(folder)"
                         data-bs-toggle="collapse"
-                        :data-bs-target="'#courseID' + course.id + 'edit'"
+                        :data-bs-target="'#folderID' + folder._id + 'edit'"
                       >
                         <i class="bi bi-pencil-square"></i>
                       </button>
@@ -470,7 +356,7 @@
                         class="btn btn-edit-form py-0 px-1"
                         data-bs-toggle="modal"
                         data-bs-target="#delete_form"
-                        v-on:click="passCurrentCourse(course)"
+                        v-on:click="passCurrentFolder(folder)"
                       >
                         <i class="bi bi-trash3-fill text-danger"></i>
                       </button>
@@ -481,22 +367,22 @@
             </h2>
 
             <div
-              :id="'courseID' + course.id + 'edit'"
+              :id="'folderID' + folder._id + 'edit'"
               class="accordion-collapse collapse"
-				:class="{'show': currentEditingCourseId === course._id}"
-				v-if="currentEditingCourseId === course._id"
-              data-bs-parent="#course_edit_form"
+				:class="{'show': currentEditingFolderId === folder._id}"
+				v-if="currentEditingFolderId === folder._id"
+              data-bs-parent="#folder_edit_form"
             >
               <div class="accordion-body px-3 py-2 fs-6 mb-2">
-                <form @submit.prevent="editCourse()">
+                <form @submit.prevent="editFolder()">
                   <div class="row mb-2">
                     <div class="col">
-                      <small>Rename Course</small>
+                      <small>Rename Folder</small>
                       <input
                         type="text"
                         class="form-control"
                         placeholder="e.g. COMP 4350"
-                        v-model="courseData.name"
+                        v-model="folderData.name"
                         required
                       />
                     </div>
@@ -507,7 +393,7 @@
                     <div class="col-9">
                       <select
                         class="form-select"
-                        v-model="courseData.priority"
+                        v-model="folderData.priority"
                         required
                       >
                         <option :value="true">Major Requirement</option>
@@ -520,7 +406,7 @@
                         type="submit"
                         class="btn btn-success w-100"
                         data-bs-toggle="collapse"
-                        :data-bs-target="'#courseID' + course.id + 'edit'"
+                        :data-bs-target="'#folderID' + folder._id + 'edit'"
                       >
                         <i class="bi bi-floppy-fill"></i>
                       </button>
@@ -547,7 +433,7 @@
                 <div class="col-10 text-start text-truncate">
                   <span v-if="currentNote">Rename {{ currentNote.title }}</span>
 
-                  <span v-else>Create new note for {{ currentCourse.name }}</span>
+                  <span v-else>Create new note for {{ currentFolder.name }}</span>
                 </div>
 
                 <div class="col-2 text-end">
@@ -589,13 +475,13 @@
       </div>
     </div>
 
-    <!--DELETE COURSE/EDIT FORM-->
+    <!--DELETE FOLDER/EDIT FORM-->
     <div class="modal modal-md fade" id="delete_form" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header px-2 py-1">
             <div class="modal-title fs-6">
-              Confirm {{ courseEditMode ? "Course" : "Note" }} Deletion
+              Confirm {{ folderEditMode ? "Folder" : "Note" }} Deletion
             </div>
             <button
               type="button"
@@ -607,19 +493,19 @@
           <div class="modal-body">
             <h6 class="text-center">
               Are you sure you want to delete the
-              {{ courseEditMode ? "course" : "note" }} named
+              {{ folderEditMode ? "folder" : "note" }} named
               <div class="row justify-content-center p-0 my-2">
                 <div class="col-9 text-truncate">
                   <strong>{{
-                    courseEditMode
-                      ? currentCourse.name
+                    folderEditMode
+                      ? currentFolder.name
                       : currentNote.title
                   }}</strong>
                 </div>
               </div>
-              from your {{ courseEditMode ? "course list" : "note folder" }}?
+              from your {{ folderEditMode ? "folders" : "note folder" }}?
               <br><br>
-              <u>This {{ courseEditMode ? "will also delete all the Notes attached to it" : "is irreversible" }}!</u>
+              <u>This {{ folderEditMode ? "will also delete all the Notes attached to it" : "is irreversible" }}!</u>
             </h6>
 
             <div class="row p-0 align-middle mt-3">
@@ -635,7 +521,7 @@
               <div class="col text-end">
                 <button
                   class="btn btn-sm btn-danger ms-3"
-                  v-on:click="courseEditMode ? deleteCourse(currentCourse._id) : deleteNote(currentNote._id)"
+                  v-on:click="folderEditMode ? deleteFolder() : deleteNote()"
                   data-bs-dismiss="modal"
                 >
                   Delete
@@ -652,27 +538,24 @@
 <script setup lang="js">
 // @ is an alias to /src
 import bootstrap from "bootstrap/dist/js/bootstrap.bundle.js";
-import { ref, reactive, onMounted, onBeforeUnmount } from 'vue';
+import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue';
+import { useCoreStore } from "@/store/core";
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 
+const coreStore = useCoreStore();
 
-import { useAuthStore } from "@/store/auth";
-
-const authStore = useAuthStore();
-
-// Course and note display variables
-const courseList = ref([]);
-const currentCourse = ref("");
+// Folder and note display variables
+const currentFolder = ref("");
 const currentNote = ref("");
 
-
-// Course form variables
-const courseFormInProgress = ref(false);
-const courseEditMode = ref(false);
-const courseEditFormInProgress = ref(false);
-const currentEditingCourseId = ref(null);
+// Folder form variables
+const folderFormInProgress = ref(false);
+const folderEditMode = ref(false);
+const folderEditFormInProgress = ref(false);
+const currentEditingFolderId = ref(null);
 const mouseOnMenu = ref(false);
+const isAClass = ref(false)
 
 // Text editor variables
 const textEditor = ref(); // Required by Vue Quill for data binding
@@ -681,7 +564,7 @@ const saveStatusTimeoutID = ref("");
 const autoSaveTimeoutID = ref("");
 
 
-const courseData = reactive({
+const folderData = reactive({
 	name: "",
 	priority: ""
 });
@@ -691,231 +574,162 @@ const noteData = reactive({
 });
 
 const textEditorData = reactive({
-	name: "",
-	title: "",
+	folderName: "",
+	noteTitle: "",
 	content: ""
 })
 
+const folderList = computed(() => {
+  return coreStore.folders;
+})
+
 async function fetchData() {
-	try {
-		const response = await authStore.getFolder();
-		
-		if (response) {
-			courseList.value = response.folders;
-
-			for (const course of courseList.value) {
-				course.notes = await Promise.all(course.notes.map(async (noteId) => {
-					const noteDetails = await authStore.getNoteByID(noteId);
-					return noteDetails.note;
-				}));
-			}
-		}
-
-	} catch (error) {
-		console.error("Error fetching courses:", error);
-	}
+	await coreStore.fetchData();
 }
 
 onMounted ( async () => {
 	await fetchData();
+
+  const sidebar = document.querySelector('#side_bar_left')
+  bootstrap.Offcanvas.getOrCreateInstance(sidebar).show();
 })
 
 
-async function addCourse(){
-	// Add the new course to the list
+async function addFolder(){
+	// Add the new folder to the list
+  const priority = isAClass.value? folderData.priority : null;
 
-	const course = {
-		name: courseData.name,
-		priority: courseData.priority,
-		notes: []
-	}
-
-	const response = await authStore.createFolder(course);
-	courseList.value.push(response.folder);
+	await coreStore.addFolder(folderData.name, priority);
 
 	// Reset important variables
-	closeCourseForm();
+	closeFolderForm();
 }
 
-async function editCourse(){
-	if (!currentCourse.value) {
-        console.error("No course selected for editing.");
+async function editFolder(){
+	if (!currentFolder.value) {
+        console.error("No folder selected for editing.");
         return;
   }
 
-    try {
-        const updatedCourse = {
-            name: courseData.name,
-            priority: courseData.priority,
-        };
-
-        await authStore.updateFolder(currentCourse.value._id, updatedCourse);
-
-        const courseIndex = courseList.value.findIndex(course => course._id === currentCourse.value._id);
-        if (courseIndex !== -1) {
-            courseList.value[courseIndex] = { ...courseList.value[courseIndex], ...updatedCourse };
-        }
-
-        closeEditCourseForm();
-
-        textEditorData.name = courseData.name;
-    } catch (error) {
-        console.error("Error updating course:", error.response?.data || error.message);
-    }
+  try{
+    await coreStore.editFolder(currentFolder.value._id, folderData.name, folderData.priority);
+    textEditorData.folderName = folderData.name;
+  } finally{
+    closeEditFolderForm();
+  }
 }
 
-async function deleteCourse(courseId){
-	if (!courseId) {
-		console.error("No course ID provided for deletion.");
+async function deleteFolder(){
+	if (!currentFolder.value) {
+		console.error("No folder ID provided for deletion.");
 		return;
 	}
 
-	try {
-		await authStore.deleteCourse(courseId);
+	await coreStore.deleteFolder(currentFolder.value._id);
 
-		courseList.value = courseList.value.filter(course => course._id !== courseId);
-
-	} catch (error) {
-		console.error("Error deleting note:", error);
-	}
-
-	// If the last course is deleted, return to the Add Course state
-	if (courseList.value.length === 0) {
-		courseEditMode.value = false;
+	// If the last folder is deleted, return to the Add New Folder state
+	if (folderList.value.length === 0) {
+		folderEditMode.value = false;
 	}
 }
 
-async function toggleCourseForm(){
-	courseFormInProgress.value = !courseFormInProgress.value;
-	resetCourseData();
+async function toggleFolderForm(){
+	folderFormInProgress.value = !folderFormInProgress.value;
+	resetFolderData();
 }
 
-async function closeCourseForm(){
+async function closeFolderForm(){
 	// Only close the form if it is open in the first place
-	if(courseFormInProgress.value){
-		const form = document.querySelector("#add_course_form");
+	if(folderFormInProgress.value){
+		const form = document.querySelector("#add_folder_form");
 		bootstrap.Collapse.getInstance(form).hide();
 
-		courseFormInProgress.value = false;
+		folderFormInProgress.value = false;
 
-		resetCourseData();
+		resetFolderData();
 	}
 }
 
-async function openEditCourseForm(course){
+async function openEditFolderForm(folder){
 	// Close if clicking on the already opened form
-	if (currentEditingCourseId.value === course._id) {
-        currentEditingCourseId.value = null; // Close the form
+	if (currentEditingFolderId.value === folder._id) {
+        currentEditingFolderId.value = null; // Close the form
         return;
     }
-	courseEditFormInProgress.value = true;
-	currentEditingCourseId.value = course._id;
-	currentCourse.value = course;
-	courseData.name = course.name;
-	courseData.priority = course.priority;
+	folderEditFormInProgress.value = true;
+	currentEditingFolderId.value = folder._id;
+	currentFolder.value = folder;
+	folderData.name = folder.name;
+	folderData.priority = folder.priority;
 }
 
-async function closeEditCourseForm(){
-	courseEditFormInProgress.value = false;
-	currentEditingCourseId.value = null;
+async function closeEditFolderForm(){
+	folderEditFormInProgress.value = false;
+	currentEditingFolderId.value = null;
 
-	if(courseFormInProgress.value){
-		courseFormInProgress.value = false;
+	if(folderFormInProgress.value){
+		folderFormInProgress.value = false;
 	}
 }
 
-async function resetCourseData(){
-	courseData.name = "";
-	courseData.priority = "";
+async function resetFolderData(){
+	folderData.name = "";
+	folderData.priority = ""
 }
 
 async function toggleEditMode(){
-	if(courseList.value.length){
-		courseEditMode.value = !courseEditMode.value;
+	if(folderList.value.length){
+		folderEditMode.value = !folderEditMode.value;
 	}
 
-	if(courseEditMode.value){
-		closeEditCourseForm();
+	if(folderEditMode.value){
+		closeEditFolderForm();
 	}
 }
 
-async function passCurrentCourse(course){
-	currentCourse.value = course; // Allows modals to use the relevant data externally
-	currentNote.value = ""; // Reset the currentNote since we are making a new course
+async function passCurrentFolder(folder){
+	currentFolder.value = folder; // Allows modals to use the relevant data externally
+	currentNote.value = ""; // Reset the currentNote since we are making a new folder
 
 	resetNoteData(); // Clear the form to prepare for new input
 }
 
 async function addNote(){
-	// Find the course the note is going to be associated with
-	const course = courseList.value.find(course => course._id === currentCourse.value._id);
-	if (!course) {
-		console.error("Error: Course not found!");
-		return;
-	}
-
-	if (!course.notes) {
-		course.notes = [];
-	}
-
-	// Add the new note to the course's list of notes
-	const note = {
-		title: noteData.title,
-		content: "<p><br></p>" // Quill editor's definition of an "empty" editor
-	}
-
 	try {
-		const savedNote = await authStore.createNoteInFolder(course._id, note);
-		course.notes.push(savedNote.note);
-	} catch (error) {
-		console.error("Error saving note to backend:", error);
-		return;
+		const newNote = await coreStore.addNote(currentFolder.value._id, noteData.title)
+    // Update the text editor contents to the new note's
+    openNotes(currentFolder.value, newNote)
+	} finally {
+		// Reset and close the form menu
+    resetNoteData();
 	}
-
-	// Reset and close the form menu
-	resetNoteData();
-
-	// Update the text editor contents to the new note's
-	openNotes(course, note)
 }
 
 async function renameNote(){
 	if(currentNote.value.title !== noteData.title){
-		currentNote.value.title = noteData.title;
+    try{
+      currentNote.value.title = noteData.title;
+      await saveNoteChanges(currentNote.value)
 
-    const noteToUpdate = currentCourse.value.notes.find(note => note._id === currentNote.value._id);
-
-    if(noteToUpdate){
-      noteToUpdate.title = noteData.title;
-
-      textEditorData.title = noteData.title;
+      textEditorData.folderName = currentFolder.value.name;
+      textEditorData.noteTitle = noteData.title;
+    } catch {
+      return;
     }
 	}
 }
 
-async function deleteNote(noteId){
-	if (!noteId) {
+async function deleteNote(){
+	if (!currentNote.value) {
 		console.error("No note ID provided for deletion.");
 		return;
 	}
 
-	try {
-		await authStore.deleteNote(noteId);
-
-		courseList.value = courseList.value.map((course) => {
-			return {
-				...course,
-				notes: course.notes.filter((note) => note._id !== noteId), // Remove deleted note
-			};
-		});
-
-	} catch (error) {
-		console.error("Error deleting note:", error);
-	}
+  await coreStore.deleteNote(currentNote.value._id);
 }
 
-async function passCurrentNote(course, note){
-  currentCourse.value = course;
+async function passCurrentNote(folder, note){
+  currentFolder.value = folder;
 	currentNote.value = note;
   
 	noteData.title = note.title;
@@ -925,7 +739,7 @@ async function resetNoteData(){
 	noteData.title = "";
 }
 
-async function openNotes(course, note) {
+async function openNotes(folder, note) {
 	// Do nothing if the mouse was inside the vertical menu button
 	if (!mouseOnMenu.value) {
 		// If moving to a new note, save the changes
@@ -937,8 +751,8 @@ async function openNotes(course, note) {
 		}
 
 		// Update the data to be used by the text editor
-		textEditorData.name = course.name;
-		textEditorData.title = note.title;
+		textEditorData.folderName = folder.name;
+		textEditorData.noteTitle = note.title;
 		textEditorData.content = note.content;
 
 		// Allows us to save changes after switching files
@@ -947,26 +761,17 @@ async function openNotes(course, note) {
 }
 
 async function saveNoteChanges(note) {
-	try {
-		const updatedNote = {
-			title: note.title,
-			content: textEditorData.content,
-		};
-
-		await authStore.updateNote(note._id, updatedNote);
-	} catch (error) {
-		console.error("Error updating note:", error.response?.data || error.message);
-	}
+  await coreStore.editNote(note._id, note.title, textEditorData.content)
 }
 
-async function autoSaveNoteChanges(note) {
+async function autoSaveNoteChanges() {
 	try { 
     saveStatus.value = "Saving...";
 
     // Auto-save 1 second after changes are made
 		clearTimeout(autoSaveTimeoutID.value);
     autoSaveTimeoutID.value = setTimeout(async () => {
-      await saveNoteChanges(note);
+      await saveNoteChanges(currentNote.value);
       saveStatus.value = "Saved!";
     }, 1000)
 

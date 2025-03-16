@@ -7,7 +7,7 @@ const folderSchema = new mongoose.Schema({
     },
     priority: {
         type: Boolean,
-        required: true,
+        required: false,
     },
     author: {
         type: mongoose.Schema.Types.ObjectId,

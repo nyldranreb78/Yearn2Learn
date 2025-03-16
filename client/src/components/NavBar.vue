@@ -1,21 +1,21 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-fixed-size fixed-top bg-white border-bottom">
-    <div class="container-fluid">
+	<nav class="navbar navbar-expand-lg navbar-fixed-size fixed-top bg-white border-bottom">
+	<div class="container-fluid">
 			<strong>
-				<a class="navbar-brand fs-3 ms-2" href="#" v-on:click="refresh">
+				<router-link :to="{ name: 'home' }" class="navbar-brand fs-3 ms-2" href="#">
 					<img :src="require(`@/assets/img/Y2L_Logo.png`)" width="40" class="object-fit-scale me-2" />
 					<span class="txt-y2l-yellow">Yearn</span>
 					<span class="txt-y2l-red">2</span>
 					<span class="txt-y2l-blue">Learn</span>
-				</a>
+				</router-link>
 			</strong>
 
 			<div class="vr ms-2 me-3" v-if="isAuthenticated"></div>
 
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0" v-if="isAuthenticated">
-				<li class="nav-item"><a class="nav-link active" href="#" v-on:click="refresh">Home</a></li>
-				<li class="nav-item"><a class="nav-link active" href="#" v-on:click="refresh">Notes</a></li>
-				<li class="nav-item"><a class="nav-link disabled" href="#">Flash Cards</a></li>
+				<li class="nav-item"><router-link :to="{ name: 'home' }" class="nav-link active" href="#">Home</router-link></li>
+				<li class="nav-item"><router-link :to="{ name: 'notes' }" class="nav-link active" href="#">Notes</router-link></li>
+				<li class="nav-item"><router-link :to="{ name: 'flashcards' }" class="nav-link active" href="#">Flash Cards</router-link></li>
 
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle disabled" href="#" role="button" data-bs-toggle="dropdown">
@@ -31,8 +31,9 @@
 
 				<li class="nav-item dropdown">
 					<a
+						id="timerFeature"
 						class="nav-link dropdown-toggle active"
-						href=""
+						href="#"
 						role="button"
 						data-bs-toggle="dropdown"
 						data-bs-auto-close="outside"
@@ -41,7 +42,7 @@
 					</a>
 
 					<ul class="dropdown-menu">
-						<li><div><DynamicTimer @timeUp="(n) => timerNotificaction(n)"/></div></li>
+						<li><div><DynamicTimer class="z-3" @timeUp="(n) => timerNotification(n)"/></div></li>
 					</ul>
 				</li>
 			</ul>
@@ -67,59 +68,90 @@
 						</router-link>
 				</div>
 			</div>
-    </div>
-   </nav>
+	</div>
+	</nav>
    
+	<div class="d-flex justify-content-end fixed-top navbar-offset z-0">
+		<div id="timerAlert" :class="'toast align-items-center border-0 mt-3 me-4 text-bg-' + toastColor" role="alert">
+			<div class="d-flex">
+				<div class="toast-body">
+					<span v-if="isPomodoro">
+						Pomodoro cycle started: <b>{{ toastMessage }}</b> for the next <u>{{ toastTime }} minutes</u>.
+					</span>
+
+					<span v-else>{{ toastMessage }}</span>
+				</div>
+				<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+			</div>
+		</div>
+	</div>
 </template>
   
 <script setup lang="js">
 import { useAuthStore } from '../store/auth';
-import { computed, ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
 import DynamicTimer from './DynamicTimer.vue';
+import bootstrap from "bootstrap/dist/js/bootstrap.bundle.js";
+
+const isPomodoro = ref("")
+const toastColor = ref("")
+const toastMessage = ref("")
+const toastTime = ref("")
 
 const authStore = useAuthStore()
-
 const router = useRouter()
-const route = useRoute()
 
 const user = computed(()=>{
-return authStore.user
+	return authStore.user
 })
 
 const isAuthenticated = computed(()=>{
-return authStore.isAuthenticated
+	return authStore.isAuthenticated
 })
 
 async function logout(){
-await authStore.logout()
-    .then( res => {
-    console.log("Logout successful:", res);
-    router.push({name: 'login'})
-    })
-    .catch(err => {
-    console.log(err.message)
-    })
+	await authStore.logout()
+		.then( res => {
+		console.log("Logout successful:", res);
+		router.push({name: 'login'})
+		})
+		.catch(err => {
+		console.log(err.message)
+		})
 }
 
-// Forces a refresh to simulate going Home
-// TODO: replace on sprint 3 once routes are established
-async function refresh(){
-	if(route.name === "home"){
-		window.location.reload();
-	}
-}
-
-const timerNotif = ref(false)
-async function timerNotificaction(timerType){
-	timerNotif.value = !timerNotif.value
-
-	if (timerType == 0){
-		alert("Time's Up!")
+async function timerNotification(timerInfo){
+	const timerToast = document.querySelector("#timerAlert");
+	const notification = bootstrap.Toast.getOrCreateInstance(timerToast)
+	
+	if (timerInfo[0] == 0){
+		isPomodoro.value = false;
+		setToast("primary", "Time's up!", 0);
 	}
 	else {
-		alert("Pomodorro Cycled!")
+		isPomodoro.value = true;
+
+		if(timerInfo[1] < 5){
+			if(timerInfo[1] % 2 == 0) {
+				setToast("danger", "Focus", 25);
+			} else {
+				setToast("success", "Take a break", 5);
+			}
+		} else{
+			setToast("primary", "Time for a big break! Rest up", 30);
+		}
 	}
+
+	setTimeout(() => {
+		notification.show();
+	}, 10);
+}
+
+async function setToast(color, message, time){
+	toastColor.value = color;
+	toastMessage.value = message;
+	toastTime.value = time;
 }
 
 </script>
