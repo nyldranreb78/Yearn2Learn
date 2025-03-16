@@ -25,8 +25,8 @@ RUN npm ci
 COPY . .
 
 # Expose the port
-#EXPOSE $PORT\
-EXPOSE 3000
+EXPOSE $PORT
+#EXPOSE 3000
 
 #Set environment variable
 #ENV DATABASE_URI = $DATABASE_URI
