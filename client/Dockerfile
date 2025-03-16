@@ -17,6 +17,8 @@ RUN npm ci
 #COPY front-end/ .
 #COPY . .
 
+#arbitrary change
+
 # Expose the port 3000, the port that we are using for the front end
 EXPOSE 3000
 
