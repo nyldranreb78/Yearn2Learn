@@ -20,7 +20,7 @@ RUN npm i
 #arbitrary change
 
 # Expose the port 3000, the port that we are using for the front end
-EXPOSE 3000
+EXPOSE 8080
 
 #
 ENV PORT=$PORT
