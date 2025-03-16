@@ -16,7 +16,7 @@ VOLUME /server
 COPY . .
 
 # Install node dependencies
-RUN npm ci
+RUN npm i
 
 # Copy the rest of the back-end files into the working directory
 #COPY server/ .
