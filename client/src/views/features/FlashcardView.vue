@@ -7,16 +7,16 @@
       class="flashcard-buttons d-flex align-items-center justify-content-start mt-3 ms-1"
     >
       <button
-        class="btn btn-secondary btn-circle me-2"
+        class="btn btn-primary btn-circle me-2"
         type="button"
         data-bs-toggle="offcanvas"
         data-bs-target="#side_bar_left"
-        v-on:click="flashcardEditMode = false"
+        v-on:click="editMode = false"
       >
         Edit
       </button>
       <button
-        class="btn btn-secondary btn-circle"
+        class="btn btn-primary btn-circle"
         type="button"
         data-bs-toggle="offcanvas"
         data-bs-target="#side_bar_left"
@@ -28,10 +28,22 @@
 
     <!-- Flashcard Main Screen -->
     <div class="row mt-3 gx-3">
-        <!-- Flashcards Box -->
+      <!-- Flashcards Box -->
       <div class="col-md-6">
-        <div class="flashcard-list-box">
+        <div class="flashcard-list-box d-flex flex-column">
           <p>List of Flashcards here</p>
+
+          <div class="box-bottom mt-auto">
+            <button
+              class="btn btn-primary btn-circle me-2"
+              type="button"
+              data-bs-toggle="offcanvas"
+              data-bs-target="#side_bar_left"
+              v-on:click="createMode = false"
+            >
+              Create New Card
+            </button>
+          </div>
         </div>
       </div>
 
@@ -63,7 +75,12 @@
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.self-quiz-box, .question-list-box {
+.box-bottom {
+  bottom: 0;
+}
+
+.self-quiz-box,
+.question-list-box {
   height: 377px;
   background-color: #f8f9fa;
   border: 1px solid #ddd;

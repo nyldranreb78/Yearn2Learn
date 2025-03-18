@@ -9,10 +9,11 @@ const flashcardSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  category: {
-    type: String,
-    default: "General",
-  }, //might changed to folder or remove it later
+  folder: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "folder",
+    required: true,
+  },
   author: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "user",
