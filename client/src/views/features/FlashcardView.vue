@@ -66,7 +66,7 @@
 
 <style>
 .flashcard-list-box {
-  height: 775px;
+  /* height: 765px; */
   background-color: #f8f9fa;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -81,7 +81,7 @@
 
 .self-quiz-box,
 .question-list-box {
-  height: 377px;
+  /* height: 367px; */
   background-color: #f8f9fa;
   border: 1px solid #ddd;
   border-radius: 8px;

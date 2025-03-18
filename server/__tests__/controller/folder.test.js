@@ -3,6 +3,7 @@ const User = require('../../models/user');
 const Note = require('../../models/note');
 const Folder = require('../../models/folder');
 const auth = require('../../middleware/auth-service');
+const Flashcards = require('../../models/flashcards');
 
 jest.mock('../../models/user');
 jest.mock('../../models/note');
@@ -332,10 +333,11 @@ describe('remove', () => {
 
     it('should return 200 and the deleted folder if all conditions are met', async () => {
         const mockID = "validID";
-        const mockFolder = {_id: "folderID", author: "validID", notes: ["note1", "note2"] };
+        const mockFolder = {_id: "folderID", author: "validID", notes: ["note1", "note2"], flashcards: ["flashcard1"] };
         auth.getUserID = jest.fn().mockReturnValue(mockID);
         Folder.findOne = jest.fn().mockResolvedValue(mockFolder);
         Note.deleteMany = jest.fn().mockResolvedValue({deletedCount: 2});
+        Flashcards.deleteMany = jest.fn().mockResolvedValue({deletedCount: 1});
         mockFolder.deleteOne = jest.fn().mockResolvedValue({deletedCound: 1});
 
         await remove(req, res);
