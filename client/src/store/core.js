@@ -4,11 +4,13 @@ import { useAuthStore } from "@/store/auth";
 export const useCoreStore = defineStore("core", {
     state: () => ({
         folderList: [],
+        taskList: [],
         authStore: useAuthStore()
     }),
 
     getters: {
         folders: (state) => state.folderList,
+        tasks: (state) => state.taskList,
     },
 
     actions: {
@@ -135,6 +137,52 @@ export const useCoreStore = defineStore("core", {
         
             } catch (error) {
                 console.error("Error deleting note:", error);
+            }
+        },
+
+        // TASKS
+        async sortTasks(){
+            this.taskList = this.taskList.sort((taskA, taskB) => {
+                return new Date(taskA.deadline) - new Date(taskB.deadline);
+            })
+        },
+
+        async addTask(taskData){
+            try{
+                // TODO: USE API
+
+                this.taskList.push(taskData);
+            } catch (error) {
+                console.error("Error adding task:", error);
+            }
+
+            this.sortTasks();
+        },
+
+        async editTask(taskId, taskData){
+            try {
+                // TODO: USE API
+        
+                const taskIndex = this.taskList.findIndex(task => task._id === taskId);
+
+                if (taskIndex !== -1) {
+                    this.taskList[taskIndex] = { ...this.taskList[taskIndex], ...taskData };
+                }
+            } catch (error) {
+                console.error("Error updating task:", error.response?.data || error.message);
+            }
+
+            this.sortTasks();
+        },
+
+        async deleteTask(taskId){
+            try {
+                // TODO: USE API
+        
+                this.taskList = this.taskList.filter(task => task._id !== taskId);
+        
+            } catch (error) {
+                console.error("Error deleting task:", error);
             }
         }
     },
