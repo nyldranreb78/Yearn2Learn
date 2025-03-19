@@ -459,7 +459,7 @@
                     type="submit"
                     class="btn"
                     :class="currentNote ? 'btn-success' : 'btn-secondary'"
-                    data-bs-dismiss="modal"
+                    v-on:click="closeModal"
                   >
                     <i
                       :class="
@@ -538,7 +538,7 @@
 <script setup lang="js">
 // @ is an alias to /src
 import bootstrap from "bootstrap/dist/js/bootstrap.bundle.js";
-import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue';
+import { ref, reactive, computed, onBeforeUnmount } from 'vue';
 import { useCoreStore } from "@/store/core";
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
@@ -582,18 +582,6 @@ const textEditorData = reactive({
 const folderList = computed(() => {
   return coreStore.folders;
 })
-
-async function fetchData() {
-	await coreStore.fetchData();
-}
-
-onMounted ( async () => {
-	await fetchData();
-
-  const sidebar = document.querySelector('#side_bar_left')
-  bootstrap.Offcanvas.getOrCreateInstance(sidebar).show();
-})
-
 
 async function addFolder(){
 	// Add the new folder to the list
@@ -787,51 +775,16 @@ async function autoSaveNoteChanges() {
 	}
 }
 
+async function closeModal(){
+  if(noteData.title){
+    const modal = document.querySelector("#add_edit_note_form");
+		bootstrap.Modal.getOrCreateInstance(modal).hide();
+  }
+}
+
 onBeforeUnmount(async () => {
 	if (currentNote.value && textEditorData.content !== currentNote.value.content) {
 		await saveNoteChanges(currentNote.value);
 	}
 });
 </script>
-
-<style scoped>
-.vh-navbar-offset {
-  height: calc(100% - 70px);
-}
-
-.sharp-top-border {
-  border-top-left-radius: 0px !important;
-  border-top-right-radius: 0px !important;
-}
-
-.accordion-button:focus {
-  outline: none !important;
-  box-shadow: none !important;
-}
-
-.btn-circle {
-  border-radius: 50%;
-  aspect-ratio: 1;
-}
-
-.note-menu:hover {
-  background-color: lightgray;
-}
-
-.btn-edit-form {
-  border: none;
-}
-
-.btn-edit-form:hover {
-  background-color: lightgray;
-}
-
-.bottom-toolbar {
-  height: 40px;
-}
-
-.accordion-edit:not(.collapsed)::after,
-.accordion-edit::after {
-  background-image: unset !important;
-}
-</style>

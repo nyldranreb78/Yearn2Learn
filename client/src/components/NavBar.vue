@@ -16,18 +16,7 @@
 				<li class="nav-item"><router-link :to="{ name: 'home' }" class="nav-link active" href="#">Home</router-link></li>
 				<li class="nav-item"><router-link :to="{ name: 'notes' }" class="nav-link active" href="#">Notes</router-link></li>
 				<li class="nav-item"><router-link :to="{ name: 'flashcards' }" class="nav-link active" href="#">Flash Cards</router-link></li>
-
-				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle disabled" href="#" role="button" data-bs-toggle="dropdown">
-						Goal Management
-					</a>
-
-					<ul class="dropdown-menu">
-						<li><a class="dropdown-item" href="#">Task List</a></li>
-						<li><hr class="dropdown-divider"></li>
-						<li><a class="dropdown-item" href="#">Goal Tracker</a></li>
-					</ul>
-				</li>
+				<li class="nav-item"><router-link :to="{ name: 'tasks' }" class="nav-link active" href="#">Task Management</router-link></li>
 
 				<li class="nav-item dropdown">
 					<a
