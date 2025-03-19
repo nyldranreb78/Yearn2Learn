@@ -23,6 +23,9 @@ const flashcardSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  collectionName: {
+    type: String
+  }
 });
 
 module.exports = mongoose.model("flashcard", flashcardSchema);
