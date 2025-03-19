@@ -42,6 +42,13 @@ const routes = [
       import("../views/features/NoteView.vue"),
     meta: { requiresAuth: true }
   },
+  {
+    path: "/tasks",
+    name: "tasks",
+    component: () =>
+      import("../views/features/TaskView.vue"),
+    meta: { requiresAuth: true }
+  },
 ];
 
 const router = createRouter({
