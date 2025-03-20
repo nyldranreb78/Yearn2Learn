@@ -1,25 +1,32 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const folderSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true
+  name: {
+    type: String,
+    required: true,
+  },
+  priority: {
+    type: Boolean,
+    required: false,
+  },
+  author: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "user",
+  },
+  notes: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "note",
     },
-    priority: {
-        type: Boolean,
-        required: false,
+  ],
+  flashcards: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "flashcards",
     },
-    author: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'user'
-    },
-    notes: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'note'
-    }],
-    
+  ],
 });
 
 folderSchema.set("timestamps", true);
 
-module.exports = mongoose.model('folder', folderSchema);
+module.exports = mongoose.model("folder", folderSchema);
