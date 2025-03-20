@@ -62,14 +62,14 @@ jobs:
       - run: echo deploying
       #- run: npm ci
       #- run: npm run build --if-present
-      - working-directory: ./server
-        run: npm ci
-      - working-directory: ./server
-        run: npm run dev --if-present
       - working-directory: ./client
         run: npm ci
       - working-directory: ./client
-        run: npm run serve --if-present
+        run: npm run build --if-present
+      - working-directory: ./server
+        run: npm ci
+      - working-directory: ./server
+        run: npm run build --if-present
       - working-directory: ./client
         run: npm test
       - working-directory: ./server
