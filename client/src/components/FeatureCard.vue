@@ -1,15 +1,25 @@
 <template>
-    <router-link :to="{ name: props.routeName }" class="card text-reset text-decoration-none h-100">
-        <div class="card-header">
-            <i :class="'me-1 bi bi-' + props.bootstrapIconCode"></i>
-            {{ props.featureName }}
-        </div>
-        <div class="card-body">
-            <p class="card-text">{{ props.description }}</p>
-        </div>
-    </router-link>
+  <router-link
+    :to="{ name: routeName }"
+    class="card text-reset text-decoration-none h-100"
+  >
+    <div class="card-header">
+      <i :class="'me-1 bi bi-' + bootstrapIconCode" />
+      {{ featureName }}
+    </div>
+    <div class="card-body">
+      <p class="card-text">
+        {{ description }}
+      </p>
+    </div>
+  </router-link>
 </template>
 
 <script setup>
-    const props = defineProps(['bootstrapIconCode', 'featureName', 'routeName', 'description'])
+defineProps({
+  bootstrapIconCode: { type: String, default: "question-circle" },
+  featureName: { type: String, default: "Feature" },
+  routeName: { type: String, default: "home" },
+  description: { type: String, default: "No description available." },
+});
 </script>

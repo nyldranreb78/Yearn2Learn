@@ -1,6 +1,0 @@
-{
-  "baseUrl": "http://localhost:8080",
-  "integrationFolder": "tests/integration",
-  "testFiles": "**/*.spec.js",
-  "supportFile": false
-}
