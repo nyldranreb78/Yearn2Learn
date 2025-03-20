@@ -9,10 +9,9 @@ const flashcardSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  folder: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "folder",
-    required: true,
+  setName: {
+    type: String,
+    required: true
   },
   author: {
     type: mongoose.Schema.Types.ObjectId,
@@ -23,9 +22,6 @@ const flashcardSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  collectionName: {
-    type: String
-  }
 });
 
 module.exports = mongoose.model("flashcard", flashcardSchema);

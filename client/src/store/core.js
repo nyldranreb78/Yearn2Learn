@@ -3,14 +3,17 @@ import { useAuthStore } from "@/store/auth";
 
 export const useCoreStore = defineStore("core", {
     state: () => ({
+        authStore: useAuthStore(),
+
         folderList: [],
         taskList: [],
-        authStore: useAuthStore()
+        flashcardList: []
     }),
 
     getters: {
         folders: (state) => state.folderList,
         tasks: (state) => state.taskList,
+        flashcards: (state) => state.flashcardList
     },
 
     actions: {
@@ -183,6 +186,42 @@ export const useCoreStore = defineStore("core", {
         
             } catch (error) {
                 console.error("Error deleting task:", error);
+            }
+        },
+
+        // FLASHCARDS
+        async addFlashcard(flashcardData){
+            try{
+                // TODO: USE API
+
+                this.flashcardList.push(flashcardData);
+            } catch (error) {
+                console.error("Error adding flashcard:", error);
+            }
+        },
+
+        async editFlashcard(flashcardId, flashcardData){
+            try {
+                // TODO: USE API
+        
+                const flashcardIndex = this.flashcardList.findIndex(flashcard => flashcard._id === flashcardId);
+
+                if (flashcardIndex !== -1) {
+                    this.flashcardList[flashcardIndex] = { ...this.flashcardList[flashcardIndex], ...flashcardData };
+                }
+            } catch (error) {
+                console.error("Error updating flashcard:", error.response?.data || error.message);
+            }
+        },
+
+        async deleteFlashcard(flashcardId){
+            try {
+                // TODO: USE API
+        
+                this.flashcardList = this.flashcardList.filter(flashcard => flashcard._id !== flashcardId);
+        
+            } catch (error) {
+                console.error("Error deleting flashcard:", error);
             }
         }
     },
