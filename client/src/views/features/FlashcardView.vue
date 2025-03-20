@@ -11,7 +11,7 @@
         </div>
 
         <div class="row align-items-start">
-          <button type="button" class="col-auto btn btn-light flash-card-ui fs-4">
+          <button type="button" class="col-auto btn btn-light flash-card-ui fs-4 text-muted">
             <i class="bi bi-caret-left-fill"></i>
           </button>
 
@@ -27,7 +27,7 @@
             </div>
           </button>
 
-          <button type="button" class="col-auto btn btn-light flash-card-ui fs-4">
+          <button type="button" class="col-auto btn btn-light flash-card-ui fs-4 text-muted">
             <i class="bi bi-caret-right-fill"></i>
           </button>
 
