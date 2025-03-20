@@ -11,9 +11,9 @@
           type="button"
           data-bs-toggle="offcanvas"
           data-bs-target="#side_bar_left"
-          v-on:click="folderEditMode = false"
+          @click="folderEditMode = false"
         >
-          <i class="bi bi-list"></i>
+          <i class="bi bi-list" />
         </button>
       </div>
 
@@ -22,58 +22,79 @@
         <div class="row justify-content-center p-0 m-0 vh-100">
           <div class="p-0">
             <QuillEditor
+              ref="textEditor"
+              v-model:content="textEditorData.content"
               class="bg-white border-top-0"
               theme="snow"
               toolbar="#fixed_toolbar"
               content-type="html"
-              ref="textEditor"
-              v-model:content="textEditorData.content"
-              @textChange="autoSaveNoteChanges()"
+              @text-change="autoSaveNoteChanges()"
             />
           </div>
         </div>
 
         <!-- TEXT EDITOR TOOLBAR -->
         <div
+          v-show="currentNote"
           class="row border bg-light 
                 bottom-toolbar fixed-bottom m-0 p-0"
-          v-show="currentNote"
         >
           <div class="col-3">
             <div class="fs-6 text-truncate ms-1 me-5 mt-1 pe-5">
-              <span class="align-middle" v-show="currentNote">{{ textEditorData.folderName }} / {{ textEditorData.noteTitle }}</span>
+              <span
+                v-show="currentNote"
+                class="align-middle"
+              >{{ textEditorData.folderName }} / {{ textEditorData.noteTitle }}</span>
             </div>
           </div>
 
-          <div id="fixed_toolbar" class="col-6 border-0 mx-auto">
+          <div
+            id="fixed_toolbar"
+            class="col-6 border-0 mx-auto"
+          >
             <!-- Font size selector -->
             <select class="ql-size me-4">
-              <option value="small"></option>
-              <option selected></option>
-              <option value="large"></option>
-              <option value="huge"></option>
+              <option value="small" />
+              <option selected />
+              <option value="large" />
+              <option value="huge" />
             </select>
 
             <!-- Common text modifiers -->
-            <button class="ql-bold"></button>
-            <button class="ql-italic"></button>
-            <button class="ql-underline"></button>
-            <button class="ql-strike"></button>
-            <button class="ql-script" value="sub"></button>
-            <button class="ql-script me-4" value="super"></button>
+            <button class="ql-bold" />
+            <button class="ql-italic" />
+            <button class="ql-underline" />
+            <button class="ql-strike" />
+            <button
+              class="ql-script"
+              value="sub"
+            />
+            <button
+              class="ql-script me-4"
+              value="super"
+            />
 
             <!-- Lists -->
-            <button class="ql-list" value="bullet"></button>
-            <button class="ql-list me-4" value="ordered"></button>
+            <button
+              class="ql-list"
+              value="bullet"
+            />
+            <button
+              class="ql-list me-4"
+              value="ordered"
+            />
 
             <!-- Niche tools -->
-            <button class="ql-blockquote"></button>
-            <button class="ql-code-block"></button>
+            <button class="ql-blockquote" />
+            <button class="ql-code-block" />
           </div>
 
           <div class="col-3">
             <div class="fs-6 text-truncate text-end me-1 ms-5 mt-1 se-5">
-              <span class="align-middle" v-show="currentNote"> {{ saveStatus }}</span>
+              <span
+                v-show="currentNote"
+                class="align-middle"
+              > {{ saveStatus }}</span>
             </div>
           </div>
         </div>
@@ -82,11 +103,11 @@
 
     <!--SIDEBAR-->
     <div
+      id="side_bar_left"
       class="offcanvas offcanvas-start navbar-offset"
       data-bs-scroll="true"
       data-bs-backdrop="false"
       tabindex="-1"
-      id="side_bar_left"
     >
       <!--SIDEBAR HEADER-->
       <div class="offcanvas-header d-inline-block pb-0">
@@ -98,9 +119,9 @@
                 class="btn btn-secondary btn-circle me-3"
                 data-bs-dismiss="offcanvas"
                 data-bs-target="#side_bar_left"
-                v-on:click="closeFolderForm()"
+                @click="closeFolderForm()"
               >
-                <i class="bi bi-arrow-left"></i>
+                <i class="bi bi-arrow-left" />
               </button>
             </div>
 
@@ -110,13 +131,16 @@
 
             <div class="col text-end align-middle pt-1">
               <button
+                v-show="folderList.length"
                 type="button"
                 class="btn btn-edit-form py-0 px-1 ms-2"
-                v-on:click="toggleEditMode()"
-                v-show="folderList.length"
+                @click="toggleEditMode()"
               >
                 <span v-show="folderEditMode">Finish Editing</span>
-                <i class="bi bi-pencil-square" v-show="!folderEditMode"></i>
+                <i
+                  v-show="!folderEditMode"
+                  class="bi bi-pencil-square"
+                />
               </button>
             </div>
           </div>
@@ -126,36 +150,42 @@
       <!--SIDEBAR BODY-->
       <div class="offcanvas-body">
         <!--ADD FOLDER FORM-->
-        <div class="row p-0 m-0 mb-3" v-if="!folderEditMode">
+        <div
+          v-if="!folderEditMode"
+          class="row p-0 m-0 mb-3"
+        >
           <button
             class="btn"
             :class="folderFormInProgress ? 'btn-secondary' : 'btn-primary'"
             type="button"
             data-bs-toggle="collapse"
             data-bs-target="#add_folder_form"
-            v-on:click="toggleFolderForm()"
+            @click="toggleFolderForm()"
           >
             <i
               :class="folderFormInProgress ? 'bi bi-x-lg' : 'bi bi-folder-plus'"
-            ></i>
+            />
             <span class="ms-2">{{
               folderFormInProgress ? "Cancel" : "Add New Folder"
             }}</span>
           </button>
 
-          <div class="collapse p-0 m-0" id="add_folder_form">
+          <div
+            id="add_folder_form"
+            class="collapse p-0 m-0"
+          >
             <div class="card card-body sharp-top-border border-top-0 mb-2">
               <form @submit.prevent="addFolder">
                 <div class="row mb-2">
                   <div class="col">
                     <small>Folder Name</small>
                     <input
+                      v-model="folderData.name"
                       type="text"
                       class="form-control"
                       placeholder="e.g. COMP 4350"
-                      v-model="folderData.name"
                       required
-                    />
+                    >
                   </div>
                 </div>
 
@@ -163,36 +193,54 @@
                   <div class="col">
                     <div class="form-check form-switch">
                       <input
+                        id="classToggle"
+                        v-model="isAClass"
                         type="checkbox"
                         role="switch"
                         class="form-check-input"
-                        id="classToggle"
-                        v-model="isAClass"
-                        v-on:click='folderData.priority = ""'
+                        @click="folderData.priority = &quot;&quot;"
                       >
-                      <label class="form-check-label" for="classToggle">Does this folder represent a class?</label>
+                      <label
+                        class="form-check-label"
+                        for="classToggle"
+                      >Does this folder represent a class?</label>
                     </div>
                   </div>
                 </div>
 
-                <div class="row mb-2" v-if="isAClass">
+                <div
+                  v-if="isAClass"
+                  class="row mb-2"
+                >
                   <small>Priority</small>
                   <div class="col">
                     <select
-                      class="form-select"
                       v-model="folderData.priority"
+                      class="form-select"
                       required
                     >
-                      <option value disabled>Select</option>
-                      <option :value="true">Major Requirement</option>
-                      <option :value="false">Elective</option>
+                      <option
+                        value
+                        disabled
+                      >
+                        Select
+                      </option>
+                      <option :value="true">
+                        Major Requirement
+                      </option>
+                      <option :value="false">
+                        Elective
+                      </option>
                     </select>
                   </div>
                 </div>
 
                 <div class="row">
                   <div class="col">
-                    <button type="submit" class="btn btn-primary w-100">
+                    <button
+                      type="submit"
+                      class="btn btn-primary w-100"
+                    >
                       Add
                     </button>
                   </div>
@@ -204,21 +252,22 @@
 
         <!--PLACEHOLDER TEXT-->
         <div
-          class="text-center text-muted px-5 py-4"
           v-show="!folderList.length && !folderFormInProgress"
+          class="text-center text-muted px-5 py-4"
         >
-          <i
-            >No folders or notes to show. Click on the "Add New Folder" button to
-            add a folder and write cotes under it.</i
-          >
+          <i>No folders or notes to show. Click on the "Add New Folder" button to
+            add a folder and write cotes under it.</i>
         </div>
 
         <!--COLLAPSIBLE FOLDER LIST-->
-        <div class="accordion accordion-flush" v-show="!folderEditMode">
+        <div
+          v-show="!folderEditMode"
+          class="accordion accordion-flush"
+        >
           <div
-            class="accordion-item"
             v-for="folder in folderList"
             :key="folder._id"
+            class="accordion-item"
           >
             <h2 class="accordion-header">
               <button
@@ -244,16 +293,16 @@
                     class="list-group-item list-group-item-action ps-3 py-1 border-top-0"
                     data-bs-toggle="modal"
                     data-bs-target="#add_edit_note_form"
-                    v-on:click="passCurrentFolder(folder)"
+                    @click="passCurrentFolder(folder)"
                   >
-                    <i class="bi bi-plus-lg me-1"></i> Create new note
+                    <i class="bi bi-plus-lg me-1" /> Create new note
                   </button>
 
                   <div
-                    class="list-group-item list-group-item-action ps-3 pe-2 py-1"
                     v-for="note in [...folder.notes].sort((noteA, noteB) => {return new Date(noteB.updatedAt) - new Date(noteA.updatedAt)})"
-                    v-bind:key="note._id"
-                    v-on:click="openNotes(folder, note)"
+                    :key="note._id"
+                    class="list-group-item list-group-item-action ps-3 pe-2 py-1"
+                    @click="openNotes(folder, note)"
                   >
                     <div class="row p-0">
                       <div class="col-10 text-start text-truncate">
@@ -264,12 +313,12 @@
                         <button
                           type="button"
                           class="btn btn-sm shadow-none note-menu"
+                          data-bs-toggle="dropdown"
                           @mouseover="mouseOnMenu = true"
                           @mouseleave="mouseOnMenu = false"
-                          v-on:click="passCurrentNote(folder, note)"
-                          data-bs-toggle="dropdown"
+                          @click="passCurrentNote(folder, note)"
                         >
-                          <i class="bi bi-three-dots-vertical"></i>
+                          <i class="bi bi-three-dots-vertical" />
                         </button>
 
                         <ul
@@ -280,22 +329,22 @@
                           <li>
                             <a
                               class="dropdown-item px-2"
-                              v-on:click="passCurrentNote(folder, note)"
                               data-bs-toggle="modal"
                               data-bs-target="#add_edit_note_form"
+                              @click="passCurrentNote(folder, note)"
                             >
                               Rename
                             </a>
                           </li>
 
-                          <li><hr class="dropdown-divider my-1" /></li>
+                          <li><hr class="dropdown-divider my-1"></li>
 
                           <li>
                             <a
                               class="dropdown-item px-2 text-danger"
-                              v-on:click="passCurrentNote(folder, note)"
                               data-bs-toggle="modal"
                               data-bs-target="#delete_form"
+                              @click="passCurrentNote(folder, note)"
                             >
                               Delete
                             </a>
@@ -311,11 +360,15 @@
         </div>
 
         <!--EDIT FOLDER VIEW-->
-        <div class="accordion" id="folder_edit_form" v-if="folderEditMode">
+        <div
+          v-if="folderEditMode"
+          id="folder_edit_form"
+          class="accordion"
+        >
           <div
-            class="accordion-item"
             v-for="folder in folderList"
             :key="folder._id"
+            class="accordion-item"
           >
             <h2 class="accordion-header">
               <button
@@ -334,21 +387,21 @@
                       <button
                         type="button"
                         class="btn btn-close"
-                        v-on:click="closeEditFolderForm()"
                         data-bs-toggle="collapse"
                         :data-bs-target="'#folderID' + folder._id + 'edit'"
-                      ></button>
+                        @click="closeEditFolderForm()"
+                      />
                     </div>
 
                     <div v-else>
                       <button
                         type="button"
                         class="btn btn-edit-form py-0 px-1 me-2"
-                        v-on:click="openEditFolderForm(folder)"
                         data-bs-toggle="collapse"
                         :data-bs-target="'#folderID' + folder._id + 'edit'"
+                        @click="openEditFolderForm(folder)"
                       >
-                        <i class="bi bi-pencil-square"></i>
+                        <i class="bi bi-pencil-square" />
                       </button>
 
                       <button
@@ -356,9 +409,9 @@
                         class="btn btn-edit-form py-0 px-1"
                         data-bs-toggle="modal"
                         data-bs-target="#delete_form"
-                        v-on:click="passCurrentFolder(folder)"
+                        @click="passCurrentFolder(folder)"
                       >
-                        <i class="bi bi-trash3-fill text-danger"></i>
+                        <i class="bi bi-trash3-fill text-danger" />
                       </button>
                     </div>
                   </div>
@@ -367,10 +420,10 @@
             </h2>
 
             <div
+              v-if="currentEditingFolderId === folder._id"
               :id="'folderID' + folder._id + 'edit'"
               class="accordion-collapse collapse"
-				:class="{'show': currentEditingFolderId === folder._id}"
-				v-if="currentEditingFolderId === folder._id"
+              :class="{'show': currentEditingFolderId === folder._id}"
               data-bs-parent="#folder_edit_form"
             >
               <div class="accordion-body px-3 py-2 fs-6 mb-2">
@@ -379,12 +432,12 @@
                     <div class="col">
                       <small>Rename Folder</small>
                       <input
+                        v-model="folderData.name"
                         type="text"
                         class="form-control"
                         placeholder="e.g. COMP 4350"
-                        v-model="folderData.name"
                         required
-                      />
+                      >
                     </div>
                   </div>
 
@@ -392,12 +445,16 @@
                     <small>Change Priority</small>
                     <div class="col-9">
                       <select
-                        class="form-select"
                         v-model="folderData.priority"
+                        class="form-select"
                         required
                       >
-                        <option :value="true">Major Requirement</option>
-                        <option :value="false">Elective</option>
+                        <option :value="true">
+                          Major Requirement
+                        </option>
+                        <option :value="false">
+                          Elective
+                        </option>
                       </select>
                     </div>
 
@@ -408,7 +465,7 @@
                         data-bs-toggle="collapse"
                         :data-bs-target="'#folderID' + folder._id + 'edit'"
                       >
-                        <i class="bi bi-floppy-fill"></i>
+                        <i class="bi bi-floppy-fill" />
                       </button>
                     </div>
                   </div>
@@ -424,7 +481,11 @@
     <!--Due to the nature of Bootstrap modals, these have to be close to the outermost HTML tag-->
 
     <!--ADD/EDIT NOTE FORM-->
-    <div class="modal modal-md fade" id="add_edit_note_form" tabindex="-1">
+    <div
+      id="add_edit_note_form"
+      class="modal modal-md fade"
+      tabindex="-1"
+    >
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-body">
@@ -441,31 +502,31 @@
                     type="button"
                     class="btn-close"
                     data-bs-dismiss="modal"
-                  ></button>
+                  />
                 </div>
               </div>
 
               <div class="row">
                 <div class="input-group mb-2">
                   <input
+                    v-model="noteData.title"
                     type="text"
                     class="form-control"
                     placeholder="e.g. Midterm Notes"
-                    v-model="noteData.title"
                     required
-                  />
+                  >
 
                   <button
                     type="submit"
                     class="btn"
                     :class="currentNote ? 'btn-success' : 'btn-secondary'"
-                    v-on:click="closeModal"
+                    @click="closeModal"
                   >
                     <i
                       :class="
                         currentNote ? 'bi bi-floppy-fill' : 'bi bi-check-lg'
                       "
-                    ></i>
+                    />
                   </button>
                 </div>
               </div>
@@ -476,7 +537,11 @@
     </div>
 
     <!--DELETE FOLDER/EDIT FORM-->
-    <div class="modal modal-md fade" id="delete_form" tabindex="-1">
+    <div
+      id="delete_form"
+      class="modal modal-md fade"
+      tabindex="-1"
+    >
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header px-2 py-1">
@@ -487,7 +552,7 @@
               type="button"
               class="btn-close"
               data-bs-dismiss="modal"
-            ></button>
+            />
           </div>
 
           <div class="modal-body">
@@ -521,8 +586,8 @@
               <div class="col text-end">
                 <button
                   class="btn btn-sm btn-danger ms-3"
-                  v-on:click="folderEditMode ? deleteFolder() : deleteNote()"
                   data-bs-dismiss="modal"
+                  @click="folderEditMode ? deleteFolder() : deleteNote()"
                 >
                   Delete
                 </button>

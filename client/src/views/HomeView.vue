@@ -1,49 +1,67 @@
 <template>
-	<div class="container-fluid text-start d-flex flex-column navbar-offset vh-navbar-offset">
-		<div class="row justify-content-md-center mt-4">
-			<div class="col-8">
-				<div class="row"><div class="col ps-0"><h4>Features</h4></div></div>
-				<div class="row mb-5">
-					<div class="col" v-for="feature in featureInfo" v-bind:key="feature[2]">
-						<FeatureCard
-							:bootstrap-icon-code="feature[0]"
-							:feature-name="feature[1]"
-							:route-name="feature[2]"
-							:description="feature[3]"
-							v-on:click="feature[2]? null : showTimer('false')"
-							@mouseleave="feature[2]? null : showTimer('outside')"
-						/>
-					</div>
-				</div>
+  <div class="container-fluid text-start d-flex flex-column navbar-offset vh-navbar-offset">
+    <div class="row justify-content-md-center mt-4">
+      <div class="col-8">
+        <div class="row">
+          <div class="col ps-0">
+            <h4>Features</h4>
+          </div>
+        </div>
+        <div class="row mb-5">
+          <div
+            v-for="feature in featureInfo"
+            :key="feature[2]"
+            class="col"
+          >
+            <FeatureCard
+              :bootstrap-icon-code="feature[0]"
+              :feature-name="feature[1]"
+              :route-name="feature[2]"
+              :description="feature[3]"
+              @click="feature[2]? null : showTimer('false')"
+              @mouseleave="feature[2]? null : showTimer('outside')"
+            />
+          </div>
+        </div>
 
-				<div class="row">
-					<div class="col-9 em-2">
-						<div class="row"><div class="col ps-0"><h4>Quick Access</h4></div></div>
+        <div class="row">
+          <div class="col-9 em-2">
+            <div class="row">
+              <div class="col ps-0">
+                <h4>Quick Access</h4>
+              </div>
+            </div>
 
-						<div class="row mb-5 pe-2">
-							<div class="col-auto"><h6><i class="bi bi-journal-text me-1"></i> Recent Notes</h6></div>
-							<div class="col border-bottom border-card mb-3"></div>
-						</div>
+            <div class="row mb-5 pe-2">
+              <div class="col-auto">
+                <h6><i class="bi bi-journal-text me-1" /> Recent Notes</h6>
+              </div>
+              <div class="col border-bottom border-card mb-3" />
+            </div>
 
-						<div class="row mb-5 pe-2">
-							<div class="col-auto"><h6><i class="bi bi-card-heading me-1"></i> Flash Cards</h6></div>
-							<div class="col border-bottom border-card mb-3"></div>
-						</div>
-					</div>
+            <div class="row mb-5 pe-2">
+              <div class="col-auto">
+                <h6><i class="bi bi-card-heading me-1" /> Flash Cards</h6>
+              </div>
+              <div class="col border-bottom border-card mb-3" />
+            </div>
+          </div>
 
-					<div class="col-3">
-						<h4>Upcoming Tasks</h4>
-						<div class="card bg-transparent p-3">
-							<div class="row mb-5 me-1">
-								<div class="col-auto"><h6>Date Here</h6></div>
-								<div class="col border-bottom border-card mb-3"></div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+          <div class="col-3">
+            <h4>Upcoming Tasks</h4>
+            <div class="card bg-transparent p-3">
+              <div class="row mb-5 me-1">
+                <div class="col-auto">
+                  <h6>Date Here</h6>
+                </div>
+                <div class="col border-bottom border-card mb-3" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 

@@ -74,3 +74,8 @@ jobs:
         run: npm test
       - working-directory: ./server
         run: npm test
+        #should trigger the cd pipeline
+      - name: Trigger another workflow
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: cd.yml
