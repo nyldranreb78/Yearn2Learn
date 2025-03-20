@@ -2,17 +2,41 @@
   <div id="login">
     <div class="container navbar-offset">
       <div class="card card-body mt-4">
-        <h5 class="card-title">Login</h5>
+        <h5 class="card-title">
+          Login
+        </h5>
         <form @submit.prevent="submit">
           <div class="mb-3">
-            <label for="email" class="form-label">Email address</label>
-            <input v-model="loginData.email" type="email" class="form-control" id="email" autocomplete="off">
+            <label
+              for="email"
+              class="form-label"
+            >Email address</label>
+            <input
+              id="email"
+              v-model="loginData.email"
+              type="email"
+              class="form-control"
+              autocomplete="off"
+            >
           </div>
           <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
-            <input v-model="loginData.password" type="password" class="form-control" id="password">
+            <label
+              for="password"
+              class="form-label"
+            >Password</label>
+            <input
+              id="password"
+              v-model="loginData.password"
+              type="password"
+              class="form-control"
+            >
           </div>
-          <button type="submit" class="btn btn-warning">Login</button>
+          <button
+            type="submit"
+            class="btn btn-warning"
+          >
+            Login
+          </button>
         </form>
       </div>
     </div>

@@ -2,34 +2,98 @@
   <div id="register">
     <div class="container navbar-offset">
       <div class="card card-body mt-4">
-        <h5 class="card-title">Register</h5>
+        <h5 class="card-title">
+          Register
+        </h5>
         <form @submit.prevent="submit">
-          <p v-if="errorMessage" class="error-message text-danger mb-4">{{ errorMessage }}</p>
+          <p
+            v-if="errorMessage"
+            class="error-message text-danger mb-4"
+          >
+            {{ errorMessage }}
+          </p>
           <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
-            <input v-model="registerData.username" type="text" class="form-control" id="username" autocomplete="off">
+            <label
+              for="username"
+              class="form-label"
+            >Username</label>
+            <input
+              id="username"
+              v-model="registerData.username"
+              type="text"
+              class="form-control"
+              autocomplete="off"
+            >
           </div>
           <div class="mb-3">
-            <label for="first_name" class="form-label">First Name</label>
-            <input v-model="registerData.first_name" type="text" class="form-control" id="first_name" autocomplete="off">
+            <label
+              for="first_name"
+              class="form-label"
+            >First Name</label>
+            <input
+              id="first_name"
+              v-model="registerData.first_name"
+              type="text"
+              class="form-control"
+              autocomplete="off"
+            >
           </div>
           <div class="mb-3">
-            <label for="last_name" class="form-label">Last Name</label>
-            <input v-model="registerData.last_name" type="text" class="form-control" id="last_name" autocomplete="off">
+            <label
+              for="last_name"
+              class="form-label"
+            >Last Name</label>
+            <input
+              id="last_name"
+              v-model="registerData.last_name"
+              type="text"
+              class="form-control"
+              autocomplete="off"
+            >
           </div>
           <div class="mb-3">
-            <label for="email" class="form-label">Email address</label>
-            <input v-model="registerData.email" type="email" class="form-control" id="email" autocomplete="off">
+            <label
+              for="email"
+              class="form-label"
+            >Email address</label>
+            <input
+              id="email"
+              v-model="registerData.email"
+              type="email"
+              class="form-control"
+              autocomplete="off"
+            >
           </div>
           <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
-            <input v-model="registerData.password" type="password" class="form-control" id="password">
+            <label
+              for="password"
+              class="form-label"
+            >Password</label>
+            <input
+              id="password"
+              v-model="registerData.password"
+              type="password"
+              class="form-control"
+            >
           </div>
           <div class="mb-3">
-            <label for="password_confirm" class="form-label">Confirm Password</label>
-            <input v-model="registerData.password_confirm" type="password" class="form-control" id="password_confirm">
+            <label
+              for="password_confirm"
+              class="form-label"
+            >Confirm Password</label>
+            <input
+              id="password_confirm"
+              v-model="registerData.password_confirm"
+              type="password"
+              class="form-control"
+            >
           </div>
-          <button type="submit" class="btn btn-warning">Register</button>
+          <button
+            type="submit"
+            class="btn btn-warning"
+          >
+            Register
+          </button>
         </form>
       </div>
     </div>

@@ -11,10 +11,10 @@ onBeforeMount ( async () => {
 </script>
 
 <template>
-	<div id="app">
-		<NavBar />
-		<RouterView />
-	</div>
+  <div id="app">
+    <NavBar />
+    <RouterView />
+  </div>
 </template>
 
 <style lang="scss">
