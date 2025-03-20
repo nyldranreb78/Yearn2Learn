@@ -141,6 +141,16 @@ export const useCoreStore = defineStore("core", {
         },
 
         // TASKS
+        async fetchTasks(){
+            try {
+                const response = await this.authStore.getTasks();
+                if (response) {
+                    this.taskList = response.tasks;
+                }
+            } catch (error) {
+                console.error("Error fetching tasks:", error);
+            }
+        }, 
         async sortTasks(){
             this.taskList = this.taskList.sort((taskA, taskB) => {
                 return new Date(taskA.deadline) - new Date(taskB.deadline);
@@ -149,9 +159,18 @@ export const useCoreStore = defineStore("core", {
 
         async addTask(taskData){
             try{
-                // TODO: USE API
+                const newTask = {
+                    name: taskData.name,
+                    deadline: taskData.deadline,
+                    folderID: taskData.folderID,
+                    taskGrade: taskData.taskGrade,
+                    actualGrade: taskData.actualGrade,
+                    isFinished: false
+                }
 
-                this.taskList.push(taskData);
+                const response = await this.authStore.createTask(newTask);
+
+                this.taskList.push(response.task);
             } catch (error) {
                 console.error("Error adding task:", error);
             }
@@ -161,7 +180,16 @@ export const useCoreStore = defineStore("core", {
 
         async editTask(taskId, taskData){
             try {
-                // TODO: USE API
+                const updatedTask = {
+                    name: taskData.name,
+                    deadline: taskData.deadline,
+                    folderID: taskData.folderID,
+                    taskGrade: taskData.taskGrade,
+                    actualGrade: taskData.actualGrade,
+                    isFinished: taskData.isFinished
+                };
+
+                await this.authStore.updateTask(taskId, updatedTask);
         
                 const taskIndex = this.taskList.findIndex(task => task._id === taskId);
 
@@ -177,7 +205,7 @@ export const useCoreStore = defineStore("core", {
 
         async deleteTask(taskId){
             try {
-                // TODO: USE API
+                await this.authStore.deleteTask(taskId);
         
                 this.taskList = this.taskList.filter(task => task._id !== taskId);
         
