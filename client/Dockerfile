@@ -15,11 +15,11 @@ RUN npm i
 
 # Copy the rest of the front-end files into the working directory
 #COPY front-end/ .
-#COPY . .
+COPY . .
 
-#arbitrary change
 
-# Expose the port 3000, the port that we are using for the front end
+
+# Expose the port 8080, the port that we are using for the front end
 EXPOSE 8080
 
 #
@@ -29,5 +29,4 @@ ENV PORT=$PORT
 #ENV PROXY_API=$PROXY_API
 ENV API_BASE_URL = $API_BASE_URL
 # Start App
-#CMD ["npm", "run","build"]
 CMD ["npm", "run","serve"]
