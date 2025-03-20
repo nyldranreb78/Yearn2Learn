@@ -5,6 +5,9 @@ on:
         workflows: ["main"]
         types:
             - completed
+        branches:
+            - develop
+            - staging
     push:
     pull_request:
         branches:
