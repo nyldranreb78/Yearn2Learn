@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const auth = require('../middleware/auth');
 
-const goalSchema = new mongoose.Schema({
+const taskSchema = new mongoose.Schema({
     author: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'user'
@@ -29,6 +29,6 @@ const goalSchema = new mongoose.Schema({
     }
 });
 
-goalSchema.set("timestamps", true);
+taskSchema.set("timestamps", true);
 
-module.exports = mongoose.model('goal', goalSchema);
+module.exports = mongoose.model('task', taskSchema);

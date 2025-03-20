@@ -173,5 +173,45 @@ export const useAuthStore = defineStore("auth", {
         throw error.message;
       }
     },
+
+    async createTask(taskData) {
+      try {
+        const { data } = await useApiPrivate().post(`/api/task/create`, taskData);
+        return data;
+      } catch (error) {
+        console.error("Error creating task:", error.response?.data || error.message);
+        throw error.message;
+      }
+    },
+
+    async getTasks() {
+      try {
+        const { data } = await useApiPrivate().get(`/api/task`);
+        return data;
+      } catch (error) {
+        console.error("Error getting tasks:", error.response?.data || error.message);
+        throw error.message;
+      }
+    },
+
+    async updateTask(taskId, taskData) {
+      try {
+        const { data } = await useApiPrivate().patch(`/api/task/${taskId}`, taskData);
+        return data;
+      } catch (error) {
+        console.error("Error updating task:", error.response?.data || error.message);
+        throw error.message;
+      }
+    },
+
+    async deleteTask(taskId) { 
+      try {
+        const { data } = await useApiPrivate().delete(`/api/task/${taskId}`);
+        return data;
+      } catch (error) {
+        console.error("Error deleting task:", error.response?.data || error.message);
+        throw error.message;
+      }
+    }
   },
 });
