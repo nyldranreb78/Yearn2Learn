@@ -1,9 +1,8 @@
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
-const bcrypt = require('bcryptjs')
 const { hashPassword, comparePassword } = require("../utils/helpers");
 
-
+// Register a new user
 async function register(req, res){
   const {username, email, first_name, last_name, password, password_confirm} = req.body
 
@@ -28,6 +27,7 @@ async function register(req, res){
   }
 }
 
+// Login the user
 async function login(req, res){
   const {email, password } = req.body
 
@@ -68,6 +68,7 @@ async function login(req, res){
   res.json({access_token: accessToken})
 }
 
+// Logout the user
 async function logout(req, res){
   const cookies = req.cookies
 
@@ -88,6 +89,7 @@ async function logout(req, res){
   res.sendStatus(204)
 }
 
+// Assign a new token on refresh
 async function refresh(req, res){
   const cookies = req.cookies
   if(!cookies.refresh_token) return res.sendStatus(401)
@@ -116,6 +118,18 @@ async function refresh(req, res){
   )
 }
 
+// DELETE User (Integration Test-Only Route)
+async function deleteTestUser(req, res) {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: 'Email is required' });
+
+    await User.deleteOne({ email }); // Delete user from DB
+    return res.status(200).json({ message: 'User deleted' });
+  } catch (error) {
+    return res.status(500).json({ message: 'Error deleting user' });
+  }
+}
 
 async function user(req, res){
   
@@ -124,4 +138,4 @@ async function user(req, res){
   return res.status(200).json(user)
 }
 
-module.exports = {register, login, logout, refresh, user}
+module.exports = {register, login, logout, refresh, user, deleteTestUser};

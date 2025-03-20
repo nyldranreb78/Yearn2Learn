@@ -22,6 +22,7 @@ const goalSchema = new mongoose.Schema({
     },
     deadline: {
         type: Date,
+        required: true
     },
     isFishished: {
         type: Boolean

@@ -1,13 +1,20 @@
 <script setup lang="js">
+
 import { RouterView } from 'vue-router';
+import { onBeforeMount } from 'vue';
+import { useCoreStore } from './store/core';
 import NavBar from './components/NavBar.vue';
+
+onBeforeMount ( async () => {
+	await useCoreStore().fetchData();
+})
 </script>
 
 <template>
-	<div id="app">
-		<NavBar />
-		<RouterView />
-	</div>
+  <div id="app">
+    <NavBar />
+    <RouterView />
+  </div>
 </template>
 
 <style lang="scss">

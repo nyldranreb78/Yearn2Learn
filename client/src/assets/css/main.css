@@ -32,3 +32,43 @@ body {
 .navbar-offset{
 	margin-top: 70px !important;
 }
+
+.vh-navbar-offset {
+	height: calc(100% - 70px);
+}
+
+.sharp-top-border {
+border-top-left-radius: 0px !important;
+border-top-right-radius: 0px !important;
+}
+
+.accordion-button:focus {
+outline: none !important;
+box-shadow: none !important;
+}
+
+.btn-circle {
+border-radius: 50%;
+aspect-ratio: 1;
+}
+
+.note-menu:hover {
+background-color: lightgray;
+}
+
+.btn-edit-form {
+border: none;
+}
+
+.btn-edit-form:hover {
+background-color: lightgray;
+}
+
+.bottom-toolbar {
+height: 40px;
+}
+
+.accordion-edit:not(.collapsed)::after,
+.accordion-edit::after {
+background-image: unset !important;
+}
