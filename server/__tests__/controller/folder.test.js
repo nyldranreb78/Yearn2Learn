@@ -336,7 +336,7 @@ describe('remove', () => {
         auth.getUserID = jest.fn().mockReturnValue(mockID);
         Folder.findOne = jest.fn().mockResolvedValue(mockFolder);
         Note.deleteMany = jest.fn().mockResolvedValue({deletedCount: 2});
-        mockFolder.deleteOne = jest.fn().mockResolvedValue({deletedCound: 1});
+        mockFolder.deleteOne = jest.fn().mockResolvedValue({deletedCount: 1});
 
         await remove(req, res);
 
