@@ -242,6 +242,7 @@
 <script setup>
 import { ref, reactive, watch, computed } from 'vue'; // reactive, computed, onMounted, onBeforeUnmount
 import { useCoreStore } from '@/store/core';
+import { onBeforeMount } from 'vue';
 import bootstrap from "bootstrap/dist/js/bootstrap.bundle.js";
 
 const coreStore = useCoreStore();
@@ -249,6 +250,10 @@ const currentTask = ref("")
 
 const isEditMode = ref(false)
 const isForClass = ref(false)
+
+onBeforeMount ( async () => {
+	await useCoreStore().fetchTasks();
+})
 
 const taskData = reactive({
     name: "",
@@ -293,7 +298,7 @@ function getClassName(folderID){
 
 async function addTask(){
     const newTask = {
-        _id: Date.now(), // TODO: REMOVE ONCE WE'RE USING THE DB
+        // _id: Date.now(), // TODO: REMOVE ONCE WE'RE USING THE DB
         // Date.now() JUST GIVES US A "UNIQUE ID" FOR TESTING PURPOSES
 
         name: taskData.name,
@@ -319,7 +324,6 @@ async function editTask(){
         actualGrade: taskData.actualGrade,
         isFinished: currentTask.value.isFinished
     };
-
     await coreStore.editTask(currentTask.value._id, updatedTask);
 
     resetTaskData();

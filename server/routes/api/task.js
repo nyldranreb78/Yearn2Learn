@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const controller = require('../../controllers/goalController')
+const controller = require('../../controllers/taskController')
 const auth = require('../../middleware/auth-service')
 
 // Get all goals

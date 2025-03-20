@@ -43,6 +43,7 @@ app.use(errorHandlerMiddleware);
 app.use("/api/auth", require("./routes/api/auth"));
 app.use("/api/folder", require("./routes/api/folder"));
 app.use("/api/note", require("./routes/api/note"));
+app.use("/api/task", require("./routes/api/task"));
 app.use("/api/flashcard", require("./routes/api/flashcard"));
 
 app.all("*", (req, res) => {
