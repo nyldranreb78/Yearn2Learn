@@ -275,6 +275,12 @@ watch(taskData, (newValue) => {
             taskData.taskGrade = null;
             taskData.actualGrade = null;
         }
+
+        if(taskData.deadline){
+            // HTML's datetime-local only uses the first 16 characters
+            // of a local date string, which is why this is hard-coded
+            taskData.deadline = taskData.deadline.substring(0, 16)
+        }
     }
 })
 
@@ -298,9 +304,6 @@ function getClassName(folderID){
 
 async function addTask(){
     const newTask = {
-        // _id: Date.now(), // TODO: REMOVE ONCE WE'RE USING THE DB
-        // Date.now() JUST GIVES US A "UNIQUE ID" FOR TESTING PURPOSES
-
         name: taskData.name,
         deadline: taskData.deadline,
         folderID: taskData.folderID,
