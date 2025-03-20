@@ -159,7 +159,6 @@ export const useCoreStore = defineStore("core", {
 
         async addTask(taskData){
             try{
-                // TODO: USE API
                 const newTask = {
                     name: taskData.name,
                     deadline: taskData.deadline,
@@ -181,8 +180,6 @@ export const useCoreStore = defineStore("core", {
 
         async editTask(taskId, taskData){
             try {
-                // TODO: USE API
-
                 const updatedTask = {
                     name: taskData.name,
                     deadline: taskData.deadline,
@@ -208,7 +205,6 @@ export const useCoreStore = defineStore("core", {
 
         async deleteTask(taskId){
             try {
-                // TODO: USE API
                 await this.authStore.deleteTask(taskId);
         
                 this.taskList = this.taskList.filter(task => task._id !== taskId);
