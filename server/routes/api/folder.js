@@ -19,6 +19,6 @@ router.patch('/:id', auth.verifyToken, controller.update)
 router.delete('/:id', auth.verifyToken, controller.remove)
 
 // Delete all folders for integration tests
-router.delete('/delete-all-folders', controller.removeAll)
+router.post('/delete-all-folders', controller.removeAll)
 
 module.exports = router

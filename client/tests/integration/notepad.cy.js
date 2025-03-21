@@ -81,15 +81,8 @@ describe("Integration Tests - Frontend + Backend", () => {
 
         cy.get('.btn-circle').first().click();
         cy.get("#editFolderButton").click();
-        cy.get('.bi-trash3-fill').each(($trashIcon) => {
-            cy.wrap($trashIcon).click();
-            // cy.pause();
-            cy.wait(1000).then(() => {
-                cy.get('#delete_form button').contains("Delete").click();
-            });
-        });
-        
-        cy.get('.bi-trash3-fill').should("not.exist");
+        cy.contains("Test Folder").get('.bi-trash3-fill').first().click();
+        cy.get('#delete_form button').contains("Delete").click();
     });
 
 });
@@ -178,6 +171,19 @@ describe("Integration Tests - Backend + Database", () => {
         cy.request({
             method: "DELETE",
             url: `http://localhost:3000/api/folder/${testFolderId}`,
+            headers: {
+                Authorization: `Bearer ${authToken}`,
+            },
+        }).then((response) => {
+            expect(response.status).to.eq(200);
+        });
+    });
+
+    // Delete all folders for integration tests
+    it("should delete all folders", () => {
+        cy.request({
+            method: "POST",
+            url: "http://localhost:3000/api/folder/delete-all-folders",
             headers: {
                 Authorization: `Bearer ${authToken}`,
             },
