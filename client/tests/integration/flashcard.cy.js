@@ -98,61 +98,22 @@ describe("Integration Tests - Frontend + Backend", () => {
     cy.get("#cardList").contains("unique question 2").should("be.visible");
   });
 
-  // it("should change flash cards", () => {
-  //   cy.visit("http://localhost:8080/#/login");
+  it("should change flash cards", () => {
+    cy.visit("/#/flashcards");
 
-  //   cy.get("#email").type(testEmail);
-  //   cy.get("#password").type(testPassword);
-  //   cy.get('button[type="submit"]').click();
+    cy.get("#turnRight").click();
+    cy.get("#currFlashcard").should("have.text", "unique question 1");
+    cy.get("#turnLeft").click();
+    cy.get("#currFlashcard").should("have.text", "unique question 2");
+  });
 
-  //   // Check if redirected to home page
-  //   cy.url().should("include", "/");
+  it("should hide list when the 'Hide List' Button is clicked", () => {
+    cy.visit("/#/flashcards");
 
-  //   cy.contains(".nav-item", "Flash Cards", { timeout: 10_000 }).click();
-  //   cy.reload();
-  //   cy.reload();
-  //   cy.get("#turnRight").click();
-  //   cy.reload();
-  //   cy.get("#currFlashcard").should("have.text", "unique question 2");
-  //   cy.reload();
-  //   cy.get("#turnLeft").click();
-  //   cy.get("#currFlashcard").should("have.text", "unique question 1");
-  // });
+    cy.get("#cardList").should("be.visible");
 
-  // it("should hide list", () => {
-  //   cy.visit("http://localhost:8080/#/login");
+    cy.get("button").contains("Hide List").click();
+    cy.get("#cardList").should("not.be.visible");
+  });
 
-  //   cy.get("#email").type(testEmail);
-  //   cy.get("#password").type(testPassword);
-  //   cy.get('button[type="submit"]').click();
-
-  //   // Check if redirected to home page
-  //   cy.url().should("include", "/");
-
-  //   cy.contains(".nav-item", "Flash Cards", { timeout: 10_000 }).click();
-  //   cy.reload();
-  //   cy.reload();
-  //   cy.get("#showQList").click();
-  //   cy.get("#cardList").filter(":visible").should("not.exist");
-  // });
-
-  // it("should filter by card set", () => {
-  //   cy.visit("http://localhost:8080/#/login");
-
-  //   cy.get("#email").type(testEmail);
-  //   cy.get("#password").type(testPassword);
-  //   cy.get('button[type="submit"]').click();
-
-  //   // Check if redirected to home page
-  //   cy.url().should("include", "/");
-
-  //   cy.contains(".nav-item", "Flash Cards", { timeout: 10_000 }).click();
-  //   cy.reload();
-  //   cy.reload();
-  //   cy.get("#filterCardGroup").select("Group2");
-  //   cy.get("#currFlashcard").should("have.text", "unique question 2");
-  //   cy.get("#filterCardGroup").select("Group1");
-  //   cy.get("#currFlashcard").should("have.text", "unique question 1");
-  // });
-  //class="col btn btn-light flash-card flash-card-ui border text-center text-truncate"
 });
