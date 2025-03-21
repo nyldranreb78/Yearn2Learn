@@ -12,25 +12,30 @@
 
         <div class="row align-items-start">
           <button
+            id="turnLeft"
             type="button"
             class="col-auto btn btn-light flash-card-ui fs-4 text-muted"
-            @click="flashcardIndex--"
             :disabled="!filteredList.length"
+            @click="flashcardIndex--"
           >
             <i class="bi bi-caret-left-fill" />
           </button>
 
           <button
+            id="currFlashcard"
             class="col btn btn-light flash-card flash-card-ui border text-center text-truncate"
-            @click="showAnswer = !showAnswer"
             :disabled="!filteredList.length"
+            @click="showAnswer = !showAnswer"
           >
-            <div v-if="filteredList.length" class="my-auto">
+            <div
+              v-if="filteredList.length"
+              class="my-auto"
+            >
               <h4 v-if="showAnswer">
                 {{ filteredList[flashcardIndex].answer }}
               </h4>
               <h4 v-else>
-                {{ filteredList[flashcardIndex].question  }}
+                {{ filteredList[flashcardIndex].question }}
               </h4>
             </div>
 
@@ -40,10 +45,11 @@
           </button>
 
           <button
+            id="turnRight"
             type="button"
             class="col-auto btn btn-light flash-card-ui fs-4 text-muted"
-            @click="flashcardIndex++"
             :disabled="!filteredList.length"
+            @click="flashcardIndex++"
           >
             <i class="bi bi-caret-right-fill" />
           </button>
@@ -64,6 +70,7 @@
                 <div class="col-12 mt-2">
                   <label><small>Question</small></label>
                   <textarea
+                    id="questionInput"
                     v-model="flashcardData.question"
                     rows="2"
                     type="text"
@@ -75,6 +82,7 @@
                 <div class="col-12 mt-2">
                   <label><small>Answer</small></label>
                   <textarea
+                    id="answerInput"
                     v-model="flashcardData.answer"
                     rows="3"
                     type="text"
@@ -101,7 +109,7 @@
                         </option>
                         <option
                           v-for="setName in flashcardSetList"
-                          v-bind:key="setName"
+                          :key="setName"
                         >
                           {{ setName }}
                         </option>
@@ -115,6 +123,7 @@
                   class="col-12 mt-2"
                 >
                   <input
+                    id="newFlashcardSet"
                     v-model="setInput"
                     type="text"
                     class="form-control form-control-sm"
@@ -129,9 +138,18 @@
               <div class="row">
                 <div class="col">
                   <label><small>Filter by Flashcard Set</small></label>
-                  <select class="form-select form-select-sm" v-model="setNameFilter">
-                    <option value>All</option>
-                    <option v-for="setName in flashcardSetList" v-bind:key="setName" :value="setName">
+                  <select
+                    v-model="setNameFilter"
+                    class="form-select form-select-sm"
+                  >
+                    <option value>
+                      All
+                    </option>
+                    <option
+                      v-for="setName in flashcardSetList"
+                      :key="setName"
+                      :value="setName"
+                    >
                       {{ setName }}
                     </option>
                   </select>
@@ -176,6 +194,7 @@
 
               <div class="col-12 mt-2">
                 <button
+                  id="createFlashcard"
                   type="button"
                   class="btn btn-sm btn-primary w-100"
                   @click="showForm = true"
@@ -201,6 +220,7 @@
 
               <div class="col ps-0">
                 <button
+                  id="createOrSaveChanges"
                   type="submit"
                   form="flashcard_form"
                   class="btn btn-sm w-100"
@@ -237,15 +257,24 @@
 
         <div
           v-show="showQuestionList && filteredList.length"
+          id="cardList"
           class="row card"
         >
-          <div class="col">
+          <div
+            id="cardList"
+            class="col"
+          >
             <div
               v-for="flashcard in filteredList"
+              id="cardList"
               :key="flashcard._id"
               class="row border-bottom p-2"
             >
-              <div v-if="!isDeleteMode || flashcard !== currentFlashcard" class="col-3 border-end">
+              <div
+                v-if="!isDeleteMode || flashcard !== currentFlashcard"
+                id="cardList"
+                class="col-3 border-end"
+              >
                 {{ flashcard.question }}
               </div>
 
@@ -254,7 +283,9 @@
                   <small class="text-danger"><i>Are you sure you want to delete this question? This is irreversible!</i></small>
                 </div>
 
-                <div v-else>{{ flashcard.answer }}</div>
+                <div v-else>
+                  {{ flashcard.answer }}
+                </div>
               </div>
 
               <div class="col-auto text-end pe-0">
@@ -290,8 +321,20 @@
                 </ul>
 
                 <div v-show="isDeleteMode && flashcard === currentFlashcard">
-                  <button type="button" class="btn btn-sm btn-secondary me-2" @click="isDeleteMode = false">Keep</button>
-                  <button type="button" class="btn btn-sm btn-danger" @click="deleteFlashcard()">Confirm Deletion</button>
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-secondary me-2"
+                    @click="isDeleteMode = false"
+                  >
+                    Keep
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-danger"
+                    @click="deleteFlashcard()"
+                  >
+                    Confirm Deletion
+                  </button>
                 </div>
               </div>
             </div>

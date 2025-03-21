@@ -5,7 +5,7 @@ on:
     branches:
       - develop
       - staging
-  #workflow_dispatch:
+
   #pull_request:
     #branches: ["main"]
   
@@ -72,6 +72,22 @@ jobs:
         run: npm run build --if-present
       - working-directory: ./client
         run: npm test
+      
+      - working-directory: ./server
+        run: npm start &
+      #- working-directory: ./client
+        #run: npm run serve &
+      #- working-directory: ./client
+        #run: npm run cypress:run
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: ./client
+          #run: npm run cypress:run
+          build: npm run build 
+          start: npm start
+          wait-on: http://localhost:8080/
+          
       - working-directory: ./server
         run: npm test
         #should trigger the cd pipeline
