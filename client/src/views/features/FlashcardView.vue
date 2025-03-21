@@ -269,11 +269,13 @@
               id="cardList"
               :key="flashcard._id"
               class="row border-bottom p-2"
+              :id = "'card_list_' + flashcard._id + '_view'"
             >
               <div
                 v-if="!isDeleteMode || flashcard !== currentFlashcard"
                 id="cardList"
                 class="col-3 border-end"
+                :id = "'card_list_' + flashcard._id + '_del'"
               >
                 {{ flashcard.question }}
               </div>
