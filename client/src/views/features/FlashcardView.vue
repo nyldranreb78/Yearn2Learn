@@ -14,59 +14,50 @@
           <button
             type="button"
             class="col-auto btn btn-light flash-card-ui fs-4 text-muted"
+            @click="flashcardIndex--"
           >
             <i class="bi bi-caret-left-fill" />
           </button>
 
           <button
-            class="col btn btn-light flash-card flash-card-ui border text-center"
-            @mouseenter="showAltText = true"
-            @mouseleave="showAltText = false"
+            class="col btn btn-light flash-card flash-card-ui border text-center text-truncate"
             @click="showAnswer = !showAnswer"
+            :disabled="!filteredList.length"
           >
-            <div class="my-auto">
+            <div v-if="filteredList.length" class="my-auto">
               <h4 v-if="showAnswer">
-                {{
-                  showAltText
-                    ? "Click here to see the question"
-                    : "Testing question"
-                }}
+                {{ filteredList[flashcardIndex].answer }}
               </h4>
               <h4 v-else>
-                {{
-                  showAltText
-                    ? "Click here to reveal the answer"
-                    : "Testing question"
-                }}
+                {{ filteredList[flashcardIndex].question  }}
               </h4>
+            </div>
+
+            <div v-else>
+              <i class="text-muted">Create a flashcard by clicking the "Create Flashcard" button on the right.</i>
             </div>
           </button>
 
           <button
             type="button"
             class="col-auto btn btn-light flash-card-ui fs-4 text-muted"
+            @click="flashcardIndex++"
           >
             <i class="bi bi-caret-right-fill" />
           </button>
 
           <div
             class="col-3 card ms-3 py-2"
-            :class="showForm ? 'flash-card-ui' : ''"
+            :class="showForm? 'flash-card-ui' : ''"
           >
             <h6 class="border-bottom pb-2">
-              {{
-                showForm
-                  ? isEditMode
-                    ? "Edit"
-                    : "Create New" + " Flashcard"
-                  : "Flashcard Options"
-              }}
+              {{ showForm? isEditMode? 'Edit' : 'Create New' + ' Flashcard' : 'Flashcard Options' }}
             </h6>
             <div v-show="showForm">
               <form
                 id="flashcard_form"
                 class="row g-3"
-                @submit.prevent="isEditMode ? editFlashcard() : addFlashcard()"
+                @submit.prevent="isEditMode? editFlashcard() : addFlashcard()"
               >
                 <div class="col-12 mt-2">
                   <label><small>Question</small></label>
@@ -103,23 +94,31 @@
                         class="form-select form-select-sm"
                         @change="setInput = ''"
                       >
-                        <option value>Select or create set</option>
-                        <option v-for="x in [1, 2, 3, 4, 5, 6]" :key="x">
-                          {{ "Flashcard Set #" + x }}
+                        <option value>
+                          Select or create set
+                        </option>
+                        <option
+                          v-for="setName in flashcardSetList"
+                          v-bind:key="setName"
+                        >
+                          {{ setName }}
                         </option>
                       </select>
                     </div>
                   </div>
                 </div>
 
-                <div v-show="!flashcardData.setName" class="col-12 mt-2">
+                <div
+                  v-show="!flashcardData.setName || isEditMode"
+                  class="col-12 mt-2"
+                >
                   <input
                     v-model="setInput"
                     type="text"
                     class="form-control form-control-sm"
                     placeholder="New Flashcard Set Name"
                     :required="!flashcardData.setName"
-                  />
+                  >
                 </div>
               </form>
             </div>
@@ -128,32 +127,47 @@
               <div class="row">
                 <div class="col">
                   <label><small>Filter by Flashcard Set</small></label>
-                  <select class="form-select form-select-sm">
-                    <option>Folder 1</option>
-                    <option>Folder 2</option>
+                  <select class="form-select form-select-sm" v-model="setNameFilter">
+                    <option value>All</option>
+                    <option v-for="setName in flashcardSetList" v-bind:key="setName" :value="setName">
+                      {{ setName }}
+                    </option>
                   </select>
                 </div>
               </div>
             </div>
 
-            <div v-show="!showForm" class="row mt-auto">
-              <div v-show="flashcardList.length" class="col-12 mt-2">
+            <div
+              v-show="!showForm"
+              class="row mt-auto"
+            >
+              <div
+                v-show="flashcardList.length"
+                class="col-12 mt-2"
+              >
                 <button
                   type="button"
                   class="btn btn-sm w-100"
-                  :class="showQuestionList ? 'btn-secondary' : 'btn-primary'"
+                  :class="showQuestionList? 'btn-secondary' : 'btn-primary'"
                   @click="showQuestionList = !showQuestionList"
                 >
                   <i
                     class="bi me-1"
-                    :class="showQuestionList ? 'bi-eye-slash' : 'bi-eye'"
+                    :class="showQuestionList? 'bi-eye-slash' : 'bi-eye'"
                   />
-                  {{ showQuestionList ? "Hide List" : "Show Full List" }}
+                  {{ showQuestionList? 'Hide List' : 'Show Full List' }}
                 </button>
               </div>
 
-              <div v-show="flashcardList.length" class="col-12 mt-2">
-                <button type="button" class="btn btn-sm btn-primary w-100">
+              <div
+                v-show="flashcardList.length"
+                class="col-12 mt-2"
+              >
+                <button
+                  type="button"
+                  class="btn btn-sm btn-primary w-100"
+                  @click="shuffleFlashcards()"
+                >
                   <i class="bi bi-shuffle me-1" /> Shuffle Flashcards
                 </button>
               </div>
@@ -169,7 +183,10 @@
               </div>
             </div>
 
-            <div v-show="showForm" class="row mt-auto">
+            <div
+              v-show="showForm"
+              class="row mt-auto"
+            >
               <div class="col-auto pe-1">
                 <button
                   type="button"
@@ -185,77 +202,95 @@
                   type="submit"
                   form="flashcard_form"
                   class="btn btn-sm w-100"
-                  :class="isEditMode ? 'btn-success' : 'btn-primary'"
+                  :class="isEditMode? 'btn-success' : 'btn-primary'"
                 >
                   <i
                     class="bi me-1"
-                    :class="isEditMode ? 'bi-floppy-fill' : 'bi-plus-lg'"
+                    :class="isEditMode? 'bi-floppy-fill' : 'bi-plus-lg'"
                   />
-                  {{ isEditMode ? "Save Changes" : "Create" }}
+                  {{ isEditMode? 'Save Changes' : 'Create' }}
                 </button>
               </div>
             </div>
           </div>
         </div>
 
-        <div v-show="showQuestionList" class="row mt-3">
+        <div
+          v-show="showQuestionList"
+          class="row mt-3"
+        >
           <div class="col p-0">
             <h4>Question List</h4>
           </div>
         </div>
 
-        <div v-show="!flashcardList.length" class="row">
+        <div
+          v-show="!filteredList.length"
+          class="row"
+        >
           <div class="col text-center m-4">
-            <i class="text-muted"
-              >There are no questions to show. Click on the "Create Flashcard"
-              button to add one.</i
-            >
+            <i class="text-muted">There are no questions to show. Click on the "Create Flashcard" button to add one.</i>
           </div>
         </div>
 
-        <div v-show="showQuestionList && flashcardList.length" class="row card">
+        <div
+          v-show="showQuestionList && filteredList.length"
+          class="row card"
+        >
           <div class="col">
             <div
-              v-for="flashcard in flashcardList"
+              v-for="flashcard in filteredList"
               :key="flashcard._id"
               class="row border-bottom p-2"
             >
-              <div class="col-3">
+              <div v-if="!isDeleteMode || flashcard !== currentFlashcard" class="col-3 border-end">
                 {{ flashcard.question }}
               </div>
 
-              <div class="col border-start">
-                {{ flashcard.answer }}
+              <div class="col">
+                <div v-if="isDeleteMode && flashcard === currentFlashcard">
+                  <small class="text-danger"><i>Are you sure you want to delete this question? This is irreversible!</i></small>
+                </div>
+
+                <div v-else>{{ flashcard.answer }}</div>
               </div>
 
               <div class="col-auto text-end pe-0">
                 <button
+                  v-show="!isDeleteMode || flashcard !== currentFlashcard"
                   type="button"
                   class="btn btn-sm shadow-none border-0 note-menu"
                   data-bs-toggle="dropdown"
-                  @click="currentFlashcard = flashcard"
                 >
                   <i class="bi bi-three-dots-vertical" />
                 </button>
 
                 <ul class="dropdown-menu py-1">
                   <li>
-                    <a class="dropdown-item px-2" @click="showEditForm()">
+                    <a
+                      class="dropdown-item px-2"
+                      @click="showEditForm(flashcard)"
+                    >
                       Edit
                     </a>
                   </li>
 
-                  <li><hr class="dropdown-divider my-1" /></li>
+                  <li><hr class="dropdown-divider my-1"></li>
 
                   <li>
                     <a
                       class="dropdown-item px-2 text-danger"
-                      @click="deleteFlashcard()"
+                      @click="showDeleteMode(flashcard)"
                     >
                       Delete
                     </a>
                   </li>
                 </ul>
+
+                <div v-show="isDeleteMode && flashcard === currentFlashcard">
+                  <button type="button" class="btn btn-sm btn-secondary me-2" @click="isDeleteMode = false">Keep</button>
+                  <button type="button" class="btn btn-sm btn-danger" @click="deleteFlashcard()">Confirm Deletion</button>
+                </div>
               </div>
             </div>
           </div>
@@ -266,18 +301,23 @@
 </template>
 
 <script setup lang="js">
-import { ref, reactive, computed, onMounted } from 'vue';
+import { ref, reactive, watch, computed } from 'vue';
 import { useCoreStore } from '@/store/core';
 
 const coreStore = useCoreStore();
 
 const showAnswer = ref(false);
-const showAltText = ref(false);
 const showQuestionList = ref(true);
 const showForm = ref(false);
-const isEditMode = ref(false);
 
-const currentFlashcard = ref(null);
+const isEditMode = ref(false);
+const isDeleteMode = ref(false);
+const isShuffleMode = ref(false);
+
+const currentFlashcard = ref("");
+const setNameFilter = ref("")
+const flashcardIndex = ref(0);
+
 const setInput = ref("")
 const flashcardData = reactive({
   setName: "",
@@ -285,16 +325,58 @@ const flashcardData = reactive({
   answer: ""
 });
 
-const flashcardList = computed(() => {
-  return coreStore.flashcards;
-});
-
-onMounted(async () => {
-  await coreStore.fetchFlashcards();
-  if (flashcardList.value.length) {
-    currentFlashcard.value = flashcardList.value[0];
+watch(setInput, (newValue) => {
+  if(newValue){
+    flashcardData.setName = '';
   }
 });
+
+watch(setNameFilter, (newValue) => {
+  if(newValue && filteredList.value.length){
+    flashcardIndex.value = 0;
+  }
+});
+
+watch(flashcardIndex, (newValue) => {
+  if(newValue){
+    if(newValue < 0){
+      flashcardIndex.value = filteredList.value.length - 1;
+    }
+    else{
+      flashcardIndex.value = newValue % filteredList.value.length;
+    }
+  }
+});
+
+const flashcardList = computed(() => {
+  return coreStore.flashcards;
+})
+
+// Find all the known setNames from all flashcards and put them in an array
+// then make a Set out of it to essentially remove duplicates,
+// then convert it to an array again
+const flashcardSetList = computed(() => {
+  return [...new Set(flashcardList.value.map(set => set.setName))];
+})
+
+const filteredList = computed(() => {
+  let list = []
+  
+  if(setNameFilter.value){
+    list = flashcardList.value.filter((flashcard) => {
+      return flashcard.setName === setNameFilter.value;
+    })
+  }
+  else {
+    list = flashcardList.value;
+  }
+  
+  if(isShuffleMode.value){
+    list = list.sort(() => 0.5 - Math.random());
+  }
+
+  return list;
+})
 
 async function addFlashcard(){
     const newFlashcard = {
@@ -325,10 +407,14 @@ async function editFlashcard(){
 async function deleteFlashcard(){
     await coreStore.deleteFlashcard(currentFlashcard.value._id);
 
-    currentFlashcard.value = flashcardList.value.length? flashcardList.value[0] : null;
+    isDeleteMode.value = false;
+    flashcardIndex.value = 0;
+    currentFlashcard.value = flashcardList.value.length? flashcardList.value[0] : "";
 }
 
-async function showEditForm(){
+async function showEditForm(flashcard){
+  currentFlashcard.value = flashcard;
+  
   setInput.value = "";
   flashcardData.setName = currentFlashcard.value.setName;
   flashcardData.question = currentFlashcard.value.question;
@@ -340,23 +426,41 @@ async function showEditForm(){
   document.body.scrollTop = document.documentElement.scrollTop = 0;
 }
 
+async function showDeleteMode(flashcard){
+  resetFlashcardData();
+  
+  currentFlashcard.value = flashcard;
+  isDeleteMode.value = true;
+}
+
 async function resetFlashcardData() {
+  setNameFilter.value = "";
   setInput.value = "";
+
   flashcardData.setName = "";
   flashcardData.question = "";
   flashcardData.answer = "";
 
   showForm.value = false;
   isEditMode.value = false;
+  isDeleteMode.value = false;
+}
+
+// Trigger the shuffle logic in the filteredList (computed) logic
+// Flipping the values twice allows it to be "noticed" by the
+// computed function
+async function shuffleFlashcards() {
+  isShuffleMode.value = false;
+  isShuffleMode.value = true;
 }
 </script>
 
 <style>
-.flash-card-ui {
+.flash-card-ui{
   height: 400px;
 }
 
-.flash-card {
+.flash-card{
   background-color: white;
   border-color: #d2d2d2 !important;
 }
