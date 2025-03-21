@@ -169,7 +169,7 @@ export const useCoreStore = defineStore("core", {
                     folderID: taskData.folderID,
                     taskGrade: taskData.taskGrade,
                     actualGrade: taskData.actualGrade,
-                    isFinished: false
+                    isFinished: taskData.isFinished
                 }
 
                 const response = await this.authStore.createTask(newTask);

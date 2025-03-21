@@ -3,6 +3,7 @@
     <div class="row justify-content-md-center mt-4">
       <div class="col-8">
         <div class="row">
+          <!--Task List-->
           <div class="col-9 pe-3">
             <div class="row">
               <div class="col text-start">
@@ -77,7 +78,9 @@
             </div>
           </div>
 
+          <!--Task Details and Class Progress-->
           <div class="col-3 bg-transparent">
+            <!--Task Details Card-->
             <div class="card">
               <div class="card-header pe-2">
                 <div class="row">
@@ -164,6 +167,7 @@
               </div>
             </div>
 
+            <!--Class Progress Card-->
             <div class="card mt-3">
               <div class="card-header pe-2">
                 <div class="row">
@@ -181,7 +185,12 @@
                       v-model="currentClass"
                       class="form-select"
                     >
-                      <option value disabled>Select</option>
+                      <option
+                        value
+                        disabled
+                      >
+                        Select
+                      </option>
                       <option
                         v-for="folder in classList"
                         :key="folder._id"
@@ -193,9 +202,20 @@
                   </div>
                 </div>
                 
-                <div v-if="classTasks.ungraded.length" class="mt-4">
-                  <div class="row border-bottom pb-0 mb-2"><div class="col">Pending Tasks</div></div>
-                  <div class="row" v-for="task in classTasks.ungraded" v-bind:key="task._id">
+                <div
+                  v-if="classTasks.ungraded.length"
+                  class="mt-4"
+                >
+                  <div class="row border-bottom pb-0 mb-2">
+                    <div class="col">
+                      Pending Tasks
+                    </div>
+                  </div>
+                  <div
+                    v-for="task in classTasks.ungraded"
+                    :key="task._id"
+                    class="row"
+                  >
                     <div class="col-6 text-truncate">
                       <button
                         type="button"
@@ -212,10 +232,21 @@
                   </div>
                 </div>
 
-                <div v-if="classTasks.graded.length" class="mt-4">
-                  <div class="row border-bottom pb-0 mb-2"><div class="col">Graded Tasks</div></div>
+                <div
+                  v-if="classTasks.graded.length"
+                  class="mt-4"
+                >
+                  <div class="row border-bottom pb-0 mb-2">
+                    <div class="col">
+                      Graded Tasks
+                    </div>
+                  </div>
 
-                  <div class="row" v-for="task in classTasks.graded" v-bind:key="task._id">
+                  <div
+                    v-for="task in classTasks.graded"
+                    :key="task._id"
+                    class="row"
+                  >
                     <div class="col-6 text-truncate">
                       <button
                         type="button"
@@ -232,7 +263,9 @@
                   </div>
 
                   <div class="row mt-4">
-                    <div class="col-6"><b>TOTAL:</b></div>
+                    <div class="col-6">
+                      <b>TOTAL:</b>
+                    </div>
                     <div class="col-6">
                       {{ totalActualGrade + ' / ' + totalTaskGrade + ' (' + (averageGrade) + ')' }}
                     </div>
@@ -246,6 +279,7 @@
     </div>
   </div>
 
+  <!--Due to the nature of Bootstrap modals, this has to be close to the outermost HTML tag-->
   <div
     id="add_edit_task_form"
     class="modal fade"
@@ -476,6 +510,7 @@ onBeforeMount ( async () => {
 	await useCoreStore().fetchTasks();
 })
 
+// Form Data
 const taskData = reactive({
     name: "",
     deadline: null,
@@ -484,6 +519,7 @@ const taskData = reactive({
     actualGrade: null
 })
 
+// Some logic to enforce values between taskGrade and actualGrade
 watch(taskData, (newValue) => {
     if (newValue) {
         // Enforce that the grade received (actualGrade) is always lower than the taskGrade
@@ -510,6 +546,7 @@ watch(taskData, (newValue) => {
     }
 })
 
+// Update the currentClass when currentTask is updated
 watch(currentTask, (newValue) => {
     if (newValue) {
       currentClass.value = classList.value.find(classFolder => {
@@ -539,6 +576,7 @@ const classTasks = computed(() => {
   }
 
   if(currentClass.value){
+    // Get graded tasks for the current class
     let tasks = taskList.value.filter((task) => {
       return task.taskGrade != null && task.folderID === currentClass.value._id;
     })

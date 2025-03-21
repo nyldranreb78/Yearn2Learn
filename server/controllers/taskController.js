@@ -42,7 +42,7 @@ async function create(req, res){
             name: req.body.name,
             taskGrade: req.body.taskGrade,
             deadline: req.body.deadline,
-            isFinished: false
+            isFinished: req.body.isFinished
         });
 
         task.author = user._id;
