@@ -55,8 +55,9 @@ describe("Integration Tests - Frontend + Backend", () => {
         cy.get(".accordion-item").first().click();
         cy.contains("Create new note").click();
         cy.get("#noteTitle").type("Test Note Title");
-        cy.wait(500);
-        cy.get('#submitNoteButton').click();
+        cy.wait(500).then(() => {
+            cy.get('#submitNoteButton').click();
+        });
         cy.contains("Test Note Title").should("exist");
         cy.get('.bi-arrow-left').first().click();
     });
@@ -68,8 +69,10 @@ describe("Integration Tests - Frontend + Backend", () => {
         cy.get(".accordion-item").first().click();
         cy.get(".note-menu").click();
         cy.contains("Delete").click();
-        cy.wait(500); // Wait a little bit so that the modal can be closed 
-        cy.get("button").contains("Delete").click();
+        cy.wait(500).then(() => {
+            cy.get("button").contains("Delete").click();
+        }) // Wait a little bit so that the modal can be closed 
+        
     });
 
     // Delete the all the folders
@@ -81,8 +84,9 @@ describe("Integration Tests - Frontend + Backend", () => {
         cy.get('.bi-trash3-fill').each(($trashIcon) => {
             cy.wrap($trashIcon).click();
             // cy.pause();
-            cy.wait(1000);
-            cy.get('#delete_form button').contains("Delete").click();
+            cy.wait(1000).then(() => {
+                cy.get('#delete_form button').contains("Delete").click();
+            });
         });
         
         cy.get('.bi-trash3-fill').should("not.exist");
