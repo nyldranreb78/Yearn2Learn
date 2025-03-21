@@ -77,7 +77,7 @@ jobs:
         with:
           working-directory: ./client
           build: npm run build 
-          start: npm cypress:run
+          start: npm run cypress:run
           
       - working-directory: ./server
         run: npm test
