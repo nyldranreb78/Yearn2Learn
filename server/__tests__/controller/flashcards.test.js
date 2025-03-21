@@ -4,6 +4,7 @@ const {
   createFlashcard,
   updateFlashcard,
   deleteFlashcard,
+  getFlashcardsBySetName,
 } = require("../../controllers/flashcardController");
 
 const Flashcard = require("../../models/flashcards");
@@ -17,7 +18,7 @@ describe("Flashcard Controller", () => {
 
   beforeEach(() => {
     req = {
-      params: { id: "validFlashcardID" },
+      params: { id: "validFlashcardID", setName: "JavaScript Basics" },
       body: {
         question: "New Question",
         answer: "New Answer",
@@ -141,7 +142,9 @@ describe("Flashcard Controller", () => {
     const mockUserID = "validUserID";
 
     auth.getUserID.mockReturnValue(mockUserID);
-    Flashcard.prototype.save = jest.fn().mockRejectedValue(new Error("Database error"));
+    Flashcard.prototype.save = jest
+      .fn()
+      .mockRejectedValue(new Error("Database error"));
 
     await createFlashcard(req, res);
 
@@ -201,5 +204,51 @@ describe("Flashcard Controller", () => {
 
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith({ message: "Flashcard not found" });
+  });
+
+  // Getting flashcards with a missing setName
+  it("should return 400 if setName is missing", async () => {
+    req.params.setName = "";
+
+    auth.getUserID.mockReturnValue("validUserID");
+
+    await getFlashcardsBySetName(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "setName is required",
+    });
+  });
+
+  // Getting flashcards with a setName
+  it("should return 200 with flashcards if found", async () => {
+    auth.getUserID.mockReturnValue("validUserID");
+
+    const mockFlashcards = [
+      { _id: "1", question: "What is JS?", answer: "JavaScript" },
+      { _id: "2", question: "What is Node.js?", answer: "Runtime for JS" },
+    ];
+    Flashcard.find.mockResolvedValue(mockFlashcards);
+
+    await getFlashcardsBySetName(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      flashcards: mockFlashcards,
+    });
+  });
+
+  // No flashcards for a particular setName
+  it("should return 404 if no flashcards are found", async () => {
+    auth.getUserID.mockReturnValue("validUserID");
+
+    Flashcard.find.mockResolvedValue(null);
+
+    await getFlashcardsBySetName(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Flashcards not found",
+    });
   });
 });

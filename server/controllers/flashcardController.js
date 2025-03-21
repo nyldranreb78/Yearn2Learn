@@ -41,6 +41,27 @@ async function getUserFlashcards(req, res) {
   }
 }
 
+// Get a single flashcard by ID
+async function getFlashcard(req, res) {
+  try {
+    const id = auth.getUserID(req);
+    if (!(await verifyID(id, res))) return;
+
+    const flashcard = await Flashcard.findById(req.params.id);
+    if (!flashcard) {
+      return res.status(404).json({ message: "Flashcard not found" });
+    }
+
+    if (flashcard.author.toString() !== id) {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
+
+    return res.status(200).json(flashcard);
+  } catch (error) {
+    return res.status(500).json({ message: "Error fetching flashcard" });
+  }
+}
+
 // Create a new flashcard
 async function createFlashcard(req, res) {
   try {
@@ -146,12 +167,37 @@ async function getFlashcardsBySetName(req, res) {
   }
 }
 
+// shuffle flashcards
+async function shuffleFlashcards(req, res) {
+  try {
+    const id = auth.getUserID(req);
+    if (!(await verifyID(id, res))) return;
+
+    const flashcardCount = await Flashcard.countDocuments({ author: id });
+
+    if (flashcardCount === 0) {
+      return res.status(404).json({ message: "No flashcards found" });
+    }
+
+    const flashcards = await Flashcard.aggregate([
+      { $match: { author: id } },
+      { $sample: { size: Math.min(flashcardCount, 10) } },
+    ]);
+
+    return res.status(200).json({ flashcards: flashcards });
+  } catch (error) {
+    return res.status(500).json({ message: "Error shuffling flashcards" });
+  }
+}
+
 module.exports = {
   verifyID,
   index,
   getUserFlashcards,
+  getFlashcard,
   createFlashcard,
   updateFlashcard,
   deleteFlashcard,
   getFlashcardsBySetName,
+  shuffleFlashcards,
 };
