@@ -85,7 +85,7 @@ describe("Flashcard Controller", () => {
   });
 
   // Get flashcards for logged-in user
-  it("should return flashcards sorted for logged-in user", async () => {
+  it("should return flashcards for logged-in user", async () => {
     const mockFlashcards = [
       {
         question: "What is JavaScript?",
