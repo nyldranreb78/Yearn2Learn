@@ -91,7 +91,6 @@ describe("Integration Tests - Backend + Database", () => {
     let testPassword = "test345";
     let testFolderId;
     let authToken;
-    let testNoteId;
 
     beforeEach(() => {
         cy.request({
