@@ -71,7 +71,7 @@ jobs:
       - working-directory: ./server
         run: npm run build --if-present
       - working-directory: ./client
-        run: npm test && npm cypress:run
+        run: npm test && npm run cypress:run
       - working-directory: ./server
         run: npm test
         #should trigger the cd pipeline
