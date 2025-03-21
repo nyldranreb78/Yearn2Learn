@@ -19,12 +19,6 @@ const folderSchema = new mongoose.Schema({
       ref: "note",
     },
   ],
-  flashcards: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "flashcards",
-    },
-  ],
 });
 
 folderSchema.set("timestamps", true);

@@ -4,22 +4,21 @@ const {
   createFlashcard,
   updateFlashcard,
   deleteFlashcard,
+  getFlashcardsBySetName,
 } = require("../../controllers/flashcardController");
 
-const Folder = require("../../models/folder");
 const Flashcard = require("../../models/flashcards");
 const auth = require("../../middleware/auth-service");
 
 jest.mock("../../middleware/auth-service");
 jest.mock("../../models/flashcards");
-jest.mock("../../models/folder");
 
 describe("Flashcard Controller", () => {
   let req, res;
 
   beforeEach(() => {
     req = {
-      params: { id: "validFlashcardID" },
+      params: { id: "validFlashcardID", setName: "JavaScript Basics" },
       body: {
         question: "New Question",
         answer: "New Answer",
@@ -55,6 +54,7 @@ describe("Flashcard Controller", () => {
         question: "MEVN?",
         answer: "Mongo, Express, Vue, Node",
         author: mockID,
+        setName: "Tech",
       },
     ];
 
@@ -87,7 +87,11 @@ describe("Flashcard Controller", () => {
   // Get flashcards for logged-in user
   it("should return flashcards sorted for logged-in user", async () => {
     const mockFlashcards = [
-      { question: "What is JavaScript?", answer: "A programming language" },
+      {
+        question: "What is JavaScript?",
+        answer: "A programming language",
+        setName: "Coding",
+      },
     ];
     auth.getUserID.mockReturnValue("validUserID");
     Flashcard.find.mockReturnValue({
@@ -117,22 +121,15 @@ describe("Flashcard Controller", () => {
 
   // Create a flashcard
   it("should create a flashcard successfully", async () => {
-    const mockFolderID = "validFolderID";
     const mockUserID = "validUserID";
 
-    req.params = { folderID: mockFolderID };
-    req.body = { question: "New Question", answer: "New Answer" };
     auth.getUserID.mockReturnValue(mockUserID);
-
-    const mockFolder = {
-      _id: mockFolderID,
+    Flashcard.prototype.save = jest.fn().mockResolvedValue({
+      question: "New Question",
+      answer: "New Answer",
+      setName: "Tech",
       author: mockUserID,
-      flashcards: [],
-      save: jest.fn(),
-    };
-    Folder.findById.mockResolvedValue(mockFolder);
-
-    Flashcard.prototype.save = jest.fn().mockResolvedValue();
+    });
 
     await createFlashcard(req, res);
 
@@ -142,21 +139,9 @@ describe("Flashcard Controller", () => {
 
   // Handle error when creating a flashcard
   it("should return 500 if flashcard creation fails", async () => {
-    const mockFolderID = "validFolderID";
     const mockUserID = "validUserID";
 
-    req.params = { folderID: mockFolderID };
-    req.body = { question: "New Question", answer: "New Answer" };
     auth.getUserID.mockReturnValue(mockUserID);
-
-    const mockFolder = {
-      _id: mockFolderID,
-      author: mockUserID,
-      flashcards: [],
-      save: jest.fn(),
-    };
-    Folder.findById = jest.fn().mockResolvedValue(mockFolder);
-
     Flashcard.prototype.save = jest
       .fn()
       .mockRejectedValue(new Error("Database error"));
@@ -219,5 +204,51 @@ describe("Flashcard Controller", () => {
 
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith({ message: "Flashcard not found" });
+  });
+
+  // Getting flashcards with a missing setName
+  it("should return 400 if setName is missing", async () => {
+    req.params.setName = "";
+
+    auth.getUserID.mockReturnValue("validUserID");
+
+    await getFlashcardsBySetName(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "setName is required",
+    });
+  });
+
+  // Getting flashcards with a setName
+  it("should return 200 with flashcards if found", async () => {
+    auth.getUserID.mockReturnValue("validUserID");
+
+    const mockFlashcards = [
+      { _id: "1", question: "What is JS?", answer: "JavaScript" },
+      { _id: "2", question: "What is Node.js?", answer: "Runtime for JS" },
+    ];
+    Flashcard.find.mockResolvedValue(mockFlashcards);
+
+    await getFlashcardsBySetName(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      flashcards: mockFlashcards,
+    });
+  });
+
+  // No flashcards for a particular setName
+  it("should return 404 if no flashcards are found", async () => {
+    auth.getUserID.mockReturnValue("validUserID");
+
+    Flashcard.find.mockResolvedValue(null);
+
+    await getFlashcardsBySetName(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Flashcards not found",
+    });
   });
 });
