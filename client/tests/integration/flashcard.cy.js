@@ -3,9 +3,7 @@ describe("Integration Tests - Frontend + Backend", () => {
   let testPassword = "1";
 
   
-
-  // User Login Test via UI - successful
-  it("should log in through the UI and redirect to homepage", () => {
+  it("we should be able to access the flashcards from the homepage (from features section)", () => {
     cy.visit("http://localhost:8080/#/login");
 
     cy.get("#email").type(testEmail);
@@ -14,10 +12,6 @@ describe("Integration Tests - Frontend + Backend", () => {
 
     // Check if redirected to home page
     cy.url().should("include", "/");
-  });
-  it("we should be able to access the flashcards from the homepage (from features section)", () => {
-    cy.visit("http://localhost:8080/#/");
-    //cy.wait(2500);
     
     cy.contains('.card','Flash Cards', {timeout:10_000}).click()
     //cy.wait(2500);
@@ -25,7 +19,15 @@ describe("Integration Tests - Frontend + Backend", () => {
     //cy.get('.card-body').should('have.attr', 'href').and('include', '#/flashcards');
   });
   it("we should be able to access the flashcards from the homepage (from widgetbar)", () => {
-    cy.visit("http://localhost:8080/#/");
+    cy.visit("http://localhost:8080/#/login");
+
+    cy.get("#email").type(testEmail);
+    cy.get("#password").type(testPassword);
+    cy.get('button[type="submit"]').click();
+
+    // Check if redirected to home page
+    cy.url().should("include", "/");
+    
     //cy.wait(2500);
     cy.contains('.nav-item','Flash Cards', {timeout:10_000}).click()
    
