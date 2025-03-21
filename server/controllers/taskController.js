@@ -41,8 +41,9 @@ async function create(req, res){
             folderID: req.body.folderID ? req.body.folderID : null,
             name: req.body.name,
             taskGrade: req.body.taskGrade,
+            actualGrade: req.body.actualGrade,
             deadline: req.body.deadline,
-            isFishished: false
+            isFinished: req.body.isFinished
         });
 
         task.author = user._id;
@@ -99,7 +100,7 @@ async function update(req, res){
         task.taskGrade = req.body.taskGrade ? req.body.taskGrade : task.taskGrade;
         task.actualGrade = req.body.actualGrade ? req.body.actualGrade : task.actualGrade;
         task.deadline = req.body.deadline ? req.body.deadline : task.deadline;
-        task.isFishished = req.body.isFishished ? req.body.isFinished : task.isFishished;
+        task.isFinished = req.body.isFinished ? req.body.isFinished : task.isFinished;
 
         await task.save();
         return res.status(200).json({ task: task });
@@ -132,4 +133,18 @@ async function remove(req, res){
     }
 };
 
-module.exports = { index, create, show, update, remove };
+async function removeAll(req, res){
+    try {
+        const id = auth.getUserID(req);
+
+        if (!(await verifyID(id, res))) return;
+
+        await Task.deleteMany({ author: id });
+
+        return res.status(200).json({ message: 'All tasks deleted' });
+    } catch (err) {
+        return res.status(500).json({ message: err.message });
+    }
+}
+
+module.exports = { index, create, show, update, remove, removeAll };

@@ -80,7 +80,7 @@
             <li>
               <div>
                 <DynamicTimer
-                  class="z-3"
+                  class="z-5"
                   @time-up="(n) => timerNotification(n)"
                 />
               </div>
@@ -144,7 +144,7 @@
     </div>
   </nav>
    
-  <div class="d-flex justify-content-end fixed-top navbar-offset z-0">
+  <div class="d-flex justify-content-end fixed-top navbar-offset z-4">
     <div
       id="timerAlert"
       :class="'toast align-items-center border-0 mt-3 me-4 text-bg-' + toastColor"

@@ -172,4 +172,29 @@ async function remove(req, res) {
     }
 }
 
-module.exports = { index, create, show, update, remove }
+async function removeAll(req, res) {
+    const id = auth.getUserID(req)
+
+    if (!(await verifyID(id, res))) return;
+
+    try {
+        const folders = await Folder.find({author: id})
+
+        if (!folders) 
+            return res.status(404).json({message: 'Folders not found'})
+
+        for (let i = 0; i < folders.length; i++) {
+            const folder = folders[i]
+            await Note.deleteMany({_id: {$in: folder.notes}})
+            await folder.deleteOne({_id: folder._id})
+        }
+
+        return res.status(200).json({message: 'All folders deleted'})
+    }
+    catch (err)
+    {
+        return res.status(500).json({message: err.message})
+    }
+}
+
+module.exports = { index, create, show, update, remove, removeAll }

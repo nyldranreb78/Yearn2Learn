@@ -18,4 +18,7 @@ router.patch('/:id', auth.verifyToken, controller.update)
 // Delete a specific goal
 router.delete('/:id', auth.verifyToken, controller.remove)
 
+// Delete all goals
+router.post('/delete-all-tasks', auth.verifyToken, controller.removeAll)
+
 module.exports = router
