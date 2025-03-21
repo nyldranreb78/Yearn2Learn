@@ -10,7 +10,7 @@
     "test:integration": "vue-cli-service test:integration",
     "test": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
-    "start": "node main",
+    "start": "npm run lint -- --fix && vue-cli-service serve",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run"
   },

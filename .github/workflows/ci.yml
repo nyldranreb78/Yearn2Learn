@@ -75,12 +75,18 @@ jobs:
       
       - working-directory: ./server
         run: npm start &
+      - working-directory: ./client
+        run: npm run serve &
+      #- working-directory: ./client
+        #run: npm run cypress:run
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
           working-directory: ./client
+          #run: npm run cypress:run
           build: npm run build 
           start: npm start
+          wait-on: http://localhost:8080/
           
       - working-directory: ./server
         run: npm test
