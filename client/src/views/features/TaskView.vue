@@ -55,7 +55,7 @@
               <button
                 type="button"
                 class="btn text-start"
-                :class="task?._id === priorityTask?._id? 'btn-warning' : 'btn-light'"
+                :class="task?._id === priorityTask?._id? 'btn-warning shadow-none' : 'btn-light'"
                 @click="currentTask = task"
               >
                 <div class="row">
