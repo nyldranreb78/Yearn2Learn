@@ -74,8 +74,8 @@ describe("Integration Tests - Frontend + Backend", () => {
         
     });
 
-    // Delete the all the folders
-    it("should delete all folders", () => {
+    // Delete one folder
+    it("should delete one folders", () => {
         cy.visit("/#/notes");
 
         cy.get('.btn-circle').first().click();
@@ -91,6 +91,7 @@ describe("Integration Tests - Backend + Database", () => {
     let testPassword = "test345";
     let testFolderId;
     let authToken;
+    let testNoteId;
 
     beforeEach(() => {
         cy.request({
@@ -104,8 +105,23 @@ describe("Integration Tests - Backend + Database", () => {
         });
     });
 
-    // Create a new folder with authorization
-    it("should add a new folder", () => {
+    // Create a new folder with note in it with authorization
+    it("should add a new folder with note", () => {
+        // Create a new note
+        cy.request({
+            method: "POST",
+            url: "http://localhost:3000/api/note/create",
+            headers: {
+                Authorization: `Bearer ${authToken}`,
+            },
+            body: { title: "Test Note Title", content: "Test Note Content" },
+            failOnStatusCode: false,
+        }).then((response) => {
+            expect(response.status).to.eq(201);
+            expect(response.body).to.have.property("note");
+            testNoteId = response.body.note._id;
+        });
+        // Create a new folder
         cy.request({
             method: "POST",
             url: "http://localhost:3000/api/folder/create",
@@ -115,6 +131,7 @@ describe("Integration Tests - Backend + Database", () => {
             body: { name: "Test Folder" },
             failOnStatusCode: false,
         }).then((response) => {
+            console.log(response.body);
             expect(response.status).to.eq(201);
             expect(response.body).to.have.property("folder");
         });
@@ -160,6 +177,7 @@ describe("Integration Tests - Backend + Database", () => {
             },
             body: { name: "Updated Test Folder" },
         }).then((response) => {
+            console.log(response.body);
             expect(response.status).to.eq(200);
             expect(response.body).to.have.property("folder");
         });
