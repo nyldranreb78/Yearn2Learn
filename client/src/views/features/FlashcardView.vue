@@ -15,6 +15,7 @@
             type="button"
             class="col-auto btn btn-light flash-card-ui fs-4 text-muted"
             @click="flashcardIndex--"
+            :disabled="!filteredList.length"
           >
             <i class="bi bi-caret-left-fill" />
           </button>
@@ -34,7 +35,7 @@
             </div>
 
             <div v-else>
-              <i class="text-muted">Create a flashcard by clicking the "Create Flashcard" button on the right.</i>
+              <i>Create a flashcard by clicking the "Create Flashcard" button on the right.</i>
             </div>
           </button>
 
@@ -42,6 +43,7 @@
             type="button"
             class="col-auto btn btn-light flash-card-ui fs-4 text-muted"
             @click="flashcardIndex++"
+            :disabled="!filteredList.length"
           >
             <i class="bi bi-caret-right-fill" />
           </button>
@@ -407,9 +409,7 @@ async function editFlashcard(){
 async function deleteFlashcard(){
     await coreStore.deleteFlashcard(currentFlashcard.value._id);
 
-    isDeleteMode.value = false;
-    flashcardIndex.value = 0;
-    currentFlashcard.value = flashcardList.value.length? flashcardList.value[0] : "";
+    resetFlashcardData();
 }
 
 async function showEditForm(flashcard){
