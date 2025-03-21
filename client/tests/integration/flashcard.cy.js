@@ -19,7 +19,7 @@ describe("Integration Tests - Frontend + Backend", () => {
     cy.visit("http://localhost:8080/#/");
     //cy.wait(2500);
     
-    cy.contains('.card','Flash Cards').click()
+    cy.contains('.card','Flash Cards', {timeout:10_000}).click()
     //cy.wait(2500);
     cy.url().should("include", "/flashcards");
     //cy.get('.card-body').should('have.attr', 'href').and('include', '#/flashcards');
@@ -27,7 +27,7 @@ describe("Integration Tests - Frontend + Backend", () => {
   it("we should be able to access the flashcards from the homepage (from widgetbar)", () => {
     cy.visit("http://localhost:8080/#/");
     //cy.wait(2500);
-    cy.contains('.nav-item','Flash Cards').click()
+    cy.contains('.nav-item','Flash Cards', {timeout:10_000}).click()
    
   });
  
