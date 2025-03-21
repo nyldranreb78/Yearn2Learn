@@ -7,7 +7,8 @@
     "build": "npm run lint -- --fix && vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
-    "test": "vue-cli-service test:unit",
+    "test:integration": "vue-cli-service test:integration",
+    "test": "vue-cli-service test:unit test:integration",
     "lint": "vue-cli-service lint",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run"
