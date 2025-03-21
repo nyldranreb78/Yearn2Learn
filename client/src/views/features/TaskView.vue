@@ -201,6 +201,10 @@
                     </select>
                   </div>
                 </div>
+
+                <div v-if="currentClass && !(classTasks.ungraded.length || classTasks.graded.length)" class="mt-2">
+                  <small class="text-muted"><i>You currently have no graded tasks to track for this class. You can add one by clicking on the "New Task" button.</i></small>
+                </div>
                 
                 <div
                   v-if="classTasks.ungraded.length"
@@ -501,7 +505,6 @@
 <script setup>
 import { ref, reactive, watch, computed } from 'vue'; // reactive, computed, onMounted, onBeforeUnmount
 import { useCoreStore } from '@/store/core';
-import { onBeforeMount } from 'vue';
 import bootstrap from "bootstrap/dist/js/bootstrap.bundle.js";
 
 const coreStore = useCoreStore(); // Central source of state
@@ -510,10 +513,6 @@ const currentClass = ref("")      // The class currently being viewed by the use
 
 const isEditMode = ref(false)
 const isForClass = ref(false)
-
-onBeforeMount ( async () => {
-	recommendTask()
-})
 
 // Form Data
 const taskData = reactive({
@@ -573,6 +572,13 @@ const taskList = computed(() => {
   return coreStore.tasks;
 })
 
+// List of Graded Tasks
+// const gradedTaskList = computed(() => {
+//   return coreStore.tasks.filter((task) => {
+//     return task.taskGrade != null;
+//   });
+// })
+
 // The graded tasks for the class that a user is viewing
 const classTasks = computed(() => {
   let sortedTasks = {
@@ -612,9 +618,17 @@ const averageGrade = computed(() => {
   return (totalActualGrade.value/totalTaskGrade.value * 100).toFixed(1) + '%';
 });
 
-async function recommendTask() {
-  console.log("DO RECOMMENDATION")
-}
+// const recommendedTask = computed(() => {
+//   // Only compare tasks from today onwards
+//   // This line gets the local 12AM time for the day
+//   let currentDay = new Date.setHours(0,0,0,0);
+
+//   let startIndex = gradedTaskList.value.findIndex((task) => {
+//     return new Date(task.deadline) >= currentDay;
+//   })
+
+//   return startIndex;
+// });
 
 async function addTask(){
     const newTask = {

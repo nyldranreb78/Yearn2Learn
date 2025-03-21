@@ -41,6 +41,7 @@ async function create(req, res){
             folderID: req.body.folderID ? req.body.folderID : null,
             name: req.body.name,
             taskGrade: req.body.taskGrade,
+            actualGrade: req.body.actualGrade,
             deadline: req.body.deadline,
             isFinished: req.body.isFinished
         });
