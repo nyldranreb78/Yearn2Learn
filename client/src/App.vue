@@ -7,6 +7,8 @@ import NavBar from './components/NavBar.vue';
 
 onBeforeMount ( async () => {
 	await useCoreStore().fetchData();
+  await useCoreStore().fetchTasks();
+  await useCoreStore().fetchFlashcards();
 })
 </script>
 
