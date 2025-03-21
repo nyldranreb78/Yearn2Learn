@@ -118,7 +118,6 @@ describe("Integration Tests - Backend + Database", () => {
         }).then((response) => {
             expect(response.status).to.eq(201);
             expect(response.body).to.have.property("note");
-            testNoteId = response.body.note._id;
         });
         // Create a new folder
         cy.request({
