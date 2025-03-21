@@ -507,7 +507,7 @@ const isEditMode = ref(false)
 const isForClass = ref(false)
 
 onBeforeMount ( async () => {
-	await useCoreStore().fetchTasks();
+	recommendTask()
 })
 
 // Form Data
@@ -606,6 +606,10 @@ const totalActualGrade = computed(() => {
 const averageGrade = computed(() => {
   return (totalActualGrade.value/totalTaskGrade.value * 100).toFixed(1) + '%';
 });
+
+async function recommendTask() {
+  console.log("DO RECOMMENDATION")
+}
 
 async function addTask(){
     const newTask = {
