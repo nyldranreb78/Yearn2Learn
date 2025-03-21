@@ -21,6 +21,7 @@
           </button>
 
           <button
+            id = "currFlashcard"
             class="col btn btn-light flash-card flash-card-ui border text-center text-truncate"
             :disabled="!filteredList.length"
             @click="showAnswer = !showAnswer"
@@ -71,6 +72,7 @@
                     rows="2"
                     type="text"
                     class="form-control form-control-sm"
+                    id = "questionInput"
                     required
                   />
                 </div>
@@ -82,6 +84,7 @@
                     rows="3"
                     type="text"
                     class="form-control form-control-sm"
+                    id = "answerInput"
                     required
                   />
                 </div>
@@ -122,6 +125,7 @@
                     type="text"
                     class="form-control form-control-sm"
                     placeholder="New Flashcard Set Name"
+                    id="newFlashcardSet"
                     :required="!flashcardData.setName"
                   >
                 </div>
@@ -215,6 +219,7 @@
               <div class="col ps-0">
                 <button
                   type="submit"
+                  id="createOrSaveChanges"
                   form="flashcard_form"
                   class="btn btn-sm w-100"
                   :class="isEditMode? 'btn-success' : 'btn-primary'"
