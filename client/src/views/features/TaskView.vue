@@ -307,6 +307,7 @@
             <div class="col-12">
               <label class="form-label">Task Name</label>
               <input
+                id="taskName"
                 v-model="taskData.name"
                 type="text"
                 class="form-control"
@@ -316,6 +317,7 @@
             <div class="col-12">
               <label class="form-label">Deadline</label>
               <input
+                id="taskDeadline"
                 v-model="taskData.deadline"
                 class="form-control"
                 type="datetime-local"
@@ -325,6 +327,7 @@
             <div class="col-12">
               <div class="form-check form-switch">
                 <input
+                  id="isForClass"
                   v-model="isForClass"
                   class="form-check-input"
                   type="checkbox"
@@ -343,6 +346,7 @@
                   <div class="col">
                     <label class="form-label">Class</label>
                     <select
+                      id="taskClass"
                       v-model="taskData.folderID"
                       class="form-select"
                       @change="resetWeight"
@@ -368,6 +372,7 @@
                   <div class="col-6">
                     <label class="form-label">Grade weight in % <small class="text-muted">(optional)</small></label>
                     <input
+                      id="taskGrade"
                       v-model="taskData.taskGrade"
                       type="number"
                       class="form-control"

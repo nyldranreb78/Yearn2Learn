@@ -132,4 +132,18 @@ async function remove(req, res){
     }
 };
 
-module.exports = { index, create, show, update, remove };
+async function removeAll(req, res){
+    try {
+        const id = auth.getUserID(req);
+
+        if (!(await verifyID(id, res))) return;
+
+        await Task.deleteMany({ author: id });
+
+        return res.status(200).json({ message: 'All tasks deleted' });
+    } catch (err) {
+        return res.status(500).json({ message: err.message });
+    }
+}
+
+module.exports = { index, create, show, update, remove, removeAll };
