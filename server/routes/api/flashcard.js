@@ -9,6 +9,9 @@ router.get("/", auth.verifyToken, controller.index);
 // Get all flashcards for the logged-in user
 router.get("/user", auth.verifyToken, controller.getUserFlashcards);
 
+// Get a single flashcard by ID
+router.get("/:id", auth.verifyToken, controller.getFlashcard);
+
 // Create a new flashcard
 router.post("/", auth.verifyToken, controller.createFlashcard);
 
@@ -20,5 +23,8 @@ router.delete("/:id", auth.verifyToken, controller.deleteFlashcard);
 
 // Get all flashcards with similar setNames
 router.get('/set/:setName', auth.verifyToken, controller.getFlashcardsBySetName);
+
+// Get shuffled flashcards
+router.get("/shuffle", auth.verifyToken, controller.shuffleFlashcards);
 
 module.exports = router;
