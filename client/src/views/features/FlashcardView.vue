@@ -14,29 +14,36 @@
           <button
             type="button"
             class="col-auto btn btn-light flash-card-ui fs-4 text-muted"
+            @click="flashcardIndex--"
+            :disabled="!filteredList.length"
           >
             <i class="bi bi-caret-left-fill" />
           </button>
 
           <button
-            class="col btn btn-light flash-card flash-card-ui border text-center"
-            @mouseenter="showAltText = true"
-            @mouseleave="showAltText = false"
+            class="col btn btn-light flash-card flash-card-ui border text-center text-truncate"
             @click="showAnswer = !showAnswer"
+            :disabled="!filteredList.length"
           >
-            <div class="my-auto">
+            <div v-if="filteredList.length" class="my-auto">
               <h4 v-if="showAnswer">
-                {{ showAltText? 'Click here to see the question' : "Testing question" }}
+                {{ filteredList[flashcardIndex].answer }}
               </h4>
               <h4 v-else>
-                {{ showAltText? 'Click here to reveal the answer' : "Testing question" }}
+                {{ filteredList[flashcardIndex].question  }}
               </h4>
+            </div>
+
+            <div v-else>
+              <i>Create a flashcard by clicking the "Create Flashcard" button on the right.</i>
             </div>
           </button>
 
           <button
             type="button"
             class="col-auto btn btn-light flash-card-ui fs-4 text-muted"
+            @click="flashcardIndex++"
+            :disabled="!filteredList.length"
           >
             <i class="bi bi-caret-right-fill" />
           </button>
@@ -85,7 +92,7 @@
                     <div class="col">
                       <label><small>Flashcard Set</small></label>
                       <select
-                        v-model="flashcardData.set"
+                        v-model="flashcardData.setName"
                         class="form-select form-select-sm"
                         @change="setInput = ''"
                       >
@@ -93,10 +100,10 @@
                           Select or create set
                         </option>
                         <option
-                          v-for="x in [1,2,3,4,5,6]"
-                          :key="x"
+                          v-for="setName in flashcardSetList"
+                          v-bind:key="setName"
                         >
-                          {{ 'Flashcard Set #' + x }}
+                          {{ setName }}
                         </option>
                       </select>
                     </div>
@@ -104,7 +111,7 @@
                 </div>
 
                 <div
-                  v-show="!flashcardData.set"
+                  v-show="!flashcardData.setName || isEditMode"
                   class="col-12 mt-2"
                 >
                   <input
@@ -112,7 +119,7 @@
                     type="text"
                     class="form-control form-control-sm"
                     placeholder="New Flashcard Set Name"
-                    :required="!flashcardData.set"
+                    :required="!flashcardData.setName"
                   >
                 </div>
               </form>
@@ -161,6 +168,7 @@
                 <button
                   type="button"
                   class="btn btn-sm btn-primary w-100"
+                  @click="shuffleFlashcards()"
                 >
                   <i class="bi bi-shuffle me-1" /> Shuffle Flashcards
                 </button>
@@ -219,7 +227,7 @@
         </div>
 
         <div
-          v-show="!flashcardList.length"
+          v-show="!filteredList.length"
           class="row"
         >
           <div class="col text-center m-4">
@@ -228,16 +236,16 @@
         </div>
 
         <div
-          v-show="showQuestionList && flashcardList.length"
+          v-show="showQuestionList && filteredList.length"
           class="row card"
         >
           <div class="col">
             <div
-              v-for="flashcard in flashcardList"
+              v-for="flashcard in filteredList"
               :key="flashcard._id"
               class="row border-bottom p-2"
             >
-              <div class="col-3">
+              <div v-if="!isDeleteMode || flashcard !== currentFlashcard" class="col-3 border-end">
                 {{ flashcard.question }}
               </div>
 
@@ -251,10 +259,10 @@
 
               <div class="col-auto text-end pe-0">
                 <button
+                  v-show="!isDeleteMode || flashcard !== currentFlashcard"
                   type="button"
                   class="btn btn-sm shadow-none border-0 note-menu"
                   data-bs-toggle="dropdown"
-                  @click="currentFlashcard = flashcard"
                 >
                   <i class="bi bi-three-dots-vertical" />
                 </button>
@@ -263,7 +271,7 @@
                   <li>
                     <a
                       class="dropdown-item px-2"
-                      @click="showEditForm()"
+                      @click="showEditForm(flashcard)"
                     >
                       Edit
                     </a>
@@ -274,7 +282,7 @@
                   <li>
                     <a
                       class="dropdown-item px-2 text-danger"
-                      @click="deleteFlashcard()"
+                      @click="showDeleteMode(flashcard)"
                     >
                       Delete
                     </a>
@@ -418,12 +426,12 @@ async function showEditForm(flashcard){
   document.body.scrollTop = document.documentElement.scrollTop = 0;
 }
 
-// async function showDeleteMode(flashcard){
-  // resetFlashcardData();
+async function showDeleteMode(flashcard){
+  resetFlashcardData();
   
-  // currentFlashcard.value = flashcard;
-  // isDeleteMode.value = true;
-//}
+  currentFlashcard.value = flashcard;
+  isDeleteMode.value = true;
+}
 
 async function resetFlashcardData() {
   setNameFilter.value = "";
@@ -441,10 +449,10 @@ async function resetFlashcardData() {
 // Trigger the shuffle logic in the filteredList (computed) logic
 // Flipping the values twice allows it to be "noticed" by the
 // computed function
-//async function shuffleFlashcards() {
-  //isShuffleMode.value = false;
-  //isShuffleMode.value = true;
-//}
+async function shuffleFlashcards() {
+  isShuffleMode.value = false;
+  isShuffleMode.value = true;
+}
 </script>
 
 <style>
