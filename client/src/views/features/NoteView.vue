@@ -22,6 +22,7 @@
         <div class="row justify-content-center p-0 m-0 vh-100">
           <div class="p-0">
             <QuillEditor
+              id="textEditor"
               ref="textEditor"
               v-model:content="textEditorData.content"
               class="bg-white border-top-0"
@@ -131,6 +132,7 @@
 
             <div class="col text-end align-middle pt-1">
               <button
+                id="editFolderButton"
                 v-show="folderList.length"
                 type="button"
                 class="btn btn-edit-form py-0 px-1 ms-2"
@@ -180,6 +182,7 @@
                   <div class="col">
                     <small>Folder Name</small>
                     <input
+                      id="folderName"
                       v-model="folderData.name"
                       type="text"
                       class="form-control"
@@ -215,6 +218,7 @@
                   <small>Priority</small>
                   <div class="col">
                     <select
+                      id="folderPriority"
                       v-model="folderData.priority"
                       class="form-select"
                       required
@@ -238,6 +242,7 @@
                 <div class="row">
                   <div class="col">
                     <button
+                      id="addFolderButton"
                       type="submit"
                       class="btn btn-primary w-100"
                     >
@@ -509,6 +514,7 @@
               <div class="row">
                 <div class="input-group mb-2">
                   <input
+                    id="noteTitle"
                     v-model="noteData.title"
                     type="text"
                     class="form-control"
@@ -517,6 +523,7 @@
                   >
 
                   <button
+                    id="submitNoteButton"
                     type="submit"
                     class="btn"
                     :class="currentNote ? 'btn-success' : 'btn-secondary'"
@@ -588,6 +595,7 @@
                   class="btn btn-sm btn-danger ms-3"
                   data-bs-dismiss="modal"
                   @click="folderEditMode ? deleteFolder() : deleteNote()"
+
                 >
                   Delete
                 </button>
