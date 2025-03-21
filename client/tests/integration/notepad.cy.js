@@ -55,9 +55,9 @@ describe("Integration Tests - Frontend + Backend", () => {
         cy.get(".accordion-item").first().click();
         cy.contains("Create new note").click();
         cy.get("#noteTitle").type("Test Note Title");
-        cy.wait(500).then(() => {
-            cy.get('#submitNoteButton').click();
-        });
+        
+        cy.get('#submitNoteButton').click();
+    
         cy.contains("Test Note Title").should("exist");
         cy.get('.bi-arrow-left').first().click();
     });
@@ -69,9 +69,8 @@ describe("Integration Tests - Frontend + Backend", () => {
         cy.get(".accordion-item").first().click();
         cy.get(".note-menu").click();
         cy.contains("Delete").click();
-        cy.wait(500).then(() => {
-            cy.get("button").contains("Delete").click();
-        }) // Wait a little bit so that the modal can be closed 
+    
+        cy.get("button").contains("Delete").click();
         
     });
 
