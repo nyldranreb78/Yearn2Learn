@@ -271,27 +271,7 @@ export const useCoreStore = defineStore("core", {
                 console.error("Error fetching flashcards by setName: ", error);
                 return [];
             }
-        },
-
-        async fetchSingleFlashcard(flashcardId) {
-            try {
-                const response = await this.authStore.getFlashcard(flashcardId);
-                return response.flashcard;
-            } catch (error) {
-                console.error("Error fetching flashcard: ", error);
-                return [];
-            }
-        },
-
-        async loadShuffledFlashcards() {
-            try {
-                const response = await this.authStore.getShuffledFlashcards();
-                return response.flashcards;
-            } catch (error) {
-                console.error("Error fetching shuffled flashcards: ", error);
-                return [];
-            }
-        },
+        }
     },
 
     

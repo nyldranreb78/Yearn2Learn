@@ -365,25 +365,5 @@ export const useAuthStore = defineStore("auth", {
         throw error.message;
       }
     },
-
-    async getFlashcard(flashcardId) {
-      try {
-        const { data } = await useApiPrivate().get(`/api/flashcard/${flashcardId}`);
-        return data;
-      } catch (error) {
-        console.error("Error fetching flashcard:", error.response?.data || error.message);
-        throw error.message;
-      }
-    },
-
-    async getShuffledFlashcards() {
-      try {
-        const { data } = await useApiPrivate().get("/api/flashcard/shuffle");
-        return data.flashcards;
-      } catch (error) {
-        console.error("Error shuffling flashcards:", error.response?.data || error.message);
-        throw error.message;
-      }
-    }
   },
 });
