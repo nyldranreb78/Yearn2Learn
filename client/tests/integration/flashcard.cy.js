@@ -132,5 +132,40 @@ describe("Integration Tests - Frontend + Backend", () => {
     cy.get("#currFlashcard").should('have.text','unique question 1')
 
   });
+  it("should hide list", () => {
+    cy.visit("http://localhost:8080/#/login");
+
+    cy.get("#email").type(testEmail);
+    cy.get("#password").type(testPassword);
+    cy.get('button[type="submit"]').click();
+
+    // Check if redirected to home page
+    cy.url().should("include", "/");
+    
+    cy.contains('.nav-item','Flash Cards', {timeout:10_000}).click();
+    cy.reload()
+    cy.reload()
+    cy.get("#showQList").click()
+    cy.get("#cardList").filter(':visible').should('not.exist')
+  });
+  it("should filter by card set", () => {
+    cy.visit("http://localhost:8080/#/login");
+
+    cy.get("#email").type(testEmail);
+    cy.get("#password").type(testPassword);
+    cy.get('button[type="submit"]').click();
+
+    // Check if redirected to home page
+    cy.url().should("include", "/");
+    
+    cy.contains('.nav-item','Flash Cards', {timeout:10_000}).click();
+    cy.reload()
+    cy.reload()
+    cy.get("#filterCardGroup").select('Group2')
+    cy.get("#currFlashcard").should('have.text','unique question 2')
+    cy.get("#filterCardGroup").select('Group1')
+    cy.get("#currFlashcard").should('have.text','unique question 1')
+  });
   //class="col btn btn-light flash-card flash-card-ui border text-center text-truncate"
 });
+

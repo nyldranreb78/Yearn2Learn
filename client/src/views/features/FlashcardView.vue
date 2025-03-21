@@ -14,6 +14,7 @@
           <button
             type="button"
             class="col-auto btn btn-light flash-card-ui fs-4 text-muted"
+            id = "turnLeft"
             :disabled="!filteredList.length"
             @click="flashcardIndex--"
           >
@@ -46,6 +47,7 @@
           <button
             type="button"
             class="col-auto btn btn-light flash-card-ui fs-4 text-muted"
+            id = "turnRight"
             :disabled="!filteredList.length"
             @click="flashcardIndex++"
           >
@@ -256,21 +258,24 @@
         <div
           v-show="showQuestionList && filteredList.length"
           class="row card"
+          id = "cardList"
         >
-          <div class="col">
+          <div class="col" id = "cardList">
             <div
               v-for="flashcard in filteredList"
               :key="flashcard._id"
               class="row border-bottom p-2"
+              id = "cardList"
             >
               <div
                 v-if="!isDeleteMode || flashcard !== currentFlashcard"
                 class="col-3 border-end"
+                id = "cardList"
               >
                 {{ flashcard.question }}
               </div>
 
-              <div class="col">
+              <div class="col" >
                 <div v-if="isDeleteMode && flashcard === currentFlashcard">
                   <small class="text-danger"><i>Are you sure you want to delete this question? This is irreversible!</i></small>
                 </div>
