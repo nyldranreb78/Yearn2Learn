@@ -1,6 +1,7 @@
 const User = require('../models/user')
 const Note = require('../models/note')
 const Folder = require('../models/folder')
+const Flashcards = require('../models/flashcards')
 const auth = require('../middleware/auth-service');
 const folder = require('../models/folder');
 
@@ -162,6 +163,7 @@ async function remove(req, res) {
             return res.status(403).json({message: 'Unauthorized'})
 
         await Note.deleteMany({_id: {$in: folder.notes}})
+        await Flashcards.deleteMany({_id: {$in: folder.flashcards}})
         await folder.deleteOne({_id: req.params.id})
 
         return res.status(200).json({message: 'Folder deleted'})
