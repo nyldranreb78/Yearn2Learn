@@ -74,7 +74,8 @@ describe("Integration Tests Task Management - Frontend + Backend", () => {
         cy.get(".row").contains("Test Task 2 Title").first().click();
         cy.get(".bi-three-dots-vertical").click();
         cy.contains("Edit Details").click();
-        cy.get("#taskName").clear().type("Test Edited");
+        cy.get("#taskName").clear();
+        cy.get("#taskName").type("Test Edited");
         cy.get("button").contains("Save").click();
         cy.contains("Test Edited").should("exist");
     });

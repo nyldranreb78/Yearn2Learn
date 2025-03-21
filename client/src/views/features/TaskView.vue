@@ -49,13 +49,13 @@
 
             <div
               v-for="task in taskList"
-              :key="task._id"
+              :key="task?._id"
               class="row"
             >
               <button
                 type="button"
                 class="btn text-start"
-                :class="task._id === priorityTask._id? 'btn-warning' : 'btn-light'"
+                :class="task?._id === priorityTask?._id? 'btn-warning' : 'btn-light'"
                 @click="currentTask = task"
               >
                 <div class="row">
@@ -66,7 +66,7 @@
                     {{ task.folderID? getClass(task.folderID).name : "" }}
                   </div>
                   <div class="col-3">
-                    {{ task.deadline? new Date(task.deadline).toLocaleString() : "" }}
+                    {{ task?.deadline? new Date(task?.deadline).toLocaleString() : "" }}
                   </div>
                   <div
                     class="col-2"
@@ -85,7 +85,7 @@
             <div class="card">
               <div
                 class="card-header pe-2"
-                :class="currentTask._id === priorityTask._id? 'text-bg-warning' : ''"
+                :class="currentTask && currentTask?._id === priorityTask?._id? 'text-bg-warning' : ''"
               >
                 <div class="row">
                   <div class="col text-start mt-1">
@@ -151,8 +151,8 @@
 
                 <div v-else>
                   <div><b><small>Name:</small></b><br>{{ currentTask.name }}</div>
-                  <div v-if="currentTask.deadline">
-                    <b><small>Deadline:</small></b><br>{{ new Date(currentTask.deadline).toLocaleString() }}
+                  <div v-if="currentTask?.deadline">
+                    <b><small>Deadline:</small></b><br>{{ new Date(currentTask?.deadline).toLocaleString() }}
                   </div>
                   <div v-if="currentTask.folderID">
                     <b><small>For Class:</small></b><br>{{ getClass(currentTask.folderID).name }}
@@ -168,13 +168,13 @@
                     <span :class="currentTask.isFinished? 'text-success' : 'text-primary'"><b>{{ getTaskStatus(currentTask.isFinished) }}</b></span>
                   </div>
                   <div
-                    v-if="currentTask._id === priorityTask._id"
+                    v-if="currentTask?._id === priorityTask?._id"
                     class="mt-4"
                   >
                     <b><small>Our Message:</small></b><br>
                     We recommend prioritizing this task!<br>This task is worth 
-                    <b>{{ currentTask.taskGrade }}%</b> of your final grade in a 
-                    <b>{{ currentClass.priority? 'Major' : 'Elective' }} course</b> that you're averaging
+                    <b>{{ currentTask.taskGrade }}%</b> of your final grade in a
+                    <b>{{ currentClass.priority? ' Major' : 'n Elective' }} course</b> that you're averaging
                     <b>{{ (averageGrade * 100).toFixed(1) + '%' }}</b> on.
                     <br><br>See full class progress breakdown below.
                   </div>
@@ -186,7 +186,7 @@
             <div class="card mt-3">
               <div
                 class="card-header pe-2"
-                :class="currentTask._id === priorityTask._id? 'text-bg-warning' : ''"
+                :class="currentTask && currentTask?._id === priorityTask?._id? 'text-bg-warning' : ''"
               >
                 <div class="row">
                   <div class="col text-start mt-1">
@@ -211,7 +211,7 @@
                       </option>
                       <option
                         v-for="folder in classList"
-                        :key="folder._id"
+                        :key="folder?._id"
                         :value="folder"
                       >
                         {{ folder.name }}
@@ -238,7 +238,7 @@
                   </div>
                   <div
                     v-for="task in classTasks.ungraded"
-                    :key="task._id"
+                    :key="task?._id"
                     class="row"
                   >
                     <div class="col-6 text-truncate">
@@ -269,7 +269,7 @@
 
                   <div
                     v-for="task in classTasks.graded"
-                    :key="task._id"
+                    :key="task?._id"
                     class="row"
                   >
                     <div class="col-6 text-truncate">
@@ -381,8 +381,8 @@
                       </option>
                       <option
                         v-for="folder in classList"
-                        :key="folder._id"
-                        :value="folder._id"
+                        :key="folder?._id"
+                        :value="folder?._id"
                       >
                         {{ folder.name }}
                       </option>
@@ -524,14 +524,14 @@
 
 
 <script setup>
-import { ref, reactive, watch, computed, onBeforeMount } from 'vue'; // reactive, computed, onMounted, onBeforeUnmount
+import { ref, reactive, watch, computed, onMounted } from 'vue';
 import { useCoreStore } from '@/store/core';
 import bootstrap from "bootstrap/dist/js/bootstrap.bundle.js";
 
 const coreStore = useCoreStore(); // Central source of state
 const currentClass = ref("")      // The class currently being viewed by the user
 const currentTask = ref("")       // The task currently being viewed by the user
-const priorityTask = ref("")      // The recommended task based on weight
+const priorityTask = ref("")      // The recommended task based on weights
 
 const isEditMode = ref(false)
 const isForClass = ref(false)
@@ -545,8 +545,18 @@ const taskData = reactive({
     actualGrade: null
 })
 
-onBeforeMount ( async () => {
-	priorityTask.value = recommendedTask.value;
+onMounted (() => {
+  // Wait 1 second to calculate a recommendation (one time)
+  setTimeout(() => {
+    priorityTask.value = recommendedTask.value;
+  }, 1000); 
+
+  // Then check for new ones every 5 seconds
+  setInterval(() => {
+      if(new Date().getTime() > new Date(priorityTask.value.deadline).getTime())
+        priorityTask.value = recommendedTask.value;
+    }, 5000); 
+  
 })
 
 // Some logic to enforce values between taskGrade and actualGrade
@@ -568,7 +578,7 @@ watch(taskData, (newValue) => {
           newValue.taskGrade = 100;
         }
 
-        if(taskData.deadline){
+        if(taskData?.deadline){
             // HTML's datetime-local only uses the first 16 characters
             // of a local date string, which is why this is hard-coded
             taskData.deadline = taskData.deadline.substring(0, 16)
@@ -580,12 +590,8 @@ watch(taskData, (newValue) => {
 watch(currentTask, (newValue) => {
     if (newValue) {
       currentClass.value = classList.value.find(classFolder => {
-        return classFolder._id === newValue.folderID;
+        return classFolder?._id === newValue.folderID;
       })
-
-      if(currentTask.value._id === priorityTask.value._id){
-        priorityTask.value = recommendedTask.value;
-      }
     }
 })
 
@@ -619,7 +625,7 @@ const classTasks = computed(() => {
   if(currentClass.value){
     // Get graded tasks for the current class
     let tasks = taskList.value.filter((task) => {
-      return task.taskGrade != null && task.folderID === currentClass.value._id;
+      return task.taskGrade != null && task.folderID === currentClass.value?._id;
     })
 
     // Segregate the graded and ungraded tasks
@@ -656,15 +662,24 @@ const recommendedTask = computed(() => {
 
   // Find the Date of the closest, upcoming graded task
   let closestTaskDate = new Date(gradedTaskList.value.find((task) => {
-    return new Date(task.deadline).getTime() >= currentDate.getTime()
-  }).deadline).getTime()
+    let deadlineDate = new Date(task?.deadline)
+    return deadlineDate.getTime() >= currentDate.getTime()  // Deadline is today onwards
+      && deadlineDate.getTime() > new Date().getTime()      // Deadline hasn't passed
+  })?.deadline)
+
+  closestTaskDate.setHours(0,0,0,0) // Set the time of the closest deadline day to midnight
 
   // Find all graded tasks that are due on the same day as the closest one discovered
   let candidates = gradedTaskList.value.filter((task) => {
-    let deadlineDate = new Date(task.deadline);
-    return deadlineDate >= closestTaskDate          // Check if the task is due within
-      && deadlineDate < closestTaskDate + 86400000  // the same day
-      && task.isFinished == false
+    let taskDeadline = new Date(task?.deadline);
+
+    // Filter candidates by order of important details
+    // This check will stop as soon as one of them returns false
+    return taskDeadline.getTime() >= closestTaskDate.getTime()        // If the task is later than the closest date
+      && task.isFinished == false                                     // If the task is not yet finished
+      && taskDeadline.getDay() === closestTaskDate.getDay()           // If the task is in the same day
+      && taskDeadline.getMonth() === closestTaskDate.getMonth()       // If the task is in the same month
+      && taskDeadline.getFullYear() === closestTaskDate.getFullYear() // If the task is in the same year
   })
 
   // Create an array of 0s to be used in storing weight
@@ -673,13 +688,13 @@ const recommendedTask = computed(() => {
   
   for(let i in candidates){
     let currentAverage = getTotalGrade(candidates, 'actualGrade') / getTotalGrade(candidates, 'taskGrade');
-    let classFolder = classList.value.find((folder) => {return folder._id === candidates[i].folderID});
-    let deadlineHour = new Date(candidates[i].deadline).getHours();
+    let classFolder = classList.value.find((folder) => {return folder?._id === candidates[i].folderID});
+    let deadlineHour = new Date(candidates[i]?.deadline).getHours();
     let weight = 0;
 
     weight += candidates[i].taskGrade/100   // Add weight based on final grade worth
     weight += 1 - currentAverage            // Add weight based on current grade average
-    weight += classFolder.priority? 1 : 0   // Add weight based on whether the class is a major or elective
+    weight += classFolder.priority? 0.5 : 0 // Add weight based on whether the class is a major or elective
     weight += (24 - deadlineHour) / 100     // Add weight based on how soon in the day it's due
 
     if(weight > mostWeight){                // Update the "recommended" candidate based on weight
@@ -700,7 +715,7 @@ function getTotalGrade(gradeArray, gradeType){
 async function addTask(){
     const newTask = {
         name: taskData.name,
-        deadline: taskData.deadline,
+        deadline: taskData?.deadline,
         folderID: taskData.folderID,
         taskGrade: taskData.taskGrade,
         actualGrade: taskData.actualGrade,
@@ -710,31 +725,34 @@ async function addTask(){
     await coreStore.addTask(newTask);
 
     resetTaskData();
+    
     currentTask.value = newTask;
+    priorityTask.value = recommendedTask.value;
 }
 
 async function editTask(){
     const updatedTask = {
         name: taskData.name,
-        deadline: taskData.deadline,
+        deadline: taskData?.deadline,
         folderID: taskData.folderID,
         taskGrade: taskData.taskGrade,
         actualGrade: taskData.actualGrade,
         isFinished: taskData.actualGrade? true : currentTask.value.isFinished
     };
 
-    await coreStore.editTask(currentTask.value._id, updatedTask);
+    await coreStore.editTask(currentTask.value?._id, updatedTask);
 
     resetTaskData();
     currentTask.value = updatedTask;
+    priorityTask.value = recommendedTask.value;
 }
 
 async function deleteTask(){
-    await coreStore.deleteTask(currentTask.value._id);
+    await coreStore.deleteTask(currentTask.value?._id);
 
     currentTask.value = taskList.value.length? taskList.value[0] : "";
 
-    if(currentTask.value._id === priorityTask.value._id){
+    if(currentTask.value?._id === priorityTask.value?._id){
       currentTask.value = "";
     }
 }
@@ -742,7 +760,9 @@ async function deleteTask(){
 async function changeStatus(newStatus){
     currentTask.value.isFinished = newStatus;
 
-    await coreStore.editTask(currentTask.value._id, currentTask.value);
+    await coreStore.editTask(currentTask.value?._id, currentTask.value);
+
+    priorityTask.value = recommendedTask.value;
 }
 
 async function prefillEditForm() {
@@ -780,7 +800,7 @@ async function resetWeight(){
 }
 
 async function closeModal(){
-  if(taskData.name && taskData.deadline){
+  if(taskData.name && taskData?.deadline){
     const modal = document.querySelector("#add_edit_task_form");
 	bootstrap.Modal.getOrCreateInstance(modal).hide();
   }
@@ -791,6 +811,6 @@ function getTaskStatus(isFinished){
 }
 
 function getClass(folderID){
-    return classList.value.find((folder) => folder._id === folderID);
+    return classList.value.find((folder) => folder?._id === folderID);
 }
 </script>
