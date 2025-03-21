@@ -26,10 +26,18 @@
           >
             <div class="my-auto">
               <h4 v-if="showAnswer">
-                {{ showAltText? 'Click here to see the question' : "Testing question" }}
+                {{
+                  showAltText
+                    ? "Click here to see the question"
+                    : "Testing question"
+                }}
               </h4>
               <h4 v-else>
-                {{ showAltText? 'Click here to reveal the answer' : "Testing question" }}
+                {{
+                  showAltText
+                    ? "Click here to reveal the answer"
+                    : "Testing question"
+                }}
               </h4>
             </div>
           </button>
@@ -43,16 +51,22 @@
 
           <div
             class="col-3 card ms-3 py-2"
-            :class="showForm? 'flash-card-ui' : ''"
+            :class="showForm ? 'flash-card-ui' : ''"
           >
             <h6 class="border-bottom pb-2">
-              {{ showForm? isEditMode? 'Edit' : 'Create New' + ' Flashcard' : 'Flashcard Options' }}
+              {{
+                showForm
+                  ? isEditMode
+                    ? "Edit"
+                    : "Create New" + " Flashcard"
+                  : "Flashcard Options"
+              }}
             </h6>
             <div v-show="showForm">
               <form
                 id="flashcard_form"
                 class="row g-3"
-                @submit.prevent="isEditMode? editFlashcard() : addFlashcard()"
+                @submit.prevent="isEditMode ? editFlashcard() : addFlashcard()"
               >
                 <div class="col-12 mt-2">
                   <label><small>Question</small></label>
@@ -85,35 +99,27 @@
                     <div class="col">
                       <label><small>Flashcard Set</small></label>
                       <select
-                        v-model="flashcardData.set"
+                        v-model="flashcardData.setName"
                         class="form-select form-select-sm"
                         @change="setInput = ''"
                       >
-                        <option value>
-                          Select or create set
-                        </option>
-                        <option
-                          v-for="x in [1,2,3,4,5,6]"
-                          :key="x"
-                        >
-                          {{ 'Flashcard Set #' + x }}
+                        <option value>Select or create set</option>
+                        <option v-for="x in [1, 2, 3, 4, 5, 6]" :key="x">
+                          {{ "Flashcard Set #" + x }}
                         </option>
                       </select>
                     </div>
                   </div>
                 </div>
 
-                <div
-                  v-show="!flashcardData.set"
-                  class="col-12 mt-2"
-                >
+                <div v-show="!flashcardData.setName" class="col-12 mt-2">
                   <input
                     v-model="setInput"
                     type="text"
                     class="form-control form-control-sm"
                     placeholder="New Flashcard Set Name"
-                    :required="!flashcardData.set"
-                  >
+                    :required="!flashcardData.setName"
+                  />
                 </div>
               </form>
             </div>
@@ -130,36 +136,24 @@
               </div>
             </div>
 
-            <div
-              v-show="!showForm"
-              class="row mt-auto"
-            >
-              <div
-                v-show="flashcardList.length"
-                class="col-12 mt-2"
-              >
+            <div v-show="!showForm" class="row mt-auto">
+              <div v-show="flashcardList.length" class="col-12 mt-2">
                 <button
                   type="button"
                   class="btn btn-sm w-100"
-                  :class="showQuestionList? 'btn-secondary' : 'btn-primary'"
+                  :class="showQuestionList ? 'btn-secondary' : 'btn-primary'"
                   @click="showQuestionList = !showQuestionList"
                 >
                   <i
                     class="bi me-1"
-                    :class="showQuestionList? 'bi-eye-slash' : 'bi-eye'"
+                    :class="showQuestionList ? 'bi-eye-slash' : 'bi-eye'"
                   />
-                  {{ showQuestionList? 'Hide List' : 'Show Full List' }}
+                  {{ showQuestionList ? "Hide List" : "Show Full List" }}
                 </button>
               </div>
 
-              <div
-                v-show="flashcardList.length"
-                class="col-12 mt-2"
-              >
-                <button
-                  type="button"
-                  class="btn btn-sm btn-primary w-100"
-                >
+              <div v-show="flashcardList.length" class="col-12 mt-2">
+                <button type="button" class="btn btn-sm btn-primary w-100">
                   <i class="bi bi-shuffle me-1" /> Shuffle Flashcards
                 </button>
               </div>
@@ -175,10 +169,7 @@
               </div>
             </div>
 
-            <div
-              v-show="showForm"
-              class="row mt-auto"
-            >
+            <div v-show="showForm" class="row mt-auto">
               <div class="col-auto pe-1">
                 <button
                   type="button"
@@ -194,41 +185,35 @@
                   type="submit"
                   form="flashcard_form"
                   class="btn btn-sm w-100"
-                  :class="isEditMode? 'btn-success' : 'btn-primary'"
+                  :class="isEditMode ? 'btn-success' : 'btn-primary'"
                 >
                   <i
                     class="bi me-1"
-                    :class="isEditMode? 'bi-floppy-fill' : 'bi-plus-lg'"
+                    :class="isEditMode ? 'bi-floppy-fill' : 'bi-plus-lg'"
                   />
-                  {{ isEditMode? 'Save Changes' : 'Create' }}
+                  {{ isEditMode ? "Save Changes" : "Create" }}
                 </button>
               </div>
             </div>
           </div>
         </div>
 
-        <div
-          v-show="showQuestionList"
-          class="row mt-3"
-        >
+        <div v-show="showQuestionList" class="row mt-3">
           <div class="col p-0">
             <h4>Question List</h4>
           </div>
         </div>
 
-        <div
-          v-show="!flashcardList.length"
-          class="row"
-        >
+        <div v-show="!flashcardList.length" class="row">
           <div class="col text-center m-4">
-            <i class="text-muted">There are no questions to show. Click on the "Create Flashcard" button to add one.</i>
+            <i class="text-muted"
+              >There are no questions to show. Click on the "Create Flashcard"
+              button to add one.</i
+            >
           </div>
         </div>
 
-        <div
-          v-show="showQuestionList && flashcardList.length"
-          class="row card"
-        >
+        <div v-show="showQuestionList && flashcardList.length" class="row card">
           <div class="col">
             <div
               v-for="flashcard in flashcardList"
@@ -255,15 +240,12 @@
 
                 <ul class="dropdown-menu py-1">
                   <li>
-                    <a
-                      class="dropdown-item px-2"
-                      @click="showEditForm()"
-                    >
+                    <a class="dropdown-item px-2" @click="showEditForm()">
                       Edit
                     </a>
                   </li>
 
-                  <li><hr class="dropdown-divider my-1"></li>
+                  <li><hr class="dropdown-divider my-1" /></li>
 
                   <li>
                     <a
@@ -284,37 +266,39 @@
 </template>
 
 <script setup lang="js">
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive, computed, onMounted } from 'vue';
 import { useCoreStore } from '@/store/core';
 
 const coreStore = useCoreStore();
 
-//const flashcardIndex = ref(0);
 const showAnswer = ref(false);
 const showAltText = ref(false);
 const showQuestionList = ref(true);
 const showForm = ref(false);
 const isEditMode = ref(false);
 
-const currentFlashcard = ref("");
-
+const currentFlashcard = ref(null);
 const setInput = ref("")
 const flashcardData = reactive({
-  set: "",
+  setName: "",
   question: "",
   answer: ""
 });
 
 const flashcardList = computed(() => {
   return coreStore.flashcards;
-})
+});
+
+onMounted(async () => {
+  await coreStore.fetchFlashcards();
+  if (flashcardList.value.length) {
+    currentFlashcard.value = flashcardList.value[0];
+  }
+});
 
 async function addFlashcard(){
     const newFlashcard = {
-      _id: Date.now(), // TODO: REMOVE ONCE WE'RE USING THE DB
-      // Date.now() JUST GIVES US A "UNIQUE ID" FOR TESTING PURPOSES
-
-      set: flashcardData.set? flashcardData.set : setInput.value,
+      setName: flashcardData.setName? flashcardData.setName : setInput.value,
       question: flashcardData.question,
       answer: flashcardData.answer
     };
@@ -327,7 +311,7 @@ async function addFlashcard(){
 
 async function editFlashcard(){
     const updatedFlashcard = {
-      set: flashcardData.set? flashcardData.set : setInput.value,
+      setName: flashcardData.setName? flashcardData.setName : setInput.value,
       question: flashcardData.question,
       answer: flashcardData.answer
     };
@@ -341,12 +325,12 @@ async function editFlashcard(){
 async function deleteFlashcard(){
     await coreStore.deleteFlashcard(currentFlashcard.value._id);
 
-    currentFlashcard.value = flashcardList.value.length? flashcardList.value[0] : "";
+    currentFlashcard.value = flashcardList.value.length? flashcardList.value[0] : null;
 }
 
 async function showEditForm(){
   setInput.value = "";
-  flashcardData.set = currentFlashcard.value.set;
+  flashcardData.setName = currentFlashcard.value.setName;
   flashcardData.question = currentFlashcard.value.question;
   flashcardData.answer = currentFlashcard.value.answer;
 
@@ -358,7 +342,7 @@ async function showEditForm(){
 
 async function resetFlashcardData() {
   setInput.value = "";
-  flashcardData.set = "";
+  flashcardData.setName = "";
   flashcardData.question = "";
   flashcardData.answer = "";
 
@@ -368,11 +352,11 @@ async function resetFlashcardData() {
 </script>
 
 <style>
-.flash-card-ui{
+.flash-card-ui {
   height: 400px;
 }
 
-.flash-card{
+.flash-card {
   background-color: white;
   border-color: #d2d2d2 !important;
 }
