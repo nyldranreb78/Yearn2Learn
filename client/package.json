@@ -10,6 +10,7 @@
     "test:integration": "vue-cli-service test:integration",
     "test": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
+    "start": "node main",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run"
   },
