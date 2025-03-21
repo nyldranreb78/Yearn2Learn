@@ -418,12 +418,12 @@ async function showEditForm(flashcard){
   document.body.scrollTop = document.documentElement.scrollTop = 0;
 }
 
-async function showDeleteMode(flashcard){
-  resetFlashcardData();
+// async function showDeleteMode(flashcard){
+  // resetFlashcardData();
   
-  currentFlashcard.value = flashcard;
-  isDeleteMode.value = true;
-}
+  // currentFlashcard.value = flashcard;
+  // isDeleteMode.value = true;
+//}
 
 async function resetFlashcardData() {
   setNameFilter.value = "";
@@ -441,10 +441,10 @@ async function resetFlashcardData() {
 // Trigger the shuffle logic in the filteredList (computed) logic
 // Flipping the values twice allows it to be "noticed" by the
 // computed function
-async function shuffleFlashcards() {
-  isShuffleMode.value = false;
-  isShuffleMode.value = true;
-}
+//async function shuffleFlashcards() {
+  //isShuffleMode.value = false;
+  //isShuffleMode.value = true;
+//}
 </script>
 
 <style>
