@@ -11,58 +11,109 @@
         </div>
 
         <div class="row align-items-start">
-          <button type="button" class="col-auto btn btn-light flash-card-ui fs-4 text-muted">
-            <i class="bi bi-caret-left-fill"></i>
+          <button
+            type="button"
+            class="col-auto btn btn-light flash-card-ui fs-4 text-muted"
+          >
+            <i class="bi bi-caret-left-fill" />
           </button>
 
           <button
             class="col btn btn-light flash-card flash-card-ui border text-center"
-            v-on:mouseenter="showAltText = true"
-            v-on:mouseleave="showAltText = false"
-            v-on:click="showAnswer = !showAnswer"
+            @mouseenter="showAltText = true"
+            @mouseleave="showAltText = false"
+            @click="showAnswer = !showAnswer"
           >
             <div class="my-auto">
-              <h4 v-if="showAnswer">{{ showAltText? 'Click here to see the question' : "Testing question" }}</h4>
-              <h4 v-else>{{ showAltText? 'Click here to reveal the answer' : "Testing question" }}</h4>
+              <h4 v-if="showAnswer">
+                {{ showAltText? 'Click here to see the question' : "Testing question" }}
+              </h4>
+              <h4 v-else>
+                {{ showAltText? 'Click here to reveal the answer' : "Testing question" }}
+              </h4>
             </div>
           </button>
 
-          <button type="button" class="col-auto btn btn-light flash-card-ui fs-4 text-muted">
-            <i class="bi bi-caret-right-fill"></i>
+          <button
+            type="button"
+            class="col-auto btn btn-light flash-card-ui fs-4 text-muted"
+          >
+            <i class="bi bi-caret-right-fill" />
           </button>
 
-          <div class="col-3 card ms-3 py-2" :class="showForm? 'flash-card-ui' : ''">
-            <h6 class="border-bottom pb-2">{{showForm? isEditMode? 'Edit' : 'Create New' + ' Flashcard' : 'Flashcard Options'}}</h6>
+          <div
+            class="col-3 card ms-3 py-2"
+            :class="showForm? 'flash-card-ui' : ''"
+          >
+            <h6 class="border-bottom pb-2">
+              {{ showForm? isEditMode? 'Edit' : 'Create New' + ' Flashcard' : 'Flashcard Options' }}
+            </h6>
             <div v-show="showForm">
-              <form class="row g-3" id="flashcard_form" @submit.prevent="isEditMode? editFlashcard() : addFlashcard()">
+              <form
+                id="flashcard_form"
+                class="row g-3"
+                @submit.prevent="isEditMode? editFlashcard() : addFlashcard()"
+              >
                 <div class="col-12 mt-2">
-                    <label><small>Question</small></label>
-                    <textarea rows="2" type="text" class="form-control form-control-sm" v-model="flashcardData.question" required></textarea>
+                  <label><small>Question</small></label>
+                  <textarea
+                    v-model="flashcardData.question"
+                    rows="2"
+                    type="text"
+                    class="form-control form-control-sm"
+                    required
+                  />
                 </div>
 
                 <div class="col-12 mt-2">
-                    <label><small>Answer</small></label>
-                    <textarea rows="3" type="text" class="form-control form-control-sm" v-model="flashcardData.answer" required></textarea>
+                  <label><small>Answer</small></label>
+                  <textarea
+                    v-model="flashcardData.answer"
+                    rows="3"
+                    type="text"
+                    class="form-control form-control-sm"
+                    required
+                  />
                 </div>
 
-                <div class="col-12"><div class="col border-bottom"></div></div>
+                <div class="col-12">
+                  <div class="col border-bottom" />
+                </div>
 
                 <div class="col-12 mt-2">
                   <div class="row">
-                      <div class="col">
-                          <label><small>Flashcard Set</small></label>
-                          <select class="form-select form-select-sm" v-model="flashcardData.set" v-on:change="setInput = ''">
-                              <option value>Select or create set</option>
-                              <option v-for="x in [1,2,3,4,5,6]" v-bind:key="x">
-                                  {{ 'Flashcard Set #' + x }}
-                              </option>
-                          </select>
-                      </div>
+                    <div class="col">
+                      <label><small>Flashcard Set</small></label>
+                      <select
+                        v-model="flashcardData.set"
+                        class="form-select form-select-sm"
+                        @change="setInput = ''"
+                      >
+                        <option value>
+                          Select or create set
+                        </option>
+                        <option
+                          v-for="x in [1,2,3,4,5,6]"
+                          :key="x"
+                        >
+                          {{ 'Flashcard Set #' + x }}
+                        </option>
+                      </select>
+                    </div>
                   </div>
                 </div>
 
-                <div class="col-12 mt-2" v-show="!flashcardData.set">
-                    <input type="text" class="form-control form-control-sm" placeholder="New Flashcard Set Name" v-model="setInput" :required="!flashcardData.set">
+                <div
+                  v-show="!flashcardData.set"
+                  class="col-12 mt-2"
+                >
+                  <input
+                    v-model="setInput"
+                    type="text"
+                    class="form-control form-control-sm"
+                    placeholder="New Flashcard Set Name"
+                    :required="!flashcardData.set"
+                  >
                 </div>
               </form>
             </div>
@@ -79,37 +130,76 @@
               </div>
             </div>
 
-            <div class="row mt-auto" v-show="!showForm">
-              <div class="col-12 mt-2" v-show="flashcardList.length">
-                <button type="button" class="btn btn-sm w-100" :class="showQuestionList? 'btn-secondary' : 'btn-primary'" v-on:click="showQuestionList = !showQuestionList">
-                  <i class="bi me-1" :class="showQuestionList? 'bi-eye-slash' : 'bi-eye'"></i>
-                  {{showQuestionList? 'Hide List' : 'Show Full List' }}
+            <div
+              v-show="!showForm"
+              class="row mt-auto"
+            >
+              <div
+                v-show="flashcardList.length"
+                class="col-12 mt-2"
+              >
+                <button
+                  type="button"
+                  class="btn btn-sm w-100"
+                  :class="showQuestionList? 'btn-secondary' : 'btn-primary'"
+                  @click="showQuestionList = !showQuestionList"
+                >
+                  <i
+                    class="bi me-1"
+                    :class="showQuestionList? 'bi-eye-slash' : 'bi-eye'"
+                  />
+                  {{ showQuestionList? 'Hide List' : 'Show Full List' }}
                 </button>
               </div>
 
-              <div class="col-12 mt-2" v-show="flashcardList.length">
-                <button type="button" class="btn btn-sm btn-primary w-100">
-                  <i class="bi bi-shuffle me-1"></i> Shuffle Flashcards
+              <div
+                v-show="flashcardList.length"
+                class="col-12 mt-2"
+              >
+                <button
+                  type="button"
+                  class="btn btn-sm btn-primary w-100"
+                >
+                  <i class="bi bi-shuffle me-1" /> Shuffle Flashcards
                 </button>
               </div>
 
               <div class="col-12 mt-2">
-                <button type="button" class="btn btn-sm btn-primary w-100" v-on:click="showForm = true">
-                  <i class="bi bi-plus-lg me-1"></i> Create Flashcard
+                <button
+                  type="button"
+                  class="btn btn-sm btn-primary w-100"
+                  @click="showForm = true"
+                >
+                  <i class="bi bi-plus-lg me-1" /> Create Flashcard
                 </button>
               </div>
             </div>
 
-            <div class="row mt-auto" v-show="showForm">
+            <div
+              v-show="showForm"
+              class="row mt-auto"
+            >
               <div class="col-auto pe-1">
-                <button type="button" class="btn btn-sm btn-secondary" v-on:click="resetFlashcardData()">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-secondary"
+                  @click="resetFlashcardData()"
+                >
                   Cancel
                 </button>
               </div>
 
               <div class="col ps-0">
-                <button type="submit" form="flashcard_form" class="btn btn-sm w-100" :class="isEditMode? 'btn-success' : 'btn-primary'">
-                  <i class="bi me-1" :class="isEditMode? 'bi-floppy-fill' : 'bi-plus-lg'"></i>
+                <button
+                  type="submit"
+                  form="flashcard_form"
+                  class="btn btn-sm w-100"
+                  :class="isEditMode? 'btn-success' : 'btn-primary'"
+                >
+                  <i
+                    class="bi me-1"
+                    :class="isEditMode? 'bi-floppy-fill' : 'bi-plus-lg'"
+                  />
                   {{ isEditMode? 'Save Changes' : 'Create' }}
                 </button>
               </div>
@@ -117,21 +207,34 @@
           </div>
         </div>
 
-        <div class="row mt-3" v-show="showQuestionList">
+        <div
+          v-show="showQuestionList"
+          class="row mt-3"
+        >
           <div class="col p-0">
             <h4>Question List</h4>
           </div>
         </div>
 
-        <div class="row" v-show="!flashcardList.length">
-            <div class="col text-center m-4">
-                <i class="text-muted">There are no questions to show. Click on the "Create Flashcard" button to add one.</i>
-            </div>
+        <div
+          v-show="!flashcardList.length"
+          class="row"
+        >
+          <div class="col text-center m-4">
+            <i class="text-muted">There are no questions to show. Click on the "Create Flashcard" button to add one.</i>
+          </div>
         </div>
 
-        <div class="row card" v-show="showQuestionList && flashcardList.length">
+        <div
+          v-show="showQuestionList && flashcardList.length"
+          class="row card"
+        >
           <div class="col">
-            <div class="row border-bottom p-2" v-for="flashcard in flashcardList" v-bind:key="flashcard._id">
+            <div
+              v-for="flashcard in flashcardList"
+              :key="flashcard._id"
+              class="row border-bottom p-2"
+            >
               <div class="col-3">
                 {{ flashcard.question }}
               </div>
@@ -142,34 +245,34 @@
 
               <div class="col-auto text-end pe-0">
                 <button
-                    type="button"
-                    class="btn btn-sm shadow-none border-0 note-menu"
-                    data-bs-toggle="dropdown"
-                    v-on:click="currentFlashcard = flashcard"
+                  type="button"
+                  class="btn btn-sm shadow-none border-0 note-menu"
+                  data-bs-toggle="dropdown"
+                  @click="currentFlashcard = flashcard"
                 >
-                    <i class="bi bi-three-dots-vertical"></i>
+                  <i class="bi bi-three-dots-vertical" />
                 </button>
 
                 <ul class="dropdown-menu py-1">
-                    <li>
-                        <a
-                            class="dropdown-item px-2"
-                            v-on:click="showEditForm()"
-                        >
-                            Edit
-                        </a>
-                    </li>
+                  <li>
+                    <a
+                      class="dropdown-item px-2"
+                      @click="showEditForm()"
+                    >
+                      Edit
+                    </a>
+                  </li>
 
-                    <li><hr class="dropdown-divider my-1" /></li>
+                  <li><hr class="dropdown-divider my-1"></li>
 
-                    <li>
-                        <a
-                        class="dropdown-item px-2 text-danger"
-                        v-on:click="deleteFlashcard()"
-                        >
-                        Delete
-                        </a>
-                    </li>
+                  <li>
+                    <a
+                      class="dropdown-item px-2 text-danger"
+                      @click="deleteFlashcard()"
+                    >
+                      Delete
+                    </a>
+                  </li>
                 </ul>
               </div>
             </div>

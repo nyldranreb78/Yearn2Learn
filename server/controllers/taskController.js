@@ -42,7 +42,7 @@ async function create(req, res){
             name: req.body.name,
             taskGrade: req.body.taskGrade,
             deadline: req.body.deadline,
-            isFishished: false
+            isFinished: false
         });
 
         task.author = user._id;
@@ -99,7 +99,7 @@ async function update(req, res){
         task.taskGrade = req.body.taskGrade ? req.body.taskGrade : task.taskGrade;
         task.actualGrade = req.body.actualGrade ? req.body.actualGrade : task.actualGrade;
         task.deadline = req.body.deadline ? req.body.deadline : task.deadline;
-        task.isFishished = req.body.isFishished ? req.body.isFinished : task.isFishished;
+        task.isFinished = req.body.isFinished ? req.body.isFinished : task.isFinished;
 
         await task.save();
         return res.status(200).json({ task: task });

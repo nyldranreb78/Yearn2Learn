@@ -149,6 +149,7 @@ export const useCoreStore = defineStore("core", {
                 const response = await this.authStore.getTasks();
                 if (response) {
                     this.taskList = response.tasks;
+                    this.sortTasks();
                 }
             } catch (error) {
                 console.error("Error fetching tasks:", error);

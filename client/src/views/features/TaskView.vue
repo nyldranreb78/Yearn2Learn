@@ -163,6 +163,83 @@
                 </div>
               </div>
             </div>
+
+            <div class="card mt-3">
+              <div class="card-header pe-2">
+                <div class="row">
+                  <div class="col text-start mt-1">
+                    Class Progress
+                  </div>
+                </div>
+              </div>
+
+              <div class="card-body">
+                <div class="row">
+                  <div class="col">
+                    Select Class
+                    <select
+                      v-model="currentClass"
+                      class="form-select"
+                    >
+                      <option value disabled>Select</option>
+                      <option
+                        v-for="folder in classList"
+                        :key="folder._id"
+                        :value="folder"
+                      >
+                        {{ folder.name }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div v-if="classTasks.ungraded.length" class="mt-4">
+                  <div class="row border-bottom pb-0 mb-2"><div class="col">Pending Tasks</div></div>
+                  <div class="row" v-for="task in classTasks.ungraded" v-bind:key="task._id">
+                    <div class="col-6 text-truncate">
+                      <button
+                        type="button"
+                        class="btn p-0"
+                        @click="currentTask = task"
+                      >
+                        <b><u>{{ task.name }}:</u></b>
+                      </button>
+                    </div>
+
+                    <div class="col-6">
+                      ? / {{ task.taskGrade }}
+                    </div>
+                  </div>
+                </div>
+
+                <div v-if="classTasks.graded.length" class="mt-4">
+                  <div class="row border-bottom pb-0 mb-2"><div class="col">Graded Tasks</div></div>
+
+                  <div class="row" v-for="task in classTasks.graded" v-bind:key="task._id">
+                    <div class="col-6 text-truncate">
+                      <button
+                        type="button"
+                        class="btn p-0"
+                        @click="currentTask = task"
+                      >
+                        <b><u>{{ task.name }}:</u></b>
+                      </button>
+                    </div>
+
+                    <div class="col-6">
+                      {{ task.actualGrade }} / {{ task.taskGrade }}
+                    </div>
+                  </div>
+
+                  <div class="row mt-4">
+                    <div class="col-6"><b>TOTAL:</b></div>
+                    <div class="col-6">
+                      {{ totalActualGrade + ' / ' + totalTaskGrade + ' (' + (averageGrade) + ')' }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -337,26 +414,41 @@
 
         <div class="modal-body">
           <h6 class="text-center">
-            Are you sure you want to delete the
+            Are you sure you want to delete this task? This is irreversible!
+            <br><br><i>Warning: Deleting this will remove it from your Class Progress. </i>
+            <span v-if="!currentTask.isFinished">
+              <i>Consider marking it as "<span class="text-success"><b>Finished</b></span>" instead.</i>
+            </span>
           </h6>
 
           <div class="row p-0 align-middle mt-3">
-            <div class="col text-start">
+            <div class="col-4 text-start">
               <button
-                class="btn btn-sm btn-secondary"
+                class="btn btn-sm btn-secondary w-100"
                 data-bs-dismiss="modal"
               >
-                Keep
+                Keep Task
               </button>
             </div>
 
-            <div class="col text-end">
+            <div class="col-4 text-middle">
               <button
-                class="btn btn-sm btn-danger ms-3"
+                v-if="!currentTask.isFinished"
+                class="btn btn-sm btn-success w-100"
+                data-bs-dismiss="modal"
+                @click="changeStatus(true)"
+              >
+                Mark As Finished
+              </button>
+            </div>
+
+            <div class="col-4 text-end">
+              <button
+                class="btn btn-sm btn-danger w-100"
                 data-bs-dismiss="modal"
                 @click="deleteTask()"
               >
-                Delete
+                Confirm Deletion
               </button>
             </div>
           </div>
@@ -373,8 +465,9 @@ import { useCoreStore } from '@/store/core';
 import { onBeforeMount } from 'vue';
 import bootstrap from "bootstrap/dist/js/bootstrap.bundle.js";
 
-const coreStore = useCoreStore();
-const currentTask = ref("")
+const coreStore = useCoreStore(); // Central source of state
+const currentTask = ref("")       // The task currently being viewed by the user
+const currentClass = ref("")      // The class currently being viewed by the user
 
 const isEditMode = ref(false)
 const isForClass = ref(false)
@@ -391,17 +484,22 @@ const taskData = reactive({
     actualGrade: null
 })
 
-// Enforce that (a) the grade received (actualGrade) is always lower than the taskGrade
-// and (b) a taskGrade of 0 is equivalent to it not having weight at all
 watch(taskData, (newValue) => {
     if (newValue) {
+        // Enforce that the grade received (actualGrade) is always lower than the taskGrade
         if(newValue.taskGrade < taskData.actualGrade){
             taskData.actualGrade = newValue.taskGrade;
         }
 
-        if(newValue.taskGrade == 0){
+        // Enforce that a taskGrade of 0 is equivalent to it not having weight at all
+        if(newValue.taskGrade <= 0){
             taskData.taskGrade = null;
             taskData.actualGrade = null;
+        }
+
+        // Enforce a maximum of 100%
+        if(newValue.taskGrade > 100){
+          newValue.taskGrade = 100;
         }
 
         if(taskData.deadline){
@@ -412,23 +510,64 @@ watch(taskData, (newValue) => {
     }
 })
 
-const taskList = computed(() => {
-  return coreStore.tasks;
+watch(currentTask, (newValue) => {
+    if (newValue) {
+      currentClass.value = classList.value.find(classFolder => {
+        return classFolder._id === newValue.folderID;
+      })
+    }
 })
 
+// List of "Classes"
+// Classes are folders with a 'Priority' field property
 const classList = computed(() => {
   return coreStore.folders.filter((folder) => {
     return folder.priority != null;
   });
 })
 
-function getTaskStatus(isFinished){
-  return isFinished? 'Finished' : 'In Progress'
-}
+// List of Tasks
+const taskList = computed(() => {
+  return coreStore.tasks;
+})
 
-function getClassName(folderID){
-    return classList.value.find((folder) => folder._id === folderID).name;
-}
+// The graded tasks for the class that a user is viewing
+const classTasks = computed(() => {
+  let sortedTasks = {
+    graded: [],
+    ungraded: []
+  }
+
+  if(currentClass.value){
+    let tasks = taskList.value.filter((task) => {
+      return task.taskGrade != null && task.folderID === currentClass.value._id;
+    })
+
+    // Segregate the graded and ungraded tasks
+    for(const i in tasks){
+      if (tasks[i].actualGrade != null){
+        sortedTasks.graded.push(tasks[i])
+      }
+      else {
+        sortedTasks.ungraded.push(tasks[i])
+      }
+    }
+  }
+
+  return sortedTasks;
+});
+
+const totalTaskGrade = computed(() => {
+  return getTotalGrade('taskGrade');
+});
+
+const totalActualGrade = computed(() => {
+  return getTotalGrade('actualGrade');
+});
+
+const averageGrade = computed(() => {
+  return (totalActualGrade.value/totalTaskGrade.value * 100).toFixed(1) + '%';
+});
 
 async function addTask(){
     const newTask = {
@@ -437,7 +576,7 @@ async function addTask(){
         folderID: taskData.folderID,
         taskGrade: taskData.taskGrade,
         actualGrade: taskData.actualGrade,
-        isFinished: false
+        isFinished: taskData.actualGrade? true : false
     };
 
     await coreStore.addTask(newTask);
@@ -453,8 +592,9 @@ async function editTask(){
         folderID: taskData.folderID,
         taskGrade: taskData.taskGrade,
         actualGrade: taskData.actualGrade,
-        isFinished: currentTask.value.isFinished
+        isFinished: taskData.actualGrade? true : currentTask.value.isFinished
     };
+
     await coreStore.editTask(currentTask.value._id, updatedTask);
 
     resetTaskData();
@@ -468,15 +608,9 @@ async function deleteTask(){
 }
 
 async function changeStatus(newStatus){
-    const updatedTask = {
-        isFinished: newStatus
-    }
-
-    if(newStatus != currentTask.value.isFinished){
-        await coreStore.editTask(currentTask.value._id, updatedTask);
-    }
-
     currentTask.value.isFinished = newStatus;
+
+    await coreStore.editTask(currentTask.value._id, currentTask.value);
 }
 
 async function prefillEditForm() {
@@ -518,5 +652,19 @@ async function closeModal(){
     const modal = document.querySelector("#add_edit_task_form");
 	bootstrap.Modal.getOrCreateInstance(modal).hide();
   }
+}
+
+function getTotalGrade(gradeType){
+  return classTasks.value.graded.reduce((gradeA, gradeB) => {
+    return gradeA + gradeB[gradeType]
+  }, 0);
+}
+
+function getTaskStatus(isFinished){
+  return isFinished? 'Finished' : 'In Progress'
+}
+
+function getClassName(folderID){
+    return classList.value.find((folder) => folder._id === folderID).name;
 }
 </script>
