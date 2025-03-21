@@ -75,8 +75,8 @@ jobs:
       
       - working-directory: ./server
         run: npm start &
-      - working-directory: ./client
-        run: npm run serve &
+      #- working-directory: ./client
+        #run: npm run serve &
       #- working-directory: ./client
         #run: npm run cypress:run
       - name: Cypress run
