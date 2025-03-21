@@ -218,11 +218,21 @@ export const useCoreStore = defineStore("core", {
         },
 
         // FLASHCARDS
+        async fetchFlashcards(){
+            try {
+                const response = await this.authStore.getUserFlashcards();
+                if (response) {
+                    this.flashcardList = response.flashcards;
+                }
+            } catch (error) {
+                console.error("Error fetching flashcards:", error);
+            }
+        },
+
         async addFlashcard(flashcardData){
             try{
-                // TODO: USE API
-
-                this.flashcardList.push(flashcardData);
+                const newFlashcard = await this.authStore.createFlashcard(flashcardData);
+                this.flashcardList.push(newFlashcard);
             } catch (error) {
                 console.error("Error adding flashcard:", error);
             }
@@ -230,8 +240,8 @@ export const useCoreStore = defineStore("core", {
 
         async editFlashcard(flashcardId, flashcardData){
             try {
-                // TODO: USE API
-        
+                await this.authStore.updateFlashcard(flashcardId, flashcardData);
+
                 const flashcardIndex = this.flashcardList.findIndex(flashcard => flashcard._id === flashcardId);
 
                 if (flashcardIndex !== -1) {
@@ -244,12 +254,22 @@ export const useCoreStore = defineStore("core", {
 
         async deleteFlashcard(flashcardId){
             try {
-                // TODO: USE API
+                await this.authStore.deleteFlashcard(flashcardId);
         
                 this.flashcardList = this.flashcardList.filter(flashcard => flashcard._id !== flashcardId);
         
             } catch (error) {
                 console.error("Error deleting flashcard:", error);
+            }
+        },
+
+        async fetchFlashcardsBySetName(setName) {
+            try {
+                const response = await this.authStore.getFlashcardsBySetName(setName);
+                return response.flashcards;
+            } catch (error) {
+                console.error("Error fetching flashcards by setName: ", error);
+                return [];
             }
         }
     },
