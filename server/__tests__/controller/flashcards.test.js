@@ -6,13 +6,11 @@ const {
   deleteFlashcard,
 } = require("../../controllers/flashcardController");
 
-const Folder = require("../../models/folder");
 const Flashcard = require("../../models/flashcards");
 const auth = require("../../middleware/auth-service");
 
 jest.mock("../../middleware/auth-service");
 jest.mock("../../models/flashcards");
-jest.mock("../../models/folder");
 
 describe("Flashcard Controller", () => {
   let req, res;
@@ -55,6 +53,7 @@ describe("Flashcard Controller", () => {
         question: "MEVN?",
         answer: "Mongo, Express, Vue, Node",
         author: mockID,
+        setName: "Tech",
       },
     ];
 
@@ -87,7 +86,11 @@ describe("Flashcard Controller", () => {
   // Get flashcards for logged-in user
   it("should return flashcards sorted for logged-in user", async () => {
     const mockFlashcards = [
-      { question: "What is JavaScript?", answer: "A programming language" },
+      {
+        question: "What is JavaScript?",
+        answer: "A programming language",
+        setName: "Coding",
+      },
     ];
     auth.getUserID.mockReturnValue("validUserID");
     Flashcard.find.mockReturnValue({
@@ -117,22 +120,15 @@ describe("Flashcard Controller", () => {
 
   // Create a flashcard
   it("should create a flashcard successfully", async () => {
-    const mockFolderID = "validFolderID";
     const mockUserID = "validUserID";
 
-    req.params = { folderID: mockFolderID };
-    req.body = { question: "New Question", answer: "New Answer" };
     auth.getUserID.mockReturnValue(mockUserID);
-
-    const mockFolder = {
-      _id: mockFolderID,
+    Flashcard.prototype.save = jest.fn().mockResolvedValue({
+      question: "New Question",
+      answer: "New Answer",
+      setName: "Tech",
       author: mockUserID,
-      flashcards: [],
-      save: jest.fn(),
-    };
-    Folder.findById.mockResolvedValue(mockFolder);
-
-    Flashcard.prototype.save = jest.fn().mockResolvedValue();
+    });
 
     await createFlashcard(req, res);
 
@@ -142,24 +138,10 @@ describe("Flashcard Controller", () => {
 
   // Handle error when creating a flashcard
   it("should return 500 if flashcard creation fails", async () => {
-    const mockFolderID = "validFolderID";
     const mockUserID = "validUserID";
 
-    req.params = { folderID: mockFolderID };
-    req.body = { question: "New Question", answer: "New Answer" };
     auth.getUserID.mockReturnValue(mockUserID);
-
-    const mockFolder = {
-      _id: mockFolderID,
-      author: mockUserID,
-      flashcards: [],
-      save: jest.fn(),
-    };
-    Folder.findById = jest.fn().mockResolvedValue(mockFolder);
-
-    Flashcard.prototype.save = jest
-      .fn()
-      .mockRejectedValue(new Error("Database error"));
+    Flashcard.prototype.save = jest.fn().mockRejectedValue(new Error("Database error"));
 
     await createFlashcard(req, res);
 

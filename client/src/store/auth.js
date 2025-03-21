@@ -212,6 +212,16 @@ export const useAuthStore = defineStore("auth", {
         console.error("Error deleting task:", error.response?.data || error.message);
         throw error.message;
       }
-    }
+    },
+
+    // async createFlashcard(flashcardData) {
+    //   try {
+    //     const { data } = await useApiPrivate().post(`/api/task/create`, taskData);
+    //     return data;
+    //   } catch (error) {
+    //     console.error("Error creating task:", error.response?.data || error.message);
+    //     throw error.message;
+    //   }
+    // }
   },
 });
