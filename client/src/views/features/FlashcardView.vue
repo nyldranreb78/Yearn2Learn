@@ -265,12 +265,12 @@
               v-for="flashcard in filteredList"
               :key="flashcard._id"
               class="row border-bottom p-2"
-              id = "cardList"
+              :id = "'cardList_' + flashcard._id + '_view'"
             >
               <div
                 v-if="!isDeleteMode || flashcard !== currentFlashcard"
                 class="col-3 border-end"
-                id = "cardList"
+                :id = "'cardList_' + flashcard._id + '_del'"
               >
                 {{ flashcard.question }}
               </div>
