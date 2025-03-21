@@ -14,36 +14,29 @@
           <button
             type="button"
             class="col-auto btn btn-light flash-card-ui fs-4 text-muted"
-            @click="flashcardIndex--"
-            :disabled="!filteredList.length"
           >
             <i class="bi bi-caret-left-fill" />
           </button>
 
           <button
-            class="col btn btn-light flash-card flash-card-ui border text-center text-truncate"
+            class="col btn btn-light flash-card flash-card-ui border text-center"
+            @mouseenter="showAltText = true"
+            @mouseleave="showAltText = false"
             @click="showAnswer = !showAnswer"
-            :disabled="!filteredList.length"
           >
-            <div v-if="filteredList.length" class="my-auto">
+            <div class="my-auto">
               <h4 v-if="showAnswer">
-                {{ filteredList[flashcardIndex].answer }}
+                {{ showAltText? 'Click here to see the question' : "Testing question" }}
               </h4>
               <h4 v-else>
-                {{ filteredList[flashcardIndex].question  }}
+                {{ showAltText? 'Click here to reveal the answer' : "Testing question" }}
               </h4>
-            </div>
-
-            <div v-else>
-              <i>Create a flashcard by clicking the "Create Flashcard" button on the right.</i>
             </div>
           </button>
 
           <button
             type="button"
             class="col-auto btn btn-light flash-card-ui fs-4 text-muted"
-            @click="flashcardIndex++"
-            :disabled="!filteredList.length"
           >
             <i class="bi bi-caret-right-fill" />
           </button>
@@ -92,7 +85,7 @@
                     <div class="col">
                       <label><small>Flashcard Set</small></label>
                       <select
-                        v-model="flashcardData.setName"
+                        v-model="flashcardData.set"
                         class="form-select form-select-sm"
                         @change="setInput = ''"
                       >
@@ -100,10 +93,10 @@
                           Select or create set
                         </option>
                         <option
-                          v-for="setName in flashcardSetList"
-                          v-bind:key="setName"
+                          v-for="x in [1,2,3,4,5,6]"
+                          :key="x"
                         >
-                          {{ setName }}
+                          {{ 'Flashcard Set #' + x }}
                         </option>
                       </select>
                     </div>
@@ -111,7 +104,7 @@
                 </div>
 
                 <div
-                  v-show="!flashcardData.setName || isEditMode"
+                  v-show="!flashcardData.set"
                   class="col-12 mt-2"
                 >
                   <input
@@ -119,7 +112,7 @@
                     type="text"
                     class="form-control form-control-sm"
                     placeholder="New Flashcard Set Name"
-                    :required="!flashcardData.setName"
+                    :required="!flashcardData.set"
                   >
                 </div>
               </form>
@@ -168,7 +161,6 @@
                 <button
                   type="button"
                   class="btn btn-sm btn-primary w-100"
-                  @click="shuffleFlashcards()"
                 >
                   <i class="bi bi-shuffle me-1" /> Shuffle Flashcards
                 </button>
@@ -227,7 +219,7 @@
         </div>
 
         <div
-          v-show="!filteredList.length"
+          v-show="!flashcardList.length"
           class="row"
         >
           <div class="col text-center m-4">
@@ -236,16 +228,16 @@
         </div>
 
         <div
-          v-show="showQuestionList && filteredList.length"
+          v-show="showQuestionList && flashcardList.length"
           class="row card"
         >
           <div class="col">
             <div
-              v-for="flashcard in filteredList"
+              v-for="flashcard in flashcardList"
               :key="flashcard._id"
               class="row border-bottom p-2"
             >
-              <div v-if="!isDeleteMode || flashcard !== currentFlashcard" class="col-3 border-end">
+              <div class="col-3">
                 {{ flashcard.question }}
               </div>
 
@@ -259,10 +251,10 @@
 
               <div class="col-auto text-end pe-0">
                 <button
-                  v-show="!isDeleteMode || flashcard !== currentFlashcard"
                   type="button"
                   class="btn btn-sm shadow-none border-0 note-menu"
                   data-bs-toggle="dropdown"
+                  @click="currentFlashcard = flashcard"
                 >
                   <i class="bi bi-three-dots-vertical" />
                 </button>
@@ -271,7 +263,7 @@
                   <li>
                     <a
                       class="dropdown-item px-2"
-                      @click="showEditForm(flashcard)"
+                      @click="showEditForm()"
                     >
                       Edit
                     </a>
@@ -282,7 +274,7 @@
                   <li>
                     <a
                       class="dropdown-item px-2 text-danger"
-                      @click="showDeleteMode(flashcard)"
+                      @click="deleteFlashcard()"
                     >
                       Delete
                     </a>
