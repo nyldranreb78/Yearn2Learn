@@ -19,6 +19,10 @@ router.patch("/:id", auth.verifyToken, controller.updateFlashcard);
 router.delete("/:id", auth.verifyToken, controller.deleteFlashcard);
 
 // Get all flashcards with similar setNames
-router.get('/set/:setName', auth.verifyToken, controller.getFlashcardsBySetName);
+router.get(
+  "/set/:setName",
+  auth.verifyToken,
+  controller.getFlashcardsBySetName,
+);
 
 module.exports = router;
