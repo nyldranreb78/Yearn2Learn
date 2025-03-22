@@ -33,29 +33,28 @@
   </div>
 </template>
 
-<script setup lang= "js">
-import { useAuthStore } from '../../store/auth';
-import { computed, onMounted } from 'vue';
+<script setup lang="js">
+import { useAuthStore } from "../../store/auth";
+import { computed, onMounted } from "vue";
 
-const authStore = useAuthStore()
+const authStore = useAuthStore();
 
-const user = computed(()=>{
-  console.log(authStore.userDetail)
-  return authStore.userDetail
-})
+const user = computed(() => {
+  console.log(authStore.userDetail);
+  return authStore.userDetail;
+});
 
-async function getUser(){
-  await authStore.getUser()
+async function getUser() {
+  await authStore.getUser();
 }
 
-onMounted(async ()=>{
-  await getUser()
-})
-
+onMounted(async () => {
+  await getUser();
+});
 </script>
 
 <style scoped>
-#user .card{
+#user .card {
   max-width: 40vw;
   margin: auto;
 }

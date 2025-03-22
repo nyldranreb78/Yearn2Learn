@@ -1,74 +1,74 @@
 /*General*/
 body {
-	background-color: #f8f9fa; /* Same as Bootstrap's "bg-light" */
+  background-color: #f8f9fa; /* Same as Bootstrap's "bg-light" */
 }
 
 /*Brand-related*/
 .y2l-blue {
-	background-color: #2f5597;
+  background-color: #2f5597;
 }
 
 .y2l-yellow {
-	background-color: #ffc000;
+  background-color: #ffc000;
 }
 
 .y2l-red {
-	background-color: #ea4d21;
+  background-color: #ea4d21;
 }
 
 .txt-y2l-blue {
-	color: #2f5597;
+  color: #2f5597;
 }
 
 .txt-y2l-yellow {
-	color: #ffc000;
+  color: #ffc000;
 }
 
 .txt-y2l-red {
-	color: #ea4d21;
+  color: #ea4d21;
 }
 
 /*Custom*/
-.navbar-offset{
-	margin-top: 70px !important;
+.navbar-offset {
+  margin-top: 70px !important;
 }
 
 .vh-navbar-offset {
-	height: calc(100% - 70px);
+  height: calc(100% - 70px);
 }
 
 .sharp-top-border {
-border-top-left-radius: 0px !important;
-border-top-right-radius: 0px !important;
+  border-top-left-radius: 0px !important;
+  border-top-right-radius: 0px !important;
 }
 
 .accordion-button:focus {
-outline: none !important;
-box-shadow: none !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 .btn-circle {
-border-radius: 50%;
-aspect-ratio: 1;
+  border-radius: 50%;
+  aspect-ratio: 1;
 }
 
 .note-menu:hover {
-background-color: lightgray;
+  background-color: lightgray;
 }
 
 .btn-edit-form {
-border: none;
+  border: none;
 }
 
 .btn-edit-form:hover {
-background-color: lightgray;
+  background-color: lightgray;
 }
 
 .bottom-toolbar {
-height: 40px;
+  height: 40px;
 }
 
 .accordion-edit:not(.collapsed)::after,
 .accordion-edit::after {
-background-image: unset !important;
+  background-image: unset !important;
 }

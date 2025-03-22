@@ -1,5 +1,7 @@
 <template>
-  <div class="container-fluid text-start d-flex flex-column navbar-offset vh-navbar-offset">
+  <div
+    class="container-fluid text-start d-flex flex-column navbar-offset vh-navbar-offset"
+  >
     <div class="row justify-content-md-center mt-4">
       <div class="col-8">
         <div class="row">
@@ -18,8 +20,8 @@
               :feature-name="feature[1]"
               :route-name="feature[2]"
               :description="feature[3]"
-              @click="feature[2]? null : showTimer('false')"
-              @mouseleave="feature[2]? null : showTimer('outside')"
+              @click="feature[2] ? null : showTimer('false')"
+              @mouseleave="feature[2] ? null : showTimer('outside')"
             />
           </div>
         </div>
@@ -64,38 +66,38 @@
   </div>
 </template>
 
-
 <script setup>
-import FeatureCard from '@/components/FeatureCard.vue';
+import FeatureCard from "@/components/FeatureCard.vue";
 import bootstrap from "bootstrap/dist/js/bootstrap.bundle.js";
 //import { ref } from 'vue'; // reactive, computed, onMounted, onBeforeUnmount
 
-const noteDesc = "Write and edit your notes, organized by folders."
-const flashcardDesc = "Create your own set of Q&A cards and test yourself with them."
-const goalDesc = "Keep track of your tasks, goals, and grade progress."
-const timerDesc = "Choose between a generic or Pomodoro Method timer."
+const noteDesc = "Write and edit your notes, organized by folders.";
+const flashcardDesc =
+  "Create your own set of Q&A cards and test yourself with them.";
+const goalDesc = "Keep track of your tasks, goals, and grade progress.";
+const timerDesc = "Choose between a generic or Pomodoro Method timer.";
 
-const featureInfo = [ // [Bootstrap Icon Code, Feature Name, Vue Route] 
-	["journal-text", "Notes", "notes", noteDesc],
-	["card-heading", "Flash Cards", "flashcards", flashcardDesc],
-	["calendar2-check", "Goal Management", "home", goalDesc], // TODO: change this later
-	["stopwatch", "Timer", null, timerDesc]
+const featureInfo = [
+  // [Bootstrap Icon Code, Feature Name, Vue Route]
+  ["journal-text", "Notes", "notes", noteDesc],
+  ["card-heading", "Flash Cards", "flashcards", flashcardDesc],
+  ["calendar2-check", "Goal Management", "home", goalDesc], // TODO: change this later
+  ["stopwatch", "Timer", null, timerDesc],
 ];
 
-async function showTimer(autoCloseAttribute){
+async function showTimer(autoCloseAttribute) {
   const timerMenu = document.querySelector("#timerFeature");
   timerMenu.setAttribute("data-bs-auto-close", autoCloseAttribute);
 
-  const dropdown = new bootstrap.Dropdown(timerMenu)
-  if(autoCloseAttribute === "false") {
-	dropdown.show();
+  const dropdown = new bootstrap.Dropdown(timerMenu);
+  if (autoCloseAttribute === "false") {
+    dropdown.show();
   }
 }
 </script>
 
-
 <style>
-.border-card{
-	border-color: #d2d2d2 !important;
+.border-card {
+  border-color: #d2d2d2 !important;
 }
 </style>

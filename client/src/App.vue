@@ -1,15 +1,14 @@
 <script setup lang="js">
+import { RouterView } from "vue-router";
+import { onBeforeMount } from "vue";
+import { useCoreStore } from "./store/core";
+import NavBar from "./components/NavBar.vue";
 
-import { RouterView } from 'vue-router';
-import { onBeforeMount } from 'vue';
-import { useCoreStore } from './store/core';
-import NavBar from './components/NavBar.vue';
-
-onBeforeMount ( async () => {
-	await useCoreStore().fetchData();
+onBeforeMount(async () => {
+  await useCoreStore().fetchData();
   await useCoreStore().fetchTasks();
   await useCoreStore().fetchFlashcards();
-})
+});
 </script>
 
 <template>

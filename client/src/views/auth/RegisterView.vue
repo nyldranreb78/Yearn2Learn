@@ -101,12 +101,12 @@
 </template>
 
 <script setup lang="js">
-import { useAuthStore } from '../../store/auth';
-import { reactive, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useAuthStore } from "../../store/auth";
+import { reactive, ref } from "vue";
+import { useRouter } from "vue-router";
 
-const authStore = useAuthStore()
-const router = useRouter()
+const authStore = useAuthStore();
+const router = useRouter();
 
 const registerData = reactive({
   username: "",
@@ -115,21 +115,21 @@ const registerData = reactive({
   last_name: "",
   password: "",
   password_confirm: "",
-})
+});
 
-const errorMessage = ref("")
+const errorMessage = ref("");
 
-async function submit(){
-  await authStore.register(registerData)
-    .then(res => {
+async function submit() {
+  await authStore
+    .register(registerData)
+    .then((res) => {
       console.log("Registration successful:", res);
-      router.replace({name: "home"})
+      router.replace({ name: "home" });
     })
-    .catch(err => {
-      errorMessage.value = err.message
-    })
+    .catch((err) => {
+      errorMessage.value = err.message;
+    });
 }
-
 </script>
 
 <style scoped>
@@ -140,7 +140,7 @@ async function submit(){
   /* height: 100vh; */
 }
 
-#register .card{
+#register .card {
   max-width: 40vw;
   margin: auto;
 }
