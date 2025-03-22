@@ -37,22 +37,18 @@
         <!-- TEXT EDITOR TOOLBAR -->
         <div
           v-show="currentNote"
-          class="row border bg-light 
-                bottom-toolbar fixed-bottom m-0 p-0"
+          class="row border bg-light bottom-toolbar fixed-bottom m-0 p-0"
         >
           <div class="col-3">
             <div class="fs-6 text-truncate ms-1 me-5 mt-1 pe-5">
-              <span
-                v-show="currentNote"
-                class="align-middle"
-              >{{ textEditorData.folderName }} / {{ textEditorData.noteTitle }}</span>
+              <span v-show="currentNote" class="align-middle"
+                >{{ textEditorData.folderName }} /
+                {{ textEditorData.noteTitle }}</span
+              >
             </div>
           </div>
 
-          <div
-            id="fixed_toolbar"
-            class="col-6 border-0 mx-auto"
-          >
+          <div id="fixed_toolbar" class="col-6 border-0 mx-auto">
             <!-- Font size selector -->
             <select class="ql-size me-4">
               <option value="small" />
@@ -66,24 +62,12 @@
             <button class="ql-italic" />
             <button class="ql-underline" />
             <button class="ql-strike" />
-            <button
-              class="ql-script"
-              value="sub"
-            />
-            <button
-              class="ql-script me-4"
-              value="super"
-            />
+            <button class="ql-script" value="sub" />
+            <button class="ql-script me-4" value="super" />
 
             <!-- Lists -->
-            <button
-              class="ql-list"
-              value="bullet"
-            />
-            <button
-              class="ql-list me-4"
-              value="ordered"
-            />
+            <button class="ql-list" value="bullet" />
+            <button class="ql-list me-4" value="ordered" />
 
             <!-- Niche tools -->
             <button class="ql-blockquote" />
@@ -92,10 +76,9 @@
 
           <div class="col-3">
             <div class="fs-6 text-truncate text-end me-1 ms-5 mt-1 se-5">
-              <span
-                v-show="currentNote"
-                class="align-middle"
-              > {{ saveStatus }}</span>
+              <span v-show="currentNote" class="align-middle">
+                {{ saveStatus }}</span
+              >
             </div>
           </div>
         </div>
@@ -132,17 +115,14 @@
 
             <div class="col text-end align-middle pt-1">
               <button
-                id="editFolderButton"
                 v-show="folderList.length"
+                id="editFolderButton"
                 type="button"
                 class="btn btn-edit-form py-0 px-1 ms-2"
                 @click="toggleEditMode()"
               >
                 <span v-show="folderEditMode">Finish Editing</span>
-                <i
-                  v-show="!folderEditMode"
-                  class="bi bi-pencil-square"
-                />
+                <i v-show="!folderEditMode" class="bi bi-pencil-square" />
               </button>
             </div>
           </div>
@@ -152,10 +132,7 @@
       <!--SIDEBAR BODY-->
       <div class="offcanvas-body">
         <!--ADD FOLDER FORM-->
-        <div
-          v-if="!folderEditMode"
-          class="row p-0 m-0 mb-3"
-        >
+        <div v-if="!folderEditMode" class="row p-0 m-0 mb-3">
           <button
             class="btn"
             :class="folderFormInProgress ? 'btn-secondary' : 'btn-primary'"
@@ -172,10 +149,7 @@
             }}</span>
           </button>
 
-          <div
-            id="add_folder_form"
-            class="collapse p-0 m-0"
-          >
+          <div id="add_folder_form" class="collapse p-0 m-0">
             <div class="card card-body sharp-top-border border-top-0 mb-2">
               <form @submit.prevent="addFolder">
                 <div class="row mb-2">
@@ -188,7 +162,7 @@
                       class="form-control"
                       placeholder="e.g. COMP 4350"
                       required
-                    >
+                    />
                   </div>
                 </div>
 
@@ -201,20 +175,16 @@
                         type="checkbox"
                         role="switch"
                         class="form-check-input"
-                        @click="folderData.priority = &quot;&quot;"
+                        @click="folderData.priority = ''"
+                      />
+                      <label class="form-check-label" for="classToggle"
+                        >Does this folder represent a class?</label
                       >
-                      <label
-                        class="form-check-label"
-                        for="classToggle"
-                      >Does this folder represent a class?</label>
                     </div>
                   </div>
                 </div>
 
-                <div
-                  v-if="isAClass"
-                  class="row mb-2"
-                >
+                <div v-if="isAClass" class="row mb-2">
                   <small>Priority</small>
                   <div class="col">
                     <select
@@ -223,18 +193,9 @@
                       class="form-select"
                       required
                     >
-                      <option
-                        value
-                        disabled
-                      >
-                        Select
-                      </option>
-                      <option :value="true">
-                        Major Requirement
-                      </option>
-                      <option :value="false">
-                        Elective
-                      </option>
+                      <option value disabled>Select</option>
+                      <option :value="true">Major Requirement</option>
+                      <option :value="false">Elective</option>
                     </select>
                   </div>
                 </div>
@@ -260,15 +221,14 @@
           v-show="!folderList.length && !folderFormInProgress"
           class="text-center text-muted px-5 py-4"
         >
-          <i>No folders or notes to show. Click on the "Add New Folder" button to
-            add a folder and write cotes under it.</i>
+          <i
+            >No folders or notes to show. Click on the "Add New Folder" button
+            to add a folder and write cotes under it.</i
+          >
         </div>
 
         <!--COLLAPSIBLE FOLDER LIST-->
-        <div
-          v-show="!folderEditMode"
-          class="accordion accordion-flush"
-        >
+        <div v-show="!folderEditMode" class="accordion accordion-flush">
           <div
             v-for="folder in folderList"
             :key="folder._id"
@@ -304,7 +264,11 @@
                   </button>
 
                   <div
-                    v-for="note in [...folder.notes].sort((noteA, noteB) => {return new Date(noteB.updatedAt) - new Date(noteA.updatedAt)})"
+                    v-for="note in [...folder.notes].sort((noteA, noteB) => {
+                      return (
+                        new Date(noteB.updatedAt) - new Date(noteA.updatedAt)
+                      );
+                    })"
                     :key="note._id"
                     class="list-group-item list-group-item-action ps-3 pe-2 py-1"
                     @click="openNotes(folder, note)"
@@ -342,7 +306,7 @@
                             </a>
                           </li>
 
-                          <li><hr class="dropdown-divider my-1"></li>
+                          <li><hr class="dropdown-divider my-1" /></li>
 
                           <li>
                             <a
@@ -365,11 +329,7 @@
         </div>
 
         <!--EDIT FOLDER VIEW-->
-        <div
-          v-if="folderEditMode"
-          id="folder_edit_form"
-          class="accordion"
-        >
+        <div v-if="folderEditMode" id="folder_edit_form" class="accordion">
           <div
             v-for="folder in folderList"
             :key="folder._id"
@@ -428,7 +388,7 @@
               v-if="currentEditingFolderId === folder._id"
               :id="'folderID' + folder._id + 'edit'"
               class="accordion-collapse collapse"
-              :class="{'show': currentEditingFolderId === folder._id}"
+              :class="{ show: currentEditingFolderId === folder._id }"
               data-bs-parent="#folder_edit_form"
             >
               <div class="accordion-body px-3 py-2 fs-6 mb-2">
@@ -442,7 +402,7 @@
                         class="form-control"
                         placeholder="e.g. COMP 4350"
                         required
-                      >
+                      />
                     </div>
                   </div>
 
@@ -454,12 +414,8 @@
                         class="form-select"
                         required
                       >
-                        <option :value="true">
-                          Major Requirement
-                        </option>
-                        <option :value="false">
-                          Elective
-                        </option>
+                        <option :value="true">Major Requirement</option>
+                        <option :value="false">Elective</option>
                       </select>
                     </div>
 
@@ -486,11 +442,7 @@
     <!--Due to the nature of Bootstrap modals, these have to be close to the outermost HTML tag-->
 
     <!--ADD/EDIT NOTE FORM-->
-    <div
-      id="add_edit_note_form"
-      class="modal modal-md fade"
-      tabindex="-1"
-    >
+    <div id="add_edit_note_form" class="modal modal-md fade" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-body">
@@ -499,7 +451,9 @@
                 <div class="col-10 text-start text-truncate">
                   <span v-if="currentNote">Rename {{ currentNote.title }}</span>
 
-                  <span v-else>Create new note for {{ currentFolder.name }}</span>
+                  <span v-else
+                    >Create new note for {{ currentFolder.name }}</span
+                  >
                 </div>
 
                 <div class="col-2 text-end">
@@ -520,7 +474,7 @@
                     class="form-control"
                     placeholder="e.g. Midterm Notes"
                     required
-                  >
+                  />
 
                   <button
                     id="submitNoteButton"
@@ -544,22 +498,14 @@
     </div>
 
     <!--DELETE FOLDER/EDIT FORM-->
-    <div
-      id="delete_form"
-      class="modal modal-md fade"
-      tabindex="-1"
-    >
+    <div id="delete_form" class="modal modal-md fade" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header px-2 py-1">
             <div class="modal-title fs-6">
               Confirm {{ folderEditMode ? "Folder" : "Note" }} Deletion
             </div>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-            />
+            <button type="button" class="btn-close" data-bs-dismiss="modal" />
           </div>
 
           <div class="modal-body">
@@ -569,15 +515,20 @@
               <div class="row justify-content-center p-0 my-2">
                 <div class="col-9 text-truncate">
                   <strong>{{
-                    folderEditMode
-                      ? currentFolder.name
-                      : currentNote.title
+                    folderEditMode ? currentFolder.name : currentNote.title
                   }}</strong>
                 </div>
               </div>
               from your {{ folderEditMode ? "folders" : "note folder" }}?
-              <br><br>
-              <u>This {{ folderEditMode ? "will also delete all the Notes attached to it" : "is irreversible" }}!</u>
+              <br /><br />
+              <u
+                >This
+                {{
+                  folderEditMode
+                    ? "will also delete all the Notes attached to it"
+                    : "is irreversible"
+                }}!</u
+              >
             </h6>
 
             <div class="row p-0 align-middle mt-3">
@@ -595,7 +546,6 @@
                   class="btn btn-sm btn-danger ms-3"
                   data-bs-dismiss="modal"
                   @click="folderEditMode ? deleteFolder() : deleteNote()"
-
                 >
                   Delete
                 </button>
@@ -611,10 +561,10 @@
 <script setup lang="js">
 // @ is an alias to /src
 import bootstrap from "bootstrap/dist/js/bootstrap.bundle.js";
-import { ref, reactive, computed, onBeforeUnmount } from 'vue';
+import { ref, reactive, computed, onBeforeUnmount } from "vue";
 import { useCoreStore } from "@/store/core";
-import { QuillEditor } from '@vueup/vue-quill'
-import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import { QuillEditor } from "@vueup/vue-quill";
+import "@vueup/vue-quill/dist/vue-quill.snow.css";
 
 const coreStore = useCoreStore();
 
@@ -628,7 +578,7 @@ const folderEditMode = ref(false);
 const folderEditFormInProgress = ref(false);
 const currentEditingFolderId = ref(null);
 const mouseOnMenu = ref(false);
-const isAClass = ref(false)
+const isAClass = ref(false);
 
 // Text editor variables
 const textEditor = ref(); // Required by Vue Quill for data binding
@@ -636,228 +586,240 @@ const saveStatus = ref("");
 const saveStatusTimeoutID = ref("");
 const autoSaveTimeoutID = ref("");
 
-
 const folderData = reactive({
-	name: "",
-	priority: ""
+  name: "",
+  priority: "",
 });
 
 const noteData = reactive({
-	title: "",
+  title: "",
 });
 
 const textEditorData = reactive({
-	folderName: "",
-	noteTitle: "",
-	content: ""
-})
+  folderName: "",
+  noteTitle: "",
+  content: "",
+});
 
 const folderList = computed(() => {
   return coreStore.folders;
-})
+});
 
-async function addFolder(){
-	// Add the new folder to the list
-  const priority = isAClass.value? folderData.priority : null;
+async function addFolder() {
+  // Add the new folder to the list
+  const priority = isAClass.value ? folderData.priority : null;
 
-	await coreStore.addFolder(folderData.name, priority);
+  await coreStore.addFolder(folderData.name, priority);
 
-	// Reset important variables
-	closeFolderForm();
+  // Reset important variables
+  closeFolderForm();
 }
 
-async function editFolder(){
-	if (!currentFolder.value) {
-        console.error("No folder selected for editing.");
-        return;
+async function editFolder() {
+  if (!currentFolder.value) {
+    console.error("No folder selected for editing.");
+    return;
   }
 
-  try{
-    await coreStore.editFolder(currentFolder.value._id, folderData.name, folderData.priority);
+  try {
+    await coreStore.editFolder(
+      currentFolder.value._id,
+      folderData.name,
+      folderData.priority,
+    );
     textEditorData.folderName = folderData.name;
-  } finally{
+  } finally {
     closeEditFolderForm();
   }
 }
 
-async function deleteFolder(){
-	if (!currentFolder.value) {
-		console.error("No folder ID provided for deletion.");
-		return;
-	}
+async function deleteFolder() {
+  if (!currentFolder.value) {
+    console.error("No folder ID provided for deletion.");
+    return;
+  }
 
-	await coreStore.deleteFolder(currentFolder.value._id);
+  await coreStore.deleteFolder(currentFolder.value._id);
 
-	// If the last folder is deleted, return to the Add New Folder state
-	if (folderList.value.length === 0) {
-		folderEditMode.value = false;
-	}
+  // If the last folder is deleted, return to the Add New Folder state
+  if (folderList.value.length === 0) {
+    folderEditMode.value = false;
+  }
 }
 
-async function toggleFolderForm(){
-	folderFormInProgress.value = !folderFormInProgress.value;
-	resetFolderData();
+async function toggleFolderForm() {
+  folderFormInProgress.value = !folderFormInProgress.value;
+  resetFolderData();
 }
 
-async function closeFolderForm(){
-	// Only close the form if it is open in the first place
-	if(folderFormInProgress.value){
-		const form = document.querySelector("#add_folder_form");
-		bootstrap.Collapse.getInstance(form).hide();
+async function closeFolderForm() {
+  // Only close the form if it is open in the first place
+  if (folderFormInProgress.value) {
+    const form = document.querySelector("#add_folder_form");
+    bootstrap.Collapse.getInstance(form).hide();
 
-		folderFormInProgress.value = false;
+    folderFormInProgress.value = false;
 
-		resetFolderData();
-	}
+    resetFolderData();
+  }
 }
 
-async function openEditFolderForm(folder){
-	// Close if clicking on the already opened form
-	if (currentEditingFolderId.value === folder._id) {
-        currentEditingFolderId.value = null; // Close the form
-        return;
-    }
-	folderEditFormInProgress.value = true;
-	currentEditingFolderId.value = folder._id;
-	currentFolder.value = folder;
-	folderData.name = folder.name;
-	folderData.priority = folder.priority;
+async function openEditFolderForm(folder) {
+  // Close if clicking on the already opened form
+  if (currentEditingFolderId.value === folder._id) {
+    currentEditingFolderId.value = null; // Close the form
+    return;
+  }
+  folderEditFormInProgress.value = true;
+  currentEditingFolderId.value = folder._id;
+  currentFolder.value = folder;
+  folderData.name = folder.name;
+  folderData.priority = folder.priority;
 }
 
-async function closeEditFolderForm(){
-	folderEditFormInProgress.value = false;
-	currentEditingFolderId.value = null;
+async function closeEditFolderForm() {
+  folderEditFormInProgress.value = false;
+  currentEditingFolderId.value = null;
 
-	if(folderFormInProgress.value){
-		folderFormInProgress.value = false;
-	}
+  if (folderFormInProgress.value) {
+    folderFormInProgress.value = false;
+  }
 }
 
-async function resetFolderData(){
-	folderData.name = "";
-	folderData.priority = ""
+async function resetFolderData() {
+  folderData.name = "";
+  folderData.priority = "";
 }
 
-async function toggleEditMode(){
-	if(folderList.value.length){
-		folderEditMode.value = !folderEditMode.value;
-	}
+async function toggleEditMode() {
+  if (folderList.value.length) {
+    folderEditMode.value = !folderEditMode.value;
+  }
 
-	if(folderEditMode.value){
-		closeEditFolderForm();
-	}
+  if (folderEditMode.value) {
+    closeEditFolderForm();
+  }
 }
 
-async function passCurrentFolder(folder){
-	currentFolder.value = folder; // Allows modals to use the relevant data externally
-	currentNote.value = ""; // Reset the currentNote since we are making a new folder
+async function passCurrentFolder(folder) {
+  currentFolder.value = folder; // Allows modals to use the relevant data externally
+  currentNote.value = ""; // Reset the currentNote since we are making a new folder
 
-	resetNoteData(); // Clear the form to prepare for new input
+  resetNoteData(); // Clear the form to prepare for new input
 }
 
-async function addNote(){
-	try {
-		const newNote = await coreStore.addNote(currentFolder.value._id, noteData.title)
+async function addNote() {
+  try {
+    const newNote = await coreStore.addNote(
+      currentFolder.value._id,
+      noteData.title,
+    );
     // Update the text editor contents to the new note's
-    openNotes(currentFolder.value, newNote)
-	} finally {
-		// Reset and close the form menu
+    openNotes(currentFolder.value, newNote);
+  } finally {
+    // Reset and close the form menu
     resetNoteData();
-	}
+  }
 }
 
-async function renameNote(){
-	if(currentNote.value.title !== noteData.title){
-    try{
+async function renameNote() {
+  if (currentNote.value.title !== noteData.title) {
+    try {
       currentNote.value.title = noteData.title;
-      await saveNoteChanges(currentNote.value)
+      await saveNoteChanges(currentNote.value);
 
       textEditorData.folderName = currentFolder.value.name;
       textEditorData.noteTitle = noteData.title;
     } catch {
       return;
     }
-	}
+  }
 }
 
-async function deleteNote(){
-	if (!currentNote.value) {
-		console.error("No note ID provided for deletion.");
-		return;
-	}
+async function deleteNote() {
+  if (!currentNote.value) {
+    console.error("No note ID provided for deletion.");
+    return;
+  }
 
   await coreStore.deleteNote(currentNote.value._id);
 }
 
-async function passCurrentNote(folder, note){
+async function passCurrentNote(folder, note) {
   currentFolder.value = folder;
-	currentNote.value = note;
-  
-	noteData.title = note.title;
+  currentNote.value = note;
+
+  noteData.title = note.title;
 }
 
-async function resetNoteData(){
-	noteData.title = "";
+async function resetNoteData() {
+  noteData.title = "";
 }
 
 async function openNotes(folder, note) {
-	// Do nothing if the mouse was inside the vertical menu button
-	if (!mouseOnMenu.value) {
-		// If moving to a new note, save the changes
-		if (currentNote.value) {
-			if (currentNote.value.content !== textEditorData.content) {
-				await saveNoteChanges(currentNote.value);
-			}
-			currentNote.value.content = textEditorData.content;
-		}
+  // Do nothing if the mouse was inside the vertical menu button
+  if (!mouseOnMenu.value) {
+    // If moving to a new note, save the changes
+    if (currentNote.value) {
+      if (currentNote.value.content !== textEditorData.content) {
+        await saveNoteChanges(currentNote.value);
+      }
+      currentNote.value.content = textEditorData.content;
+    }
 
-		// Update the data to be used by the text editor
-		textEditorData.folderName = folder.name;
-		textEditorData.noteTitle = note.title;
-		textEditorData.content = note.content;
+    // Update the data to be used by the text editor
+    textEditorData.folderName = folder.name;
+    textEditorData.noteTitle = note.title;
+    textEditorData.content = note.content;
 
-		// Allows us to save changes after switching files
-		currentNote.value = note;
-	}
+    // Allows us to save changes after switching files
+    currentNote.value = note;
+  }
 }
 
 async function saveNoteChanges(note) {
-  await coreStore.editNote(note._id, note.title, textEditorData.content)
+  await coreStore.editNote(note._id, note.title, textEditorData.content);
 }
 
 async function autoSaveNoteChanges() {
-	try { 
+  try {
     saveStatus.value = "Saving...";
 
     // Auto-save 1 second after changes are made
-		clearTimeout(autoSaveTimeoutID.value);
+    clearTimeout(autoSaveTimeoutID.value);
     autoSaveTimeoutID.value = setTimeout(async () => {
       await saveNoteChanges(currentNote.value);
       saveStatus.value = "Saved!";
-    }, 1000)
+    }, 1000);
 
     // Let the user know changes have been saved for 5 seconds
-    clearTimeout(saveStatusTimeoutID.value)
+    clearTimeout(saveStatusTimeoutID.value);
     saveStatusTimeoutID.value = setTimeout(async () => {
-      if(autoSaveTimeoutID.value){
+      if (autoSaveTimeoutID.value) {
         saveStatus.value = "";
       }
-    }, 5000)
-	} catch (error) {
-		console.error("Error updating note:", error.response?.data || error.message);
-	}
+    }, 5000);
+  } catch (error) {
+    console.error(
+      "Error updating note:",
+      error.response?.data || error.message,
+    );
+  }
 }
 
-async function closeModal(){
-  if(noteData.title){
+async function closeModal() {
+  if (noteData.title) {
     const modal = document.querySelector("#add_edit_note_form");
-		bootstrap.Modal.getOrCreateInstance(modal).hide();
+    bootstrap.Modal.getOrCreateInstance(modal).hide();
   }
 }
 
 onBeforeUnmount(async () => {
-	if (currentNote.value && textEditorData.content !== currentNote.value.content) {
-		await saveNoteChanges(currentNote.value);
-	}
+  if (
+    currentNote.value &&
+    textEditorData.content !== currentNote.value.content
+  ) {
+    await saveNoteChanges(currentNote.value);
+  }
 });
 </script>

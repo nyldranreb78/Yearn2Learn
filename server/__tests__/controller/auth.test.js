@@ -144,7 +144,7 @@ describe("User Login", () => {
     expect(User.findOne).toHaveBeenCalledWith({ email: "testuser@email.com" });
     expect(comparePassword).toHaveBeenCalledWith(
       "password123",
-      "hashed_password"
+      "hashed_password",
     );
     expect(jwt.sign).toHaveBeenCalledTimes(2);
     expect(res.cookie).toHaveBeenCalledWith(
@@ -155,7 +155,7 @@ describe("User Login", () => {
         sameSite: "None",
         secure: true,
         maxAge: 24 * 60 * 60 * 1000,
-      })
+      }),
     );
     expect(res.json).toHaveBeenCalledWith({
       access_token: "mock_access_token",
@@ -257,7 +257,7 @@ describe("Refresh Token", () => {
     User.findOne.mockResolvedValueOnce(mockUser);
 
     jwt.verify = jest.fn((token, secret, callback) =>
-      callback(null, { id: 1 })
+      callback(null, { id: 1 }),
     );
     jwt.sign = jest.fn(() => "new_mock_access_token");
 
@@ -289,7 +289,7 @@ describe("Refresh Token", () => {
     User.findOne.mockResolvedValueOnce(mockUser);
 
     jwt.verify = jest.fn((token, secret, callback) =>
-      callback(new Error("Token verification failed"), null)
+      callback(new Error("Token verification failed"), null),
     );
 
     await refresh(req, res);
@@ -302,7 +302,7 @@ describe("Refresh Token", () => {
     User.findOne.mockResolvedValueOnce(mockUser);
 
     jwt.verify = jest.fn(
-      (token, secret, callback) => callback(null, { id: 2 }) // 🔹 Simulate a mismatch
+      (token, secret, callback) => callback(null, { id: 2 }), // 🔹 Simulate a mismatch
     );
 
     await refresh(req, res);

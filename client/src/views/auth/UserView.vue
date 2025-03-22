@@ -3,13 +3,8 @@
     <div class="container navbar-offset">
       <Suspense>
         <template #default>
-          <div
-            v-if="user"
-            class="card card-body mt-4"
-          >
-            <h5 class="card-title">
-              Username: {{ user.username }}
-            </h5>
+          <div v-if="user" class="card card-body mt-4">
+            <h5 class="card-title">Username: {{ user.username }}</h5>
             <h6 class="card-subtitle mb-2 text-muted">
               Email: {{ user.email }}
             </h6>
@@ -33,29 +28,28 @@
   </div>
 </template>
 
-<script setup lang= "js">
-import { useAuthStore } from '../../store/auth';
-import { computed, onMounted } from 'vue';
+<script setup lang="js">
+import { useAuthStore } from "../../store/auth";
+import { computed, onMounted } from "vue";
 
-const authStore = useAuthStore()
+const authStore = useAuthStore();
 
-const user = computed(()=>{
-  console.log(authStore.userDetail)
-  return authStore.userDetail
-})
+const user = computed(() => {
+  console.log(authStore.userDetail);
+  return authStore.userDetail;
+});
 
-async function getUser(){
-  await authStore.getUser()
+async function getUser() {
+  await authStore.getUser();
 }
 
-onMounted(async ()=>{
-  await getUser()
-})
-
+onMounted(async () => {
+  await getUser();
+});
 </script>
 
 <style scoped>
-#user .card{
+#user .card {
   max-width: 40vw;
   margin: auto;
 }

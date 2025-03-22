@@ -1,141 +1,167 @@
-const User = require('../models/user')
-const jwt = require('jsonwebtoken')
+const User = require("../models/user");
+const jwt = require("jsonwebtoken");
 const { hashPassword, comparePassword } = require("../utils/helpers");
 
 // Register a new user
-async function register(req, res){
-  const {username, email, first_name, last_name, password, password_confirm} = req.body
+async function register(req, res) {
+  const { username, email, first_name, last_name, password, password_confirm } =
+    req.body;
 
-  if(!username || !email || !password || !password_confirm || !first_name || !last_name) {
-    return res.status(422).json({'message': 'Missing fields'})
+  if (
+    !username ||
+    !email ||
+    !password ||
+    !password_confirm ||
+    !first_name ||
+    !last_name
+  ) {
+    return res.status(422).json({ message: "Missing fields" });
   }
 
-  if(password !== password_confirm) return res.status(422).json({'message': 'Passwords do not match'})
+  if (password !== password_confirm)
+    return res.status(422).json({ message: "Passwords do not match" });
 
-  const userExists = await User.exists({email})
+  const userExists = await User.exists({ email });
 
-  if(userExists) return res.sendStatus(409)
+  if (userExists) return res.sendStatus(409);
 
   try {
-    const hashedPassword = await hashPassword(password); 
+    const hashedPassword = await hashPassword(password);
 
-    await User.create({email, username, password: hashedPassword, first_name, last_name})
+    await User.create({
+      email,
+      username,
+      password: hashedPassword,
+      first_name,
+      last_name,
+    });
 
-    return res.sendStatus(201)
+    return res.sendStatus(201);
   } catch (error) {
-    return res.status(400).json({message: "Could not register"})
+    return res.status(400).json({ message: "Could not register" });
   }
 }
 
 // Login the user
-async function login(req, res){
-  const {email, password } = req.body
+async function login(req, res) {
+  const { email, password } = req.body;
 
-  if(!email || !password) return res.status(422).json({message: 'Missing fields'})
-  
-  const user = await User.findOne({email})
+  if (!email || !password)
+    return res.status(422).json({ message: "Missing fields" });
 
-  if(!user) return res.status(401).json({message: "Email or password is incorrect"})
+  const user = await User.findOne({ email });
 
-  const match = await comparePassword(password, user.password)
+  if (!user)
+    return res.status(401).json({ message: "Email or password is incorrect" });
 
-  if(!match) return res.status(401).json({message: "Email or password is incorrect"})
+  const match = await comparePassword(password, user.password);
+
+  if (!match)
+    return res.status(401).json({ message: "Email or password is incorrect" });
 
   const accessToken = jwt.sign(
     {
-      id: user.id
+      id: user.id,
     },
     process.env.ACCESS_TOKEN_SECRET,
     {
-      expiresIn: '1800s'
-    }
-  )
+      expiresIn: "1800s",
+    },
+  );
 
   const refreshToken = jwt.sign(
     {
-      id: user.id
+      id: user.id,
     },
     process.env.REFRESH_TOKEN_SECRET,
     {
-      expiresIn: '1d'
-    }
-  )
-  
-  user.refresh_token = refreshToken
-  await user.save()
+      expiresIn: "1d",
+    },
+  );
 
-  res.cookie('refresh_token', refreshToken, {httpOnly: true, sameSite: 'None', secure: true, maxAge: 24*60*60*1000})
-  res.json({access_token: accessToken})
+  user.refresh_token = refreshToken;
+  await user.save();
+
+  res.cookie("refresh_token", refreshToken, {
+    httpOnly: true,
+    sameSite: "None",
+    secure: true,
+    maxAge: 24 * 60 * 60 * 1000,
+  });
+  res.json({ access_token: accessToken });
 }
 
 // Logout the user
-async function logout(req, res){
-  const cookies = req.cookies
+async function logout(req, res) {
+  const cookies = req.cookies;
 
-  if(!cookies.refresh_token) return res.sendStatus(204)
+  if (!cookies.refresh_token) return res.sendStatus(204);
 
-  const refreshToken = cookies.refresh_token
-  const user = await User.findOne({refresh_token: refreshToken})
+  const refreshToken = cookies.refresh_token;
+  const user = await User.findOne({ refresh_token: refreshToken });
 
-  if(!user){
-    res.clearCookie('refresh_token', {httpOnly: true, sameSite: 'None', secure: true})
-    return res.sendStatus(204)
+  if (!user) {
+    res.clearCookie("refresh_token", {
+      httpOnly: true,
+      sameSite: "None",
+      secure: true,
+    });
+    return res.sendStatus(204);
   }
 
-  user.refresh_token = null
-  await user.save()
+  user.refresh_token = null;
+  await user.save();
 
-  res.clearCookie('refresh_token', {httpOnly: true, sameSite: 'None', secure: true})
-  res.sendStatus(204)
+  res.clearCookie("refresh_token", {
+    httpOnly: true,
+    sameSite: "None",
+    secure: true,
+  });
+  res.sendStatus(204);
 }
 
 // Assign a new token on refresh
-async function refresh(req, res){
-  const cookies = req.cookies
-  if(!cookies.refresh_token) return res.sendStatus(401)
+async function refresh(req, res) {
+  const cookies = req.cookies;
+  if (!cookies.refresh_token) return res.sendStatus(401);
 
-  const refreshToken = cookies.refresh_token
+  const refreshToken = cookies.refresh_token;
 
-  const user = await User.findOne({refresh_token: refreshToken})
+  const user = await User.findOne({ refresh_token: refreshToken });
 
-  if(!user) return res.sendStatus(403)
+  if (!user) return res.sendStatus(403);
 
-  jwt.verify(
-    refreshToken,
-    process.env.REFRESH_TOKEN_SECRET,
-    (err, decoded) => {
-      if(err || user.id !== decoded.id) return res.sendStatus(403)
+  jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
+    if (err || user.id !== decoded.id) return res.sendStatus(403);
 
-      const accessToken = jwt.sign(
-        { id: decoded.id },
-        process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: '1800s' }
-      )
+    const accessToken = jwt.sign(
+      { id: decoded.id },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: "1800s" },
+    );
 
-      console.log("New Access Token on Refresh:", accessToken);
-      res.json({access_token: accessToken});
-    }
-  )
+    console.log("New Access Token on Refresh:", accessToken);
+    res.json({ access_token: accessToken });
+  });
 }
 
 // DELETE User (Integration Test-Only Route)
 async function deleteTestUser(req, res) {
   try {
     const { email } = req.body;
-    if (!email) return res.status(400).json({ message: 'Email is required' });
+    if (!email) return res.status(400).json({ message: "Email is required" });
 
     await User.deleteOne({ email }); // Delete user from DB
-    return res.status(200).json({ message: 'User deleted' });
+    return res.status(200).json({ message: "User deleted" });
   } catch (error) {
-    return res.status(500).json({ message: 'Error deleting user' });
+    return res.status(500).json({ message: "Error deleting user" });
   }
 }
 
-async function user(req, res){
-  
-  const user = req.user
+async function user(req, res) {
+  const user = req.user;
 
-  return res.status(200).json(user)
+  return res.status(200).json(user);
 }
 
-module.exports = {register, login, logout, refresh, user, deleteTestUser};
+module.exports = { register, login, logout, refresh, user, deleteTestUser };

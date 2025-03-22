@@ -16,7 +16,7 @@ async function index(req, res) {
 
     const flashcards = await Flashcard.find({ author: id }).populate(
       "author",
-      "username"
+      "username",
     );
     return res.status(200).json({ flashcards });
   } catch (err) {

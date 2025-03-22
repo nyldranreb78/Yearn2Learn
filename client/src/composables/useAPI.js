@@ -13,7 +13,7 @@ export function useApiPrivate() {
         }
         return config;
       },
-      (error) => Promise.reject(error)
+      (error) => Promise.reject(error),
     );
 
     axiosPrivateInstance.interceptors.response.use(
@@ -21,7 +21,8 @@ export function useApiPrivate() {
       async (error) => {
         const prevRequest = error?.config;
         if (
-          (error?.response?.status === 403 || error?.response?.status === 401) &&
+          (error?.response?.status === 403 ||
+            error?.response?.status === 401) &&
           !prevRequest.sent
         ) {
           prevRequest.sent = true;
@@ -34,7 +35,7 @@ export function useApiPrivate() {
           }
         }
         return Promise.reject(error);
-      }
+      },
     );
   });
 

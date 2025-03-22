@@ -1,15 +1,15 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 
-const Schema = mongoose.Schema
+const Schema = mongoose.Schema;
 
 const UserSchema = Schema(
   {
-    username:{
+    username: {
       type: String,
-      required: true
+      required: true,
     },
 
-    email:{
+    email: {
       type: String,
       required: true,
       lowercase: true,
@@ -17,44 +17,43 @@ const UserSchema = Schema(
       unique: true,
       validate: [
         (val) => /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(val),
-      ]
+      ],
     },
 
     first_name: {
       type: String,
-      required: true
+      required: true,
     },
 
     last_name: {
       type: String,
-      required: true
+      required: true,
     },
 
     password: {
       type: String,
       required: true,
-      min: 6
+      min: 6,
     },
 
-    refresh_token: String
+    refresh_token: String,
   },
   {
-    virtuals:{
+    virtuals: {
       full_name: {
-        get(){
-          return this.first_name + ' ' + this.last_name
-        }
+        get() {
+          return this.first_name + " " + this.last_name;
+        },
       },
 
       id: {
-        get(){
-          return this._id
-        }
-      }
+        get() {
+          return this._id;
+        },
+      },
     },
-    timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
+    timestamps: { createdAt: "created_at", updatedAt: "updated_at" },
   },
-  
-)
+);
 
-module.exports = mongoose.model('user', UserSchema)
+module.exports = mongoose.model("user", UserSchema);

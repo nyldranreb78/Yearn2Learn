@@ -11,7 +11,7 @@ const flashcardSchema = new mongoose.Schema({
   },
   setName: {
     type: String,
-    required: true
+    required: true,
   },
   author: {
     type: mongoose.Schema.Types.ObjectId,

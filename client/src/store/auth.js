@@ -81,7 +81,7 @@ export const useAuthStore = defineStore("auth", {
       } catch (error) {
         console.error(
           "Error getting note:",
-          error.response?.data || error.message
+          error.response?.data || error.message,
         );
         throw error.message;
       }
@@ -91,13 +91,13 @@ export const useAuthStore = defineStore("auth", {
       try {
         const { data } = await useApiPrivate().post(
           `/api/note/create`,
-          noteData
+          noteData,
         );
         return data;
       } catch (error) {
         console.error(
           "Error creating note:",
-          error.response?.data || error.message
+          error.response?.data || error.message,
         );
         throw error.message;
       }
@@ -110,7 +110,7 @@ export const useAuthStore = defineStore("auth", {
       } catch (error) {
         console.error(
           "Error getting folders:",
-          error.response?.data || error.message
+          error.response?.data || error.message,
         );
         throw error.message;
       }
@@ -120,13 +120,13 @@ export const useAuthStore = defineStore("auth", {
       try {
         const { data } = await useApiPrivate().post(
           `/api/folder/create`,
-          folderData
+          folderData,
         );
         return data;
       } catch (error) {
         console.error(
           "Error creating folder:",
-          error.response?.data || error.message
+          error.response?.data || error.message,
         );
         throw error.message;
       }
@@ -136,13 +136,13 @@ export const useAuthStore = defineStore("auth", {
       try {
         const { data } = await useApiPrivate().patch(
           `/api/folder/${folderId}`,
-          folderData
+          folderData,
         );
         return data;
       } catch (error) {
         console.error(
           "Error updating folder:",
-          error.response?.data || error.message
+          error.response?.data || error.message,
         );
         throw error.message;
       }
@@ -152,13 +152,13 @@ export const useAuthStore = defineStore("auth", {
       try {
         const { data } = await useApiPrivate().post(
           `/api/note/${folderId}/create`,
-          noteData
+          noteData,
         );
         return data;
       } catch (error) {
         console.error(
           "Error creating note in folder:",
-          error.response?.data || error.message
+          error.response?.data || error.message,
         );
         throw error.message;
       }
@@ -167,13 +167,13 @@ export const useAuthStore = defineStore("auth", {
     async getNotesInFolder(folderId) {
       try {
         const { data } = await useApiPrivate().get(
-          `/api/note/${folderId}/notes`
+          `/api/note/${folderId}/notes`,
         );
         return data;
       } catch (error) {
         console.error(
           "Error getting note in folder:",
-          error.response?.data || error.message
+          error.response?.data || error.message,
         );
         throw error.message;
       }
@@ -183,13 +183,13 @@ export const useAuthStore = defineStore("auth", {
       try {
         const { data } = await useApiPrivate().patch(
           `/api/note/${noteId}`,
-          noteData
+          noteData,
         );
         return data;
       } catch (error) {
         console.error(
           "Error updating note in folder:",
-          error.response?.data || error.message
+          error.response?.data || error.message,
         );
         throw error.message;
       }
@@ -202,7 +202,7 @@ export const useAuthStore = defineStore("auth", {
       } catch (error) {
         console.error(
           "Error getting note in folder:",
-          error.response?.data || error.message
+          error.response?.data || error.message,
         );
         throw error.message;
       }
@@ -211,13 +211,13 @@ export const useAuthStore = defineStore("auth", {
     async deleteFolder(folderId) {
       try {
         const { data } = await useApiPrivate().delete(
-          `/api/folder/${folderId}`
+          `/api/folder/${folderId}`,
         );
         return data;
       } catch (error) {
         console.error(
           "Error getting note in folder:",
-          error.response?.data || error.message
+          error.response?.data || error.message,
         );
         throw error.message;
       }
@@ -227,13 +227,13 @@ export const useAuthStore = defineStore("auth", {
       try {
         const { data } = await useApiPrivate().post(
           `/api/task/create`,
-          taskData
+          taskData,
         );
         return data;
       } catch (error) {
         console.error(
           "Error creating task:",
-          error.response?.data || error.message
+          error.response?.data || error.message,
         );
         throw error.message;
       }
@@ -246,7 +246,7 @@ export const useAuthStore = defineStore("auth", {
       } catch (error) {
         console.error(
           "Error getting tasks:",
-          error.response?.data || error.message
+          error.response?.data || error.message,
         );
         throw error.message;
       }
@@ -256,13 +256,13 @@ export const useAuthStore = defineStore("auth", {
       try {
         const { data } = await useApiPrivate().patch(
           `/api/task/${taskId}`,
-          taskData
+          taskData,
         );
         return data;
       } catch (error) {
         console.error(
           "Error updating task:",
-          error.response?.data || error.message
+          error.response?.data || error.message,
         );
         throw error.message;
       }
@@ -275,7 +275,7 @@ export const useAuthStore = defineStore("auth", {
       } catch (error) {
         console.error(
           "Error deleting task:",
-          error.response?.data || error.message
+          error.response?.data || error.message,
         );
         throw error.message;
       }
@@ -288,7 +288,7 @@ export const useAuthStore = defineStore("auth", {
       } catch (error) {
         console.error(
           "Error fetching all flashcards:",
-          error.response?.data || error.message
+          error.response?.data || error.message,
         );
         throw error.message;
       }
@@ -301,7 +301,7 @@ export const useAuthStore = defineStore("auth", {
       } catch (error) {
         console.error(
           "Error fetching user flashcards:",
-          error.response?.data || error.message
+          error.response?.data || error.message,
         );
         throw error.message;
       }
@@ -311,13 +311,13 @@ export const useAuthStore = defineStore("auth", {
       try {
         const { data } = await useApiPrivate().post(
           `/api/flashcard/`,
-          flashcardData
+          flashcardData,
         );
         return data;
       } catch (error) {
         console.error(
           "Error creating flashcard:",
-          error.response?.data || error.message
+          error.response?.data || error.message,
         );
         throw error.message;
       }
@@ -327,13 +327,13 @@ export const useAuthStore = defineStore("auth", {
       try {
         const { data } = await useApiPrivate().patch(
           `/api/flashcard/${flashcardId}`,
-          flashcardData
+          flashcardData,
         );
         return data;
       } catch (error) {
         console.error(
           "Error updating flashcard:",
-          error.response?.data || error.message
+          error.response?.data || error.message,
         );
         throw error.message;
       }
@@ -345,7 +345,7 @@ export const useAuthStore = defineStore("auth", {
       } catch (error) {
         console.error(
           "Error deleting flashcard:",
-          error.response?.data || error.message
+          error.response?.data || error.message,
         );
         throw error.message;
       }
@@ -354,13 +354,13 @@ export const useAuthStore = defineStore("auth", {
     async getFlashcardsBySetName(setName) {
       try {
         const { data } = await useApiPrivate().get(
-          `/api/flashcard/set/${encodeURIComponent(setName)}`
+          `/api/flashcard/set/${encodeURIComponent(setName)}`,
         );
         return data;
       } catch (error) {
         console.error(
           "Error fetching flashcards by setName:",
-          error.response?.data || error.message
+          error.response?.data || error.message,
         );
         throw error.message;
       }

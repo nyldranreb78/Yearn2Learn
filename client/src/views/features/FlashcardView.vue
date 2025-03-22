@@ -27,10 +27,7 @@
             :disabled="!filteredList.length"
             @click="showAnswer = !showAnswer"
           >
-            <div
-              v-if="filteredList.length"
-              class="my-auto"
-            >
+            <div v-if="filteredList.length" class="my-auto">
               <h4 v-if="showAnswer">
                 {{ filteredList[flashcardIndex].answer }}
               </h4>
@@ -40,7 +37,10 @@
             </div>
 
             <div v-else>
-              <i>Create a flashcard by clicking the "Create Flashcard" button on the right.</i>
+              <i
+                >Create a flashcard by clicking the "Create Flashcard" button on
+                the right.</i
+              >
             </div>
           </button>
 
@@ -56,16 +56,22 @@
 
           <div
             class="col-3 card ms-3 py-2"
-            :class="showForm? 'flash-card-ui' : ''"
+            :class="showForm ? 'flash-card-ui' : ''"
           >
             <h6 class="border-bottom pb-2">
-              {{ showForm? isEditMode? 'Edit' : 'Create New' + ' Flashcard' : 'Flashcard Options' }}
+              {{
+                showForm
+                  ? isEditMode
+                    ? "Edit"
+                    : "Create New" + " Flashcard"
+                  : "Flashcard Options"
+              }}
             </h6>
             <div v-show="showForm">
               <form
                 id="flashcard_form"
                 class="row g-3"
-                @submit.prevent="isEditMode? editFlashcard() : addFlashcard()"
+                @submit.prevent="isEditMode ? editFlashcard() : addFlashcard()"
               >
                 <div class="col-12 mt-2">
                   <label><small>Question</small></label>
@@ -104,9 +110,7 @@
                         class="form-select form-select-sm"
                         @change="setInput = ''"
                       >
-                        <option value>
-                          Select or create set
-                        </option>
+                        <option value>Select or create set</option>
                         <option
                           v-for="setName in flashcardSetList"
                           :key="setName"
@@ -129,7 +133,7 @@
                     class="form-control form-control-sm"
                     placeholder="New Flashcard Set Name"
                     :required="!flashcardData.setName"
-                  >
+                  />
                 </div>
               </form>
             </div>
@@ -142,9 +146,7 @@
                     v-model="setNameFilter"
                     class="form-select form-select-sm"
                   >
-                    <option value>
-                      All
-                    </option>
+                    <option value>All</option>
                     <option
                       v-for="setName in flashcardSetList"
                       :key="setName"
@@ -157,32 +159,23 @@
               </div>
             </div>
 
-            <div
-              v-show="!showForm"
-              class="row mt-auto"
-            >
-              <div
-                v-show="flashcardList.length"
-                class="col-12 mt-2"
-              >
+            <div v-show="!showForm" class="row mt-auto">
+              <div v-show="flashcardList.length" class="col-12 mt-2">
                 <button
                   type="button"
                   class="btn btn-sm w-100"
-                  :class="showQuestionList? 'btn-secondary' : 'btn-primary'"
+                  :class="showQuestionList ? 'btn-secondary' : 'btn-primary'"
                   @click="showQuestionList = !showQuestionList"
                 >
                   <i
                     class="bi me-1"
-                    :class="showQuestionList? 'bi-eye-slash' : 'bi-eye'"
+                    :class="showQuestionList ? 'bi-eye-slash' : 'bi-eye'"
                   />
-                  {{ showQuestionList? 'Hide List' : 'Show Full List' }}
+                  {{ showQuestionList ? "Hide List" : "Show Full List" }}
                 </button>
               </div>
 
-              <div
-                v-show="flashcardList.length"
-                class="col-12 mt-2"
-              >
+              <div v-show="flashcardList.length" class="col-12 mt-2">
                 <button
                   type="button"
                   class="btn btn-sm btn-primary w-100"
@@ -204,10 +197,7 @@
               </div>
             </div>
 
-            <div
-              v-show="showForm"
-              class="row mt-auto"
-            >
+            <div v-show="showForm" class="row mt-auto">
               <div class="col-auto pe-1">
                 <button
                   type="button"
@@ -224,34 +214,31 @@
                   type="submit"
                   form="flashcard_form"
                   class="btn btn-sm w-100"
-                  :class="isEditMode? 'btn-success' : 'btn-primary'"
+                  :class="isEditMode ? 'btn-success' : 'btn-primary'"
                 >
                   <i
                     class="bi me-1"
-                    :class="isEditMode? 'bi-floppy-fill' : 'bi-plus-lg'"
+                    :class="isEditMode ? 'bi-floppy-fill' : 'bi-plus-lg'"
                   />
-                  {{ isEditMode? 'Save Changes' : 'Create' }}
+                  {{ isEditMode ? "Save Changes" : "Create" }}
                 </button>
               </div>
             </div>
           </div>
         </div>
 
-        <div
-          v-show="showQuestionList"
-          class="row mt-3"
-        >
+        <div v-show="showQuestionList" class="row mt-3">
           <div class="col p-0">
             <h4>Question List</h4>
           </div>
         </div>
 
-        <div
-          v-show="!filteredList.length"
-          class="row"
-        >
+        <div v-show="!filteredList.length" class="row">
           <div class="col text-center m-4">
-            <i class="text-muted">There are no questions to show. Click on the "Create Flashcard" button to add one.</i>
+            <i class="text-muted"
+              >There are no questions to show. Click on the "Create Flashcard"
+              button to add one.</i
+            >
           </div>
         </div>
 
@@ -260,10 +247,7 @@
           id="cardList"
           class="row card"
         >
-          <div
-            id="cardList"
-            class="col"
-          >
+          <div id="cardList" class="col">
             <div
               v-for="flashcard in filteredList"
               id="cardList"
@@ -280,7 +264,12 @@
 
               <div class="col">
                 <div v-if="isDeleteMode && flashcard === currentFlashcard">
-                  <small class="text-danger"><i>Are you sure you want to delete this question? This is irreversible!</i></small>
+                  <small class="text-danger"
+                    ><i
+                      >Are you sure you want to delete this question? This is
+                      irreversible!</i
+                    ></small
+                  >
                 </div>
 
                 <div v-else>
@@ -308,7 +297,7 @@
                     </a>
                   </li>
 
-                  <li><hr class="dropdown-divider my-1"></li>
+                  <li><hr class="dropdown-divider my-1" /></li>
 
                   <li>
                     <a
@@ -346,8 +335,8 @@
 </template>
 
 <script setup lang="js">
-import { ref, reactive, watch, computed } from 'vue';
-import { useCoreStore } from '@/store/core';
+import { ref, reactive, watch, computed } from "vue";
+import { useCoreStore } from "@/store/core";
 
 const coreStore = useCoreStore();
 
@@ -360,34 +349,33 @@ const isDeleteMode = ref(false);
 const isShuffleMode = ref(false);
 
 const currentFlashcard = ref("");
-const setNameFilter = ref("")
+const setNameFilter = ref("");
 const flashcardIndex = ref(0);
 
-const setInput = ref("")
+const setInput = ref("");
 const flashcardData = reactive({
   setName: "",
   question: "",
-  answer: ""
+  answer: "",
 });
 
 watch(setInput, (newValue) => {
-  if(newValue){
-    flashcardData.setName = '';
+  if (newValue) {
+    flashcardData.setName = "";
   }
 });
 
 watch(setNameFilter, (newValue) => {
-  if(newValue && filteredList.value.length){
+  if (newValue && filteredList.value.length) {
     flashcardIndex.value = 0;
   }
 });
 
 watch(flashcardIndex, (newValue) => {
-  if(newValue){
-    if(newValue < 0){
+  if (newValue) {
+    if (newValue < 0) {
       flashcardIndex.value = filteredList.value.length - 1;
-    }
-    else{
+    } else {
       flashcardIndex.value = newValue % filteredList.value.length;
     }
   }
@@ -395,69 +383,68 @@ watch(flashcardIndex, (newValue) => {
 
 const flashcardList = computed(() => {
   return coreStore.flashcards;
-})
+});
 
 // Find all the known setNames from all flashcards and put them in an array
 // then make a Set out of it to essentially remove duplicates,
 // then convert it to an array again
 const flashcardSetList = computed(() => {
-  return [...new Set(flashcardList.value.map(set => set.setName))];
-})
+  return [...new Set(flashcardList.value.map((set) => set.setName))];
+});
 
 const filteredList = computed(() => {
-  let list = []
-  
-  if(setNameFilter.value){
+  let list = [];
+
+  if (setNameFilter.value) {
     list = flashcardList.value.filter((flashcard) => {
       return flashcard.setName === setNameFilter.value;
-    })
-  }
-  else {
+    });
+  } else {
     list = flashcardList.value;
   }
-  
-  if(isShuffleMode.value){
+
+  if (isShuffleMode.value) {
     list = list.sort(() => 0.5 - Math.random());
   }
 
   return list;
-})
+});
 
-async function addFlashcard(){
-    const newFlashcard = {
-      setName: flashcardData.setName? flashcardData.setName : setInput.value,
-      question: flashcardData.question,
-      answer: flashcardData.answer
-    };
+async function addFlashcard() {
+  const newFlashcard = {
+    setName: flashcardData.setName ? flashcardData.setName : setInput.value,
+    question: flashcardData.question,
+    answer: flashcardData.answer,
+  };
 
-    await coreStore.addFlashcard(newFlashcard);
+  await coreStore.addFlashcard(newFlashcard);
 
-    resetFlashcardData();
-    currentFlashcard.value = newFlashcard;
+  resetFlashcardData();
+  currentFlashcard.value = newFlashcard;
 }
 
-async function editFlashcard(){
-    const updatedFlashcard = {
-      setName: flashcardData.setName? flashcardData.setName : setInput.value,
-      question: flashcardData.question,
-      answer: flashcardData.answer
-    };
+async function editFlashcard() {
+  const updatedFlashcard = {
+    setName: flashcardData.setName ? flashcardData.setName : setInput.value,
+    question: flashcardData.question,
+    answer: flashcardData.answer,
+  };
 
-    await coreStore.editFlashcard(currentFlashcard.value._id, updatedFlashcard);
+  await coreStore.editFlashcard(currentFlashcard.value._id, updatedFlashcard);
 
-    resetFlashcardData();
-    currentFlashcard.value = updatedFlashcard;
+  resetFlashcardData();
+  currentFlashcard.value = updatedFlashcard;
 }
 
-async function deleteFlashcard(){
-    await coreStore.deleteFlashcard(currentFlashcard.value._id);
+async function deleteFlashcard() {
+  await coreStore.deleteFlashcard(currentFlashcard.value._id);
 
-    resetFlashcardData();
+  resetFlashcardData();
 }
 
-async function showEditForm(flashcard){
+async function showEditForm(flashcard) {
   currentFlashcard.value = flashcard;
-  
+
   setInput.value = "";
   flashcardData.setName = currentFlashcard.value.setName;
   flashcardData.question = currentFlashcard.value.question;
@@ -469,9 +456,9 @@ async function showEditForm(flashcard){
   document.body.scrollTop = document.documentElement.scrollTop = 0;
 }
 
-async function showDeleteMode(flashcard){
+async function showDeleteMode(flashcard) {
   resetFlashcardData();
-  
+
   currentFlashcard.value = flashcard;
   isDeleteMode.value = true;
 }
@@ -499,11 +486,11 @@ async function shuffleFlashcards() {
 </script>
 
 <style>
-.flash-card-ui{
+.flash-card-ui {
   height: 400px;
 }
 
-.flash-card{
+.flash-card {
   background-color: white;
   border-color: #d2d2d2 !important;
 }

@@ -150,7 +150,10 @@ describe("Integration Tests - Backend + Database", () => {
       failOnStatusCode: false,
     }).then((response) => {
       expect(response.status).to.eq(401);
-      expect(response.body).to.have.property("message", "Email or password is incorrect");
+      expect(response.body).to.have.property(
+        "message",
+        "Email or password is incorrect",
+      );
     });
   });
 
@@ -212,7 +215,7 @@ describe("Integration Tests - Backend + Database", () => {
       cy.request("POST", "http://localhost:3000/api/auth/logout").then(
         (res) => {
           expect(res.status).to.eq(204);
-        }
+        },
       );
 
       // Refreshing token should fail since it was cleared during logout

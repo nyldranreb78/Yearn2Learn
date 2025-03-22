@@ -50,7 +50,7 @@ describe("Integration Tests - Frontend + Backend", () => {
 
     cy.get('[class="col text-center m-4"]').should(
       "have.text",
-      'There are no questions to show. Click on the "Create Flashcard" button to add one.'
+      'There are no questions to show. Click on the "Create Flashcard" button to add one.',
     );
   });
 
@@ -115,5 +115,4 @@ describe("Integration Tests - Frontend + Backend", () => {
     cy.get("button").contains("Hide List").click();
     cy.get("#cardList").should("not.be.visible");
   });
-
 });
