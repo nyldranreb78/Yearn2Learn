@@ -60,13 +60,10 @@
             Timer
           </a>
 
-          <ul class="dropdown-menu">
+          <ul class="dropdown-menu z-3">
             <li>
               <div>
-                <DynamicTimer
-                  class="z-5"
-                  @time-up="(n) => timerNotification(n)"
-                />
+                <DynamicTimer @time-up="(n) => timerNotification(n)" />
               </div>
             </li>
           </ul>
@@ -110,7 +107,7 @@
     </div>
   </nav>
 
-  <div class="d-flex justify-content-end fixed-top navbar-offset z-4">
+  <div class="d-flex justify-content-end fixed-top navbar-offset z-0">
     <div
       id="timerAlert"
       :class="

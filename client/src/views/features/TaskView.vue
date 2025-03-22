@@ -86,7 +86,7 @@
           </div>
 
           <!--Task Details and Class Progress-->
-          <div class="col-3 bg-transparent">
+          <div class="col-3 bg-transparent z-n1">
             <!--Task Details Card-->
             <div class="card">
               <div
