@@ -13,37 +13,23 @@
             :src="require(`@/assets/img/Y2L_Logo.png`)"
             width="40"
             class="object-fit-scale me-2"
-          >
+          />
           <span class="txt-y2l-yellow">Yearn</span>
           <span class="txt-y2l-red">2</span>
           <span class="txt-y2l-blue">Learn</span>
         </router-link>
       </strong>
 
-      <div
-        v-if="isAuthenticated"
-        class="vr ms-2 me-3"
-      />
+      <div v-if="isAuthenticated" class="vr ms-2 me-3" />
 
-      <ul
-        v-if="isAuthenticated"
-        class="navbar-nav me-auto mb-2 mb-lg-0"
-      >
+      <ul v-if="isAuthenticated" class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <router-link
-            :to="{ name: 'home' }"
-            class="nav-link active"
-            href="#"
-          >
+          <router-link :to="{ name: 'home' }" class="nav-link active" href="#">
             Home
           </router-link>
         </li>
         <li class="nav-item">
-          <router-link
-            :to="{ name: 'notes' }"
-            class="nav-link active"
-            href="#"
-          >
+          <router-link :to="{ name: 'notes' }" class="nav-link active" href="#">
             Notes
           </router-link>
         </li>
@@ -57,11 +43,7 @@
           </router-link>
         </li>
         <li class="nav-item">
-          <router-link
-            :to="{ name: 'tasks' }"
-            class="nav-link active"
-            href="#"
-          >
+          <router-link :to="{ name: 'tasks' }" class="nav-link active" href="#">
             Task Management
           </router-link>
         </li>
@@ -92,10 +74,7 @@
       </ul>
 
       <div class="d-flex justify-content-end">
-        <li
-          v-if="isAuthenticated"
-          class="nav-item dropdown me-2"
-        >
+        <li v-if="isAuthenticated" class="nav-item dropdown me-2">
           <a
             class="nav-link dropdown-toggle"
             href="#"
@@ -106,39 +85,24 @@
           </a>
           <ul class="dropdown-menu dropdown-menu-end">
             <li>
-              <router-link
-                :to="{ name: 'user' }"
-                class="dropdown-item"
-              >
+              <router-link :to="{ name: 'user' }" class="dropdown-item">
                 Profile
               </router-link>
             </li>
-            <li><hr class="dropdown-divider"></li>
+            <li><hr class="dropdown-divider" /></li>
             <li>
-              <button
-                class="dropdown-item text-danger"
-                @click="logout"
-              >
+              <button class="dropdown-item text-danger" @click="logout">
                 Logout
               </button>
             </li>
           </ul>
         </li>
 
-        <div
-          v-else
-          class="d-flex"
-        >
-          <router-link
-            :to="{ name: 'login' }"
-            class="btn btn-warning me-2"
-          >
+        <div v-else class="d-flex">
+          <router-link :to="{ name: 'login' }" class="btn btn-warning me-2">
             Login
           </router-link>
-          <router-link
-            :to="{ name: 'register' }"
-            class="btn btn-warning"
-          >
+          <router-link :to="{ name: 'register' }" class="btn btn-warning">
             Register
           </router-link>
         </div>

@@ -10,11 +10,7 @@
           </div>
         </div>
         <div class="row mb-5">
-          <div
-            v-for="feature in featureInfo"
-            :key="feature[2]"
-            class="col"
-          >
+          <div v-for="feature in featureInfo" :key="feature[2]" class="col">
             <FeatureCard
               :bootstrap-icon-code="feature[0]"
               :feature-name="feature[1]"

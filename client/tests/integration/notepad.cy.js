@@ -59,124 +59,124 @@ describe("Integration Tests - Frontend + Backend", () => {
 
     // Delete one folder
     it("should delete one folders", () => {
+      cy.visit("/#/notes");
+
+      // Delete the note that was added
+      it("should delete the note", () => {
+        cy.visit("/#/notes");
+        cy.get(".btn-circle").first().click();
+        cy.get(".accordion-item").first().click();
+        cy.get(".note-menu").click();
+        cy.contains("Delete").click();
+
+        cy.get("button").contains("Delete").click();
+      });
+
+      // Delete the all the folders
+      it("should delete all folders", () => {
         cy.visit("/#/notes");
 
-  // Delete the note that was added
-  it("should delete the note", () => {
-    cy.visit("/#/notes");
-    cy.get(".btn-circle").first().click();
-    cy.get(".accordion-item").first().click();
-    cy.get(".note-menu").click();
-    cy.contains("Delete").click();
-
-    cy.get("button").contains("Delete").click();
-  });
-
-  // Delete the all the folders
-  it("should delete all folders", () => {
-    cy.visit("/#/notes");
-
-    cy.get(".btn-circle").first().click();
-    cy.get("#editFolderButton").click();
-    cy.contains("Test Folder").get(".bi-trash3-fill").first().click();
-    cy.get("#delete_form button").contains("Delete").click();
-  });
-});
-
-describe("Integration Tests - Backend + Database", () => {
-  let testEmail = "test2@email.com";
-  let testPassword = "test345";
-  let testFolderId;
-  let authToken;
-
-  beforeEach(() => {
-    cy.request({
-      method: "POST",
-      url: "http://localhost:3000/api/auth/login",
-      body: { email: testEmail, password: testPassword },
-    }).then((response) => {
-      expect(response.status).to.eq(200);
-      expect(response.body).to.have.property("access_token");
-      authToken = response.body.access_token;
+        cy.get(".btn-circle").first().click();
+        cy.get("#editFolderButton").click();
+        cy.contains("Test Folder").get(".bi-trash3-fill").first().click();
+        cy.get("#delete_form button").contains("Delete").click();
+      });
     });
-  });
 
-    // Create a new folder with note in it with authorization
-    it("should add a new folder with note", () => {
+    describe("Integration Tests - Backend + Database", () => {
+      let testEmail = "test2@email.com";
+      let testPassword = "test345";
+      let testFolderId;
+      let authToken;
+
+      beforeEach(() => {
+        cy.request({
+          method: "POST",
+          url: "http://localhost:3000/api/auth/login",
+          body: { email: testEmail, password: testPassword },
+        }).then((response) => {
+          expect(response.status).to.eq(200);
+          expect(response.body).to.have.property("access_token");
+          authToken = response.body.access_token;
+        });
+      });
+
+      // Create a new folder with note in it with authorization
+      it("should add a new folder with note", () => {
         // Create a new note
         cy.request({
-            method: "POST",
-            url: "http://localhost:3000/api/note/create",
-            headers: {
-                Authorization: `Bearer ${authToken}`,
-            },
-            body: { title: "Test Note Title", content: "Test Note Content" },
-            failOnStatusCode: false,
+          method: "POST",
+          url: "http://localhost:3000/api/note/create",
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+          body: { title: "Test Note Title", content: "Test Note Content" },
+          failOnStatusCode: false,
         }).then((response) => {
-            expect(response.status).to.eq(201);
-            expect(response.body).to.have.property("note");
+          expect(response.status).to.eq(201);
+          expect(response.body).to.have.property("note");
         });
         // Create a new folder
         cy.request({
-            method: "POST",
-            url: "http://localhost:3000/api/folder/create",
-            headers: {
-                Authorization: `Bearer ${authToken}`,
-            },  
-            body: { name: "Test Folder" },
-            failOnStatusCode: false,
+          method: "POST",
+          url: "http://localhost:3000/api/folder/create",
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+          body: { name: "Test Folder" },
+          failOnStatusCode: false,
         }).then((response) => {
-            console.log(response.body);
-            expect(response.status).to.eq(201);
-            expect(response.body).to.have.property("folder");
+          console.log(response.body);
+          expect(response.status).to.eq(201);
+          expect(response.body).to.have.property("folder");
         });
+      });
     });
-  });
 
-  // Get all folders with authorization
-  it("should get all folders", () => {
-    cy.request({
-      method: "GET",
-      url: "http://localhost:3000/api/folder",
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-    }).then((response) => {
-      expect(response.status).to.eq(200);
-      expect(response.body).to.have.property("folders");
-      testFolderId = response.body.folders[0]._id;
-      console.log(response.body);
+    // Get all folders with authorization
+    it("should get all folders", () => {
+      cy.request({
+        method: "GET",
+        url: "http://localhost:3000/api/folder",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      }).then((response) => {
+        expect(response.status).to.eq(200);
+        expect(response.body).to.have.property("folders");
+        testFolderId = response.body.folders[0]._id;
+        console.log(response.body);
+      });
     });
-  });
 
-  // Get a specific folder with authorization
-  it("should get a specific folder", () => {
-    cy.request({
-      method: "GET",
-      url: `http://localhost:3000/api/folder/${testFolderId}`,
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-    }).then((response) => {
-      expect(response.status).to.eq(200);
-      expect(response.body).to.have.property("folder");
+    // Get a specific folder with authorization
+    it("should get a specific folder", () => {
+      cy.request({
+        method: "GET",
+        url: `http://localhost:3000/api/folder/${testFolderId}`,
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      }).then((response) => {
+        expect(response.status).to.eq(200);
+        expect(response.body).to.have.property("folder");
+      });
     });
-  });
 
     // Update a specific folder with authorization
     it("should update a specific folder", () => {
-        cy.request({
-            method: "PATCH",
-            url: `http://localhost:3000/api/folder/${testFolderId}`,
-            headers: {
-                Authorization: `Bearer ${authToken}`,
-            },
-            body: { name: "Updated Test Folder" },
-        }).then((response) => {
-            console.log(response.body);
-            expect(response.status).to.eq(200);
-            expect(response.body).to.have.property("folder");
-        });
+      cy.request({
+        method: "PATCH",
+        url: `http://localhost:3000/api/folder/${testFolderId}`,
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+        body: { name: "Updated Test Folder" },
+      }).then((response) => {
+        console.log(response.body);
+        expect(response.status).to.eq(200);
+        expect(response.body).to.have.property("folder");
+      });
     });
   });
 
