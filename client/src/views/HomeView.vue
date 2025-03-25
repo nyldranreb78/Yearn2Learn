@@ -30,29 +30,72 @@
               </div>
             </div>
 
-            <div class="row mb-5 pe-2">
+            <div class="row mb-2 pe-2">
               <div class="col-auto">
                 <h6><i class="bi bi-journal-text me-1" /> Recent Notes</h6>
               </div>
               <div class="col border-bottom border-card mb-3" />
             </div>
 
-            <div class="row mb-5 pe-2">
+            <div class="row mb-5">
+              <div
+                v-for="note in noteList"
+                v-bind:key="note._id"
+                class="col-3"
+                @mouseenter="coreStore.setNote(note)"
+              >
+                <FeatureCard
+                  :bootstrap-icon-code="''"
+                  :feature-name="note.title"
+                  :route-name="'notes'"
+                  :description="
+                    'Last opened on ' +
+                    new Date(note.updatedAt).toLocaleString()
+                  "
+                />
+              </div>
+            </div>
+
+            <div class="row mb-2 pe-2">
               <div class="col-auto">
-                <h6><i class="bi bi-card-heading me-1" /> Flash Cards</h6>
+                <h6><i class="bi bi-card-heading me-1" /> Flash Card Sets</h6>
               </div>
               <div class="col border-bottom border-card mb-3" />
+            </div>
+
+            <div class="row mb-5">
+              <div
+                v-for="set in flashcardSetList"
+                v-bind:key="set"
+                class="col-2"
+                @mouseenter="coreStore.setFlashcardSet(set)"
+              >
+                <FeatureCard
+                  :bootstrap-icon-code="''"
+                  :route-name="'flashcards'"
+                  :description="set"
+                />
+              </div>
             </div>
           </div>
 
           <div class="col-3">
             <h4>Upcoming Tasks</h4>
             <div class="card bg-transparent p-3">
-              <div class="row mb-5 me-1">
-                <div class="col-auto">
-                  <h6>Date Here</h6>
+              <div class="row mb-2">
+                <div
+                  v-for="task in taskList"
+                  v-bind:key="task._id"
+                  class="mb-3"
+                  @mouseenter="coreStore.setTask(task)"
+                >
+                  <FeatureCard
+                    :bootstrap-icon-code="''"
+                    :feature-name="new Date(task.deadline).toLocaleString()"
+                    :route-name="'tasks'"
+                    :description="task.name"
+                  />
                 </div>
-                <div class="col border-bottom border-card mb-3" />
               </div>
             </div>
           </div>
@@ -65,7 +108,10 @@
 <script setup>
 import FeatureCard from "@/components/FeatureCard.vue";
 import bootstrap from "bootstrap/dist/js/bootstrap.bundle.js";
-//import { ref } from 'vue'; // reactive, computed, onMounted, onBeforeUnmount
+import { useCoreStore } from "@/store/core";
+import { computed, onBeforeMount } from "vue"; // reactive, computed, onMounted,
+
+const coreStore = useCoreStore();
 
 const noteDesc = "Write and edit your notes, organized by folders.";
 const flashcardDesc =
@@ -77,9 +123,46 @@ const featureInfo = [
   // [Bootstrap Icon Code, Feature Name, Vue Route]
   ["journal-text", "Notes", "notes", noteDesc],
   ["card-heading", "Flash Cards", "flashcards", flashcardDesc],
-  ["calendar2-check", "Goal Management", "home", goalDesc], // TODO: change this later
+  ["calendar2-check", "Task Management", "tasks", goalDesc], // TODO: change this later
   ["stopwatch", "Timer", null, timerDesc],
 ];
+
+const noteList = computed(() => {
+  // Find all folders
+  const folders = coreStore.folders;
+  let notes = [];
+
+  // Find all notes in each folder
+  for (let i in folders) {
+    notes.push.apply(notes, folders[i].notes);
+  }
+
+  // Sort all notes by date (descending)
+  notes = notes.sort((noteA, noteB) => {
+    return new Date(noteB.updatedAt) - new Date(noteA.updatedAt);
+  });
+
+  // Return the latest 8 notes
+  return notes.slice(0, Math.min(8, notes.length));
+});
+
+const taskList = computed(() => {
+  const tasks = coreStore.tasks;
+
+  return tasks
+    .filter((task) => {
+      return task.taskGrade != null;
+    })
+    .slice(0, Math.min(4, tasks.length));
+});
+
+const flashcardSetList = computed(() => {
+  const flashcards = [
+    ...new Set(coreStore.flashcards.map((set) => set.setName)),
+  ];
+
+  return flashcards.slice(0, Math.min(6, flashcards.length));
+});
 
 async function showTimer(autoCloseAttribute) {
   const timerMenu = document.querySelector("#timerFeature");
@@ -90,6 +173,12 @@ async function showTimer(autoCloseAttribute) {
     dropdown.show();
   }
 }
+
+onBeforeMount(() => {
+  useCoreStore().fetchData();
+  useCoreStore().fetchFlashcards();
+  useCoreStore().fetchTasks();
+});
 </script>
 
 <style>

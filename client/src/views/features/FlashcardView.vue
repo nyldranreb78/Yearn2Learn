@@ -335,7 +335,7 @@
 </template>
 
 <script setup lang="js">
-import { ref, reactive, watch, computed } from "vue";
+import { ref, reactive, watch, computed, onBeforeMount } from "vue";
 import { useCoreStore } from "@/store/core";
 
 const coreStore = useCoreStore();
@@ -483,6 +483,14 @@ async function shuffleFlashcards() {
   isShuffleMode.value = false;
   isShuffleMode.value = true;
 }
+
+onBeforeMount(() => {
+  useCoreStore().fetchFlashcards();
+
+  if (coreStore.currentFlashcardSet) {
+    setNameFilter.value = coreStore.currentFlashcardSet;
+  }
+});
 </script>
 
 <style>

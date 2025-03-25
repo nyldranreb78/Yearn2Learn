@@ -62,10 +62,10 @@
               >
                 <div class="row">
                   <div class="col-4 text-truncate">
-                    {{ task.name }}
+                    {{ task?.name }}
                   </div>
                   <div class="col-3 text-truncate">
-                    {{ task.folderID ? getClass(task.folderID).name : "" }}
+                    {{ task.folderID ? getClass(task.folderID)?.name : "" }}
                   </div>
                   <div class="col-3">
                     {{
@@ -86,7 +86,7 @@
           </div>
 
           <!--Task Details and Class Progress-->
-          <div class="col-3 bg-transparent z-n1">
+          <div class="col-3 bg-transparent z-3">
             <!--Task Details Card-->
             <div class="card">
               <div
@@ -165,7 +165,7 @@
                 <div v-else>
                   <div>
                     <b><small>Name:</small></b
-                    ><br />{{ currentTask.name }}
+                    ><br />{{ currentTask?.name }}
                   </div>
                   <div v-if="currentTask?.deadline">
                     <b><small>Deadline:</small></b
@@ -175,7 +175,7 @@
                   </div>
                   <div v-if="currentTask.folderID">
                     <b><small>For Class:</small></b
-                    ><br />{{ getClass(currentTask.folderID).name }}
+                    ><br />{{ getClass(currentTask.folderID)?.name }}
                   </div>
                   <div v-if="currentTask.taskGrade > 0">
                     <b><small>Final Grade Weight:</small></b
@@ -207,7 +207,7 @@
                     <b>{{ currentTask.taskGrade }}%</b> of your final grade in a
                     <b
                       >{{
-                        currentClass.priority ? " Major" : "n Elective"
+                        currentClass?.priority ? " Major" : "n Elective"
                       }}
                       course</b
                     >
@@ -245,7 +245,7 @@
                         :key="folder?._id"
                         :value="folder"
                       >
-                        {{ folder.name }}
+                        {{ folder?.name }}
                       </option>
                     </select>
                   </div>
@@ -283,7 +283,7 @@
                         @click="currentTask = task"
                       >
                         <b
-                          ><u>{{ task.name }}:</u></b
+                          ><u>{{ task?.name }}:</u></b
                         >
                       </button>
                     </div>
@@ -309,7 +309,7 @@
                         @click="currentTask = task"
                       >
                         <b
-                          ><u>{{ task.name }}:</u></b
+                          ><u>{{ task?.name }}:</u></b
                         >
                       </button>
                     </div>
@@ -414,13 +414,13 @@
                         :key="folder?._id"
                         :value="folder?._id"
                       >
-                        {{ folder.name }}
+                        {{ folder?.name }}
                       </option>
                     </select>
                   </div>
                 </div>
 
-                <div v-show="taskData.folderID != null" class="row mt-2">
+                <div v-show="taskData?.folderID != null" class="row mt-2">
                   <div class="col-6">
                     <label class="form-label"
                       >Grade weight in %
@@ -448,14 +448,14 @@
                           type="number"
                           class="form-control"
                           min="0"
-                          :max="taskData.taskGrade"
-                          :disabled="!taskData.taskGrade"
+                          :max="taskData?.taskGrade"
+                          :disabled="!taskData?.taskGrade"
                         />
                       </div>
 
                       <div class="col-auto ps-0 my-1">
-                        <span v-show="taskData.taskGrade" class="align-middle"
-                          >/ {{ taskData.taskGrade }}%</span
+                        <span v-show="taskData?.taskGrade" class="align-middle"
+                          >/ {{ taskData?.taskGrade }}%</span
                         >
                       </div>
                     </div>
@@ -551,7 +551,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch, computed, onMounted } from "vue";
+import { ref, reactive, watch, computed, onBeforeMount, onMounted } from "vue";
 import { useCoreStore } from "@/store/core";
 import bootstrap from "bootstrap/dist/js/bootstrap.bundle.js";
 
@@ -576,20 +576,22 @@ onMounted(() => {
   // Wait 1 second to calculate a recommendation (one time)
   setTimeout(() => {
     priorityTask.value = recommendedTask.value;
-  }, 1000);
 
-  // Then check for new ones every 5 seconds
-  setInterval(() => {
-    if (new Date().getTime() > new Date(priorityTask.value.deadline).getTime())
-      priorityTask.value = recommendedTask.value;
-  }, 5000);
+    // Then check for new ones every 5 seconds
+    setInterval(() => {
+      if (
+        new Date().getTime() > new Date(priorityTask.value.deadline).getTime()
+      )
+        priorityTask.value = recommendedTask.value;
+    }, 5000);
+  }, 1000);
 });
 
 // Some logic to enforce values between taskGrade and actualGrade
 watch(taskData, (newValue) => {
   if (newValue) {
     // Enforce that the grade received (actualGrade) is always lower than the taskGrade
-    if (newValue.taskGrade < taskData.actualGrade) {
+    if (newValue.taskGrade < taskData?.actualGrade) {
       taskData.actualGrade = newValue.taskGrade;
     }
 
@@ -607,7 +609,7 @@ watch(taskData, (newValue) => {
     if (taskData?.deadline) {
       // HTML's datetime-local only uses the first 16 characters
       // of a local date string, which is why this is hard-coded
-      taskData.deadline = taskData.deadline.substring(0, 16);
+      taskData.deadline = taskData?.deadline.substring(0, 16);
     }
   }
 });
@@ -625,7 +627,7 @@ watch(currentTask, (newValue) => {
 // Classes are folders with a 'Priority' field property
 const classList = computed(() => {
   return coreStore.folders.filter((folder) => {
-    return folder.priority != null;
+    return folder?.priority != null;
   });
 });
 
@@ -731,7 +733,7 @@ const recommendedTask = computed(() => {
 
     weight += candidates[i].taskGrade / 100; // Add weight based on final grade worth
     weight += 1 - currentAverage; // Add weight based on current grade average
-    weight += classFolder.priority ? 0.5 : 0; // Add weight based on whether the class is a major or elective
+    weight += classFolder?.priority ? 0.5 : 0; // Add weight based on whether the class is a major or elective
     weight += (24 - deadlineHour) / 100; // Add weight based on how soon in the day it's due
 
     if (weight > mostWeight) {
@@ -741,7 +743,11 @@ const recommendedTask = computed(() => {
     }
   }
 
-  return candidates[vipIndex];
+  if (candidates.length > vipIndex && candidates[vipIndex]) {
+    return candidates[vipIndex];
+  } else {
+    return null;
+  }
 });
 
 function getTotalGrade(gradeArray, gradeType) {
@@ -752,12 +758,12 @@ function getTotalGrade(gradeArray, gradeType) {
 
 async function addTask() {
   const newTask = {
-    name: taskData.name,
+    name: taskData?.name,
     deadline: taskData?.deadline,
-    folderID: taskData.folderID,
-    taskGrade: taskData.taskGrade,
-    actualGrade: taskData.actualGrade,
-    isFinished: taskData.actualGrade ? true : false,
+    folderID: taskData?.folderID,
+    taskGrade: taskData?.taskGrade,
+    actualGrade: taskData?.actualGrade,
+    isFinished: taskData?.actualGrade ? true : false,
   };
 
   await coreStore.addTask(newTask);
@@ -770,12 +776,12 @@ async function addTask() {
 
 async function editTask() {
   const updatedTask = {
-    name: taskData.name,
+    name: taskData?.name,
     deadline: taskData?.deadline,
-    folderID: taskData.folderID,
-    taskGrade: taskData.taskGrade,
-    actualGrade: taskData.actualGrade,
-    isFinished: taskData.actualGrade ? true : currentTask.value.isFinished,
+    folderID: taskData?.folderID,
+    taskGrade: taskData?.taskGrade,
+    actualGrade: taskData?.actualGrade,
+    isFinished: taskData?.actualGrade ? true : currentTask.value.isFinished,
   };
 
   await coreStore.editTask(currentTask.value?._id, updatedTask);
@@ -806,13 +812,13 @@ async function changeStatus(newStatus) {
 async function prefillEditForm() {
   isEditMode.value = true;
 
-  taskData.name = currentTask.value.name;
+  taskData.name = currentTask.value?.name;
   taskData.deadline = currentTask.value.deadline;
   taskData.folderID = currentTask.value.folderID;
   taskData.taskGrade = currentTask.value.taskGrade;
   taskData.actualGrade = currentTask.value.actualGrade;
 
-  if (taskData.folderID) {
+  if (taskData?.folderID) {
     isForClass.value = true;
   }
 }
@@ -838,7 +844,7 @@ async function resetWeight() {
 }
 
 async function closeModal() {
-  if (taskData.name && taskData?.deadline) {
+  if (taskData?.name && taskData?.deadline) {
     const modal = document.querySelector("#add_edit_task_form");
     bootstrap.Modal.getOrCreateInstance(modal).hide();
   }
@@ -851,4 +857,12 @@ function getTaskStatus(isFinished) {
 function getClass(folderID) {
   return classList.value.find((folder) => folder?._id === folderID);
 }
+
+onBeforeMount(() => {
+  useCoreStore().fetchTasks();
+
+  if (coreStore.currentTask) {
+    currentTask.value = coreStore.currentTask;
+  }
+});
 </script>
