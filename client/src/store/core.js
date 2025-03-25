@@ -8,6 +8,10 @@ export const useCoreStore = defineStore("core", {
     folderList: [],
     taskList: [],
     flashcardList: [],
+
+    currentNote: "",
+    currentTask: "",
+    currentFlashcardSet: "",
   }),
 
   getters: {
@@ -306,6 +310,19 @@ export const useCoreStore = defineStore("core", {
         console.error("Error fetching flashcards by setName: ", error);
         return [];
       }
+    },
+
+    // HOME PAGE
+    async setNote(note) {
+      this.currentNote = note;
+    },
+
+    async setTask(task) {
+      this.currentTask = task;
+    },
+
+    async setFlashcardSet(flashcardSet) {
+      this.currentFlashcardSet = flashcardSet;
     },
   },
 });

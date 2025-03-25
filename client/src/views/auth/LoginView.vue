@@ -32,6 +32,7 @@
 
 <script setup lang="js">
 import { useAuthStore } from "../../store/auth";
+import { useCoreStore } from "@/store/core";
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 
@@ -55,6 +56,10 @@ async function submit() {
     .catch((err) => {
       errorMessage.value = err.message;
     });
+
+  await useCoreStore().fetchData();
+  await useCoreStore().fetchTasks();
+  await useCoreStore().fetchFlashcards();
 }
 </script>
 

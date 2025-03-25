@@ -33,17 +33,16 @@ describe("Integration Tests Task Management - Frontend + Backend", () => {
   // Create a new task with a class associated
   it("should create a new task with a class associated", () => {
     // First create a class(folder)
-    cy.request({
-      method: "POST",
-      url: "http://localhost:3000/api/folder/create",
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-      body: {
-        name: "Test Class",
-        priority: true,
-      },
-    });
+    cy.visit("/#/notes");
+
+    cy.get(".btn-circle").first().click();
+    cy.contains("Add New Folder").click();
+
+    cy.get("#folderName").type("Test Class");
+    cy.get("#classToggle").click();
+    cy.get(".form-select").should("be.visible").last().select("true");
+    cy.get("#addFolderButton").click();
+    cy.contains("Test Class").should("be.visible");
 
     cy.visit("/#/tasks");
 
@@ -51,7 +50,7 @@ describe("Integration Tests Task Management - Frontend + Backend", () => {
     cy.get("#taskName").type("Test Task 2 Title");
     cy.get("#taskDeadline").type("2030-12-31T12:00");
     cy.get("#isForClass").click();
-    cy.get(".form-select").last().select("Test Class");
+    cy.get("#taskClass").select("Test Class");
     cy.get("#taskGrade").type("20");
     cy.get("button").contains("Create").click();
     cy.contains("Test Task 2").should("exist");

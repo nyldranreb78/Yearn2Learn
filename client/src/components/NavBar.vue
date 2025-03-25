@@ -111,7 +111,8 @@
     <div
       id="timerAlert"
       :class="
-        'toast align-items-center border-0 mt-3 me-4 text-bg-' + toastColor
+        'toast timer-toast align-items-center border-0 mt-3 me-4 text-bg-' +
+        toastColor
       "
       role="alert"
     >
@@ -210,6 +211,10 @@ async function setToast(color, message, time) {
 
 .nav-item {
   list-style: none !important;
+}
+
+.timer-toast {
+  width: 300px !important;
 }
 
 .nav-item::before,

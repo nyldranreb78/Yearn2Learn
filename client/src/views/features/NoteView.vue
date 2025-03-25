@@ -561,7 +561,7 @@
 <script setup lang="js">
 // @ is an alias to /src
 import bootstrap from "bootstrap/dist/js/bootstrap.bundle.js";
-import { ref, reactive, computed, onBeforeUnmount } from "vue";
+import { ref, reactive, computed, onBeforeMount, onBeforeUnmount } from "vue";
 import { useCoreStore } from "@/store/core";
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
@@ -813,6 +813,21 @@ async function closeModal() {
     bootstrap.Modal.getOrCreateInstance(modal).hide();
   }
 }
+
+onBeforeMount(() => {
+  useCoreStore().fetchData();
+
+  if (coreStore.currentNote) {
+    currentNote.value = coreStore.currentNote;
+
+    const folderName = folderList.value.find(
+      (folder) => folder._id === currentNote.value.folder,
+    ).name;
+    textEditorData.folderName = folderName;
+    textEditorData.noteTitle = currentNote.value.title;
+    textEditorData.content = currentNote.value.content;
+  }
+});
 
 onBeforeUnmount(async () => {
   if (
