@@ -90,38 +90,40 @@
       </ul>
 
       <div class="d-flex justify-content-end">
-        <li
-          v-if="isAuthenticated"
-          class="nav-item dropdown me-2"
-        >
-          <a
-            class="nav-link dropdown-toggle"
-            href="#"
-            role="button"
-            data-bs-toggle="dropdown"
+        <ul>
+          <li
+            v-if="isAuthenticated"
+            class="nav-item dropdown me-2"
           >
-            {{ user.username }}
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end">
-            <li>
-              <router-link
-                :to="{ name: 'user' }"
-                class="dropdown-item"
-              >
-                Profile
-              </router-link>
-            </li>
-            <li><hr class="dropdown-divider"></li>
-            <li>
-              <button
-                class="dropdown-item text-danger"
-                @click="logout"
-              >
-                Logout
-              </button>
-            </li>
-          </ul>
-        </li>
+            <a
+              class="nav-link dropdown-toggle btn btn-link"
+              type="button"
+              data-bs-toggle="dropdown"
+              @keydown="handleKeyDown"
+            >
+              {{ user.username }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li>
+                <router-link
+                  :to="{ name: 'user' }"
+                  class="dropdown-item"
+                >
+                  Profile
+                </router-link>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <button
+                  class="dropdown-item text-danger"
+                  @click="logout"
+                >
+                  Logout
+                </button>
+              </li>
+            </ul>
+          </li>
+        </ul>
       </div>
     </div>
   </nav>

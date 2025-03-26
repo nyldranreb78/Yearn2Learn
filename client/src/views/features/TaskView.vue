@@ -455,7 +455,10 @@
                   class="row mt-2"
                 >
                   <div class="col-6">
-                    <label class="form-label">Grade weight in %
+                    <label
+                      for="taskGrade"
+                      class="form-label"
+                    >Grade weight in %
                       <small class="text-muted">(optional)</small></label>
                     <input
                       id="taskGrade"
@@ -468,11 +471,15 @@
                   </div>
 
                   <div class="col-6">
-                    <label class="form-label">Grade received
+                    <label
+                      for="actualGrade"
+                      class="form-label"
+                    >Grade received
                       <small class="text-muted">(if applicable)</small></label>
                     <div class="row">
                       <div class="col">
                         <input
+                          id="actualGrade"
                           v-model="taskData.actualGrade"
                           type="number"
                           class="form-control"
