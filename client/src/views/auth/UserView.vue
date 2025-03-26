@@ -1,6 +1,5 @@
 <template>
   <div id="user">
-    <NavBar />
     <div class="container navbar-offset">
       <Suspense>
         <template #default>
@@ -35,7 +34,6 @@
 </template>
 
 <script setup lang="js">
-import NavBar from "@/components/NavBar.vue";
 import { useAuthStore } from "../../store/auth";
 import { computed, onMounted } from "vue";
 

@@ -90,7 +90,7 @@
       </ul>
 
       <div class="d-flex justify-content-end">
-        <ul>
+        <ul class="navbar-nav mb-2 mb-lg-0">
           <li
             v-if="isAuthenticated"
             class="nav-item dropdown me-2"

@@ -2,7 +2,6 @@
   <div
     class="container-fluid text-start d-flex flex-column navbar-offset vh-navbar-offset"
   >
-    <NavBar />
     <div class="row justify-content-md-center mt-4">
       <div class="col-8">
         <div class="row">
@@ -128,7 +127,6 @@
 
 <script setup>
 import FeatureCard from "@/components/FeatureCard.vue";
-import NavBar from "@/components/NavBar.vue";
 import bootstrap from "bootstrap/dist/js/bootstrap.bundle.js";
 import { useCoreStore } from "@/store/core";
 import { computed, onBeforeMount } from "vue"; // reactive, computed, onMounted,

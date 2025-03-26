@@ -2,7 +2,6 @@
   <div
     class="container-fluid text-start d-flex flex-column navbar-offset vh-navbar-offset"
   >
-    <NavBar />
     <!--MAIN SCREEN-->
     <!--The table grid divides the screen into three with the text editor in the middle-->
     <div class="row bg-light">
@@ -618,7 +617,6 @@
 
 <script setup lang="js">
 // @ is an alias to /src
-import NavBar from "@/components/NavBar.vue";
 import bootstrap from "bootstrap/dist/js/bootstrap.bundle.js";
 import { ref, reactive, computed, onBeforeMount, onBeforeUnmount } from "vue";
 import { useCoreStore } from "@/store/core";
