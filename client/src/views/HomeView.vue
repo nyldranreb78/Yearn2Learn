@@ -37,10 +37,14 @@
               <div class="col border-bottom border-card mb-3" />
             </div>
 
+            <div v-if="!noteList.length" class="text-muted text-center">
+              <i>There are no Notes to show. Visit the Notes page to write some!</i>
+            </div>
+
             <div class="row mb-5">
               <div
                 v-for="note in noteList"
-                v-bind:key="note._id"
+                :key="note._id"
                 class="col-3"
                 @mouseenter="coreStore.setNote(note)"
               >
@@ -63,10 +67,14 @@
               <div class="col border-bottom border-card mb-3" />
             </div>
 
+            <div v-if="!flashcardSetList.length" class="text-muted text-center">
+              <i>There are no Flashcard Sets to show. Visit the Flashcards page to create some!</i>
+            </div>
+
             <div class="row mb-5">
               <div
                 v-for="set in flashcardSetList"
-                v-bind:key="set"
+                :key="set"
                 class="col-2"
                 @mouseenter="coreStore.setFlashcardSet(set)"
               >
@@ -85,7 +93,7 @@
               <div class="row mb-2">
                 <div
                   v-for="task in taskList"
-                  v-bind:key="task._id"
+                  :key="task._id"
                   class="mb-3"
                   @mouseenter="coreStore.setTask(task)"
                 >
@@ -122,7 +130,7 @@ const timerDesc = "Choose between a generic or Pomodoro Method timer.";
 const featureInfo = [
   // [Bootstrap Icon Code, Feature Name, Vue Route]
   ["journal-text", "Notes", "notes", noteDesc],
-  ["card-heading", "Flash Cards", "flashcards", flashcardDesc],
+  ["card-heading", "Flashcards", "flashcards", flashcardDesc],
   ["calendar2-check", "Task Management", "tasks", goalDesc], // TODO: change this later
   ["stopwatch", "Timer", null, timerDesc],
 ];

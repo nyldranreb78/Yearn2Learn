@@ -53,7 +53,7 @@ describe("Integration Tests Task Management - Frontend + Backend", () => {
     cy.get("#taskClass").select("Test Class");
     cy.get("#taskGrade").type("20");
     cy.get("button").contains("Create").click();
-    cy.contains("Test Task 2").should("exist");
+    cy.contains("Test Task 2 Title").should("exist");
   });
 
   // Mark a task as completed
