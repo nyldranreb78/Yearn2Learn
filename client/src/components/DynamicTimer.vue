@@ -9,8 +9,15 @@
           v-model="isPomodoroMode"
           class="form-select form-select-sm mb-2"
         >
-          <option :value="false" selected>General</option>
-          <option :value="true">Pomodoro</option>
+          <option
+            :value="false"
+            selected
+          >
+            General
+          </option>
+          <option :value="true">
+            Pomodoro
+          </option>
         </select>
       </div>
     </div>
@@ -54,7 +61,10 @@
       </div>
     </div>
 
-    <div v-if="!isPomodoroMode" class="row mx-0 mt-2">
+    <div
+      v-if="!isPomodoroMode"
+      class="row mx-0 mt-2"
+    >
       <div class="col-6 d-grid px-1">
         <button
           type="button"

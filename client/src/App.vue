@@ -1,11 +1,21 @@
 <script setup lang="js">
-import { RouterView } from "vue-router";
+import { useRouter, RouterView } from "vue-router";
+import { computed } from "vue";
 import NavBar from "./components/NavBar.vue";
+
+const router = useRouter();
+
+const isInUserManagement = computed(() => {
+  const currentPath = router.currentRoute.value.name;
+
+  return currentPath === "login" || currentPath === "register";
+});
 </script>
 
 <template>
   <div id="app">
-    <NavBar />
+    <div v-show="!isInUserManagement"><NavBar /></div>
+
     <RouterView />
   </div>
 </template>

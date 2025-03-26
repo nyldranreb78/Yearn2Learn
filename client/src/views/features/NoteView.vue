@@ -41,14 +41,18 @@
         >
           <div class="col-3">
             <div class="fs-6 text-truncate ms-1 me-5 mt-1 pe-5">
-              <span v-show="currentNote" class="align-middle"
-                >{{ textEditorData.folderName }} /
-                {{ textEditorData.noteTitle }}</span
-              >
+              <span
+                v-show="currentNote"
+                class="align-middle"
+              >{{ textEditorData.folderName }} /
+                {{ textEditorData.noteTitle }}</span>
             </div>
           </div>
 
-          <div id="fixed_toolbar" class="col-6 border-0 mx-auto">
+          <div
+            id="fixed_toolbar"
+            class="col-6 border-0 mx-auto"
+          >
             <!-- Font size selector -->
             <select class="ql-size me-4">
               <option value="small" />
@@ -62,12 +66,24 @@
             <button class="ql-italic" />
             <button class="ql-underline" />
             <button class="ql-strike" />
-            <button class="ql-script" value="sub" />
-            <button class="ql-script me-4" value="super" />
+            <button
+              class="ql-script"
+              value="sub"
+            />
+            <button
+              class="ql-script me-4"
+              value="super"
+            />
 
             <!-- Lists -->
-            <button class="ql-list" value="bullet" />
-            <button class="ql-list me-4" value="ordered" />
+            <button
+              class="ql-list"
+              value="bullet"
+            />
+            <button
+              class="ql-list me-4"
+              value="ordered"
+            />
 
             <!-- Niche tools -->
             <button class="ql-blockquote" />
@@ -76,9 +92,11 @@
 
           <div class="col-3">
             <div class="fs-6 text-truncate text-end me-1 ms-5 mt-1 se-5">
-              <span v-show="currentNote" class="align-middle">
-                {{ saveStatus }}</span
+              <span
+                v-show="currentNote"
+                class="align-middle"
               >
+                {{ saveStatus }}</span>
             </div>
           </div>
         </div>
@@ -122,7 +140,10 @@
                 @click="toggleEditMode()"
               >
                 <span v-show="folderEditMode">Finish Editing</span>
-                <i v-show="!folderEditMode" class="bi bi-pencil-square" />
+                <i
+                  v-show="!folderEditMode"
+                  class="bi bi-pencil-square"
+                />
               </button>
             </div>
           </div>
@@ -132,7 +153,10 @@
       <!--SIDEBAR BODY-->
       <div class="offcanvas-body">
         <!--ADD FOLDER FORM-->
-        <div v-if="!folderEditMode" class="row p-0 m-0 mb-3">
+        <div
+          v-if="!folderEditMode"
+          class="row p-0 m-0 mb-3"
+        >
           <button
             class="btn"
             :class="folderFormInProgress ? 'btn-secondary' : 'btn-primary'"
@@ -149,7 +173,10 @@
             }}</span>
           </button>
 
-          <div id="add_folder_form" class="collapse p-0 m-0">
+          <div
+            id="add_folder_form"
+            class="collapse p-0 m-0"
+          >
             <div class="card card-body sharp-top-border border-top-0 mb-2">
               <form @submit.prevent="addFolder">
                 <div class="row mb-2">
@@ -162,7 +189,7 @@
                       class="form-control"
                       placeholder="e.g. COMP 4350"
                       required
-                    />
+                    >
                   </div>
                 </div>
 
@@ -176,15 +203,19 @@
                         role="switch"
                         class="form-check-input"
                         @click="folderData.priority = ''"
-                      />
-                      <label class="form-check-label" for="classToggle"
-                        >Does this folder represent a class?</label
                       >
+                      <label
+                        class="form-check-label"
+                        for="classToggle"
+                      >Does this folder represent a class?</label>
                     </div>
                   </div>
                 </div>
 
-                <div v-if="isAClass" class="row mb-2">
+                <div
+                  v-if="isAClass"
+                  class="row mb-2"
+                >
                   <small>Priority</small>
                   <div class="col">
                     <select
@@ -193,9 +224,18 @@
                       class="form-select"
                       required
                     >
-                      <option value disabled>Select</option>
-                      <option :value="true">Major Requirement</option>
-                      <option :value="false">Elective</option>
+                      <option
+                        value
+                        disabled
+                      >
+                        Select
+                      </option>
+                      <option :value="true">
+                        Major Requirement
+                      </option>
+                      <option :value="false">
+                        Elective
+                      </option>
                     </select>
                   </div>
                 </div>
@@ -221,14 +261,15 @@
           v-show="!folderList.length && !folderFormInProgress"
           class="text-center text-muted px-5 py-4"
         >
-          <i
-            >No folders or notes to show. Click on the "Add New Folder" button
-            to add a folder and write cotes under it.</i
-          >
+          <i>No folders or notes to show. Click on the "Add New Folder" button
+            to add a folder and write cotes under it.</i>
         </div>
 
         <!--COLLAPSIBLE FOLDER LIST-->
-        <div v-show="!folderEditMode" class="accordion accordion-flush">
+        <div
+          v-show="!folderEditMode"
+          class="accordion accordion-flush"
+        >
           <div
             v-for="folder in folderList"
             :key="folder._id"
@@ -306,7 +347,7 @@
                             </a>
                           </li>
 
-                          <li><hr class="dropdown-divider my-1" /></li>
+                          <li><hr class="dropdown-divider my-1"></li>
 
                           <li>
                             <a
@@ -329,7 +370,11 @@
         </div>
 
         <!--EDIT FOLDER VIEW-->
-        <div v-if="folderEditMode" id="folder_edit_form" class="accordion">
+        <div
+          v-if="folderEditMode"
+          id="folder_edit_form"
+          class="accordion"
+        >
           <div
             v-for="folder in folderList"
             :key="folder._id"
@@ -402,7 +447,7 @@
                         class="form-control"
                         placeholder="e.g. COMP 4350"
                         required
-                      />
+                      >
                     </div>
                   </div>
 
@@ -414,8 +459,12 @@
                         class="form-select"
                         required
                       >
-                        <option :value="true">Major Requirement</option>
-                        <option :value="false">Elective</option>
+                        <option :value="true">
+                          Major Requirement
+                        </option>
+                        <option :value="false">
+                          Elective
+                        </option>
                       </select>
                     </div>
 
@@ -442,7 +491,11 @@
     <!--Due to the nature of Bootstrap modals, these have to be close to the outermost HTML tag-->
 
     <!--ADD/EDIT NOTE FORM-->
-    <div id="add_edit_note_form" class="modal modal-md fade" tabindex="-1">
+    <div
+      id="add_edit_note_form"
+      class="modal modal-md fade"
+      tabindex="-1"
+    >
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-body">
@@ -451,9 +504,7 @@
                 <div class="col-10 text-start text-truncate">
                   <span v-if="currentNote">Rename {{ currentNote.title }}</span>
 
-                  <span v-else
-                    >Create new note for {{ currentFolder.name }}</span
-                  >
+                  <span v-else>Create new note for {{ currentFolder.name }}</span>
                 </div>
 
                 <div class="col-2 text-end">
@@ -474,7 +525,7 @@
                     class="form-control"
                     placeholder="e.g. Midterm Notes"
                     required
-                  />
+                  >
 
                   <button
                     id="submitNoteButton"
@@ -498,14 +549,22 @@
     </div>
 
     <!--DELETE FOLDER/EDIT FORM-->
-    <div id="delete_form" class="modal modal-md fade" tabindex="-1">
+    <div
+      id="delete_form"
+      class="modal modal-md fade"
+      tabindex="-1"
+    >
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header px-2 py-1">
             <div class="modal-title fs-6">
               Confirm {{ folderEditMode ? "Folder" : "Note" }} Deletion
             </div>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" />
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            />
           </div>
 
           <div class="modal-body">
@@ -520,15 +579,13 @@
                 </div>
               </div>
               from your {{ folderEditMode ? "folders" : "note folder" }}?
-              <br /><br />
-              <u
-                >This
+              <br><br>
+              <u>This
                 {{
                   folderEditMode
                     ? "will also delete all the Notes attached to it"
                     : "is irreversible"
-                }}!</u
-              >
+                }}!</u>
             </h6>
 
             <div class="row p-0 align-middle mt-3">
@@ -625,7 +682,7 @@ async function editFolder() {
     await coreStore.editFolder(
       currentFolder.value._id,
       folderData.name,
-      folderData.priority,
+      folderData.priority
     );
     textEditorData.folderName = folderData.name;
   } finally {
@@ -712,7 +769,7 @@ async function addNote() {
   try {
     const newNote = await coreStore.addNote(
       currentFolder.value._id,
-      noteData.title,
+      noteData.title
     );
     // Update the text editor contents to the new note's
     openNotes(currentFolder.value, newNote);
@@ -802,7 +859,7 @@ async function autoSaveNoteChanges() {
   } catch (error) {
     console.error(
       "Error updating note:",
-      error.response?.data || error.message,
+      error.response?.data || error.message
     );
   }
 }
@@ -821,7 +878,7 @@ onBeforeMount(() => {
     currentNote.value = coreStore.currentNote;
 
     const folderName = folderList.value.find(
-      (folder) => folder._id === currentNote.value.folder,
+      (folder) => folder._id === currentNote.value.folder
     ).name;
     textEditorData.folderName = folderName;
     textEditorData.noteTitle = currentNote.value.title;
