@@ -35,6 +35,11 @@ jobs:
     - working-directory: ./server
       run: npm run build --if-present
     #- run: npm run build --if-present
+    - name: SonarQube Scan
+      uses: SonarSource/sonarqube-scan-action@v4
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
     
   deploy:
     name: deploy
