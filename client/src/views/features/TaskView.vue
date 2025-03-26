@@ -203,17 +203,21 @@
                   >
                     <b><small>Our Message:</small></b
                     ><br />
-                    We recommend prioritizing this task!<br />This task is worth
-                    <b>{{ currentTask.taskGrade }}%</b> of your final grade in a
-                    <b
-                      >{{
-                        currentClass?.priority ? " Major" : "n Elective"
-                      }}
-                      course</b
-                    >
-                    that you're averaging
-                    <b>{{ (averageGrade * 100).toFixed(1) + "%" }}</b> on.
-                    <br /><br />See full class progress breakdown below.
+                    We recommend prioritizing this task!
+                    <span v-if="gradedTaskList.length">
+                      <br />This task is worth
+                      <b>{{ currentTask.taskGrade }}%</b> of your final grade in
+                      a
+                      <b
+                        >{{
+                          currentClass?.priority ? " Major" : "n Elective"
+                        }}
+                        course</b
+                      >
+                      that you're averaging
+                      <b>{{ (averageGrade * 100).toFixed(1) + "%" }}</b> on.
+                      <br /><br />See full class progress breakdown below.
+                    </span>
                   </div>
                 </div>
               </div>
@@ -580,9 +584,11 @@ onMounted(() => {
     // Then check for new ones every 5 seconds
     setInterval(() => {
       if (
+        priorityTask.value &&
         new Date().getTime() > new Date(priorityTask.value.deadline).getTime()
-      )
+      ) {
         priorityTask.value = recommendedTask.value;
+      }
     }, 5000);
   }, 1000);
 });
@@ -643,6 +649,11 @@ const gradedTaskList = computed(() => {
   });
 });
 
+// Boolean value that checks if every task is finished
+const allTasksFinished = computed(() => {
+  return coreStore.tasks.every((task) => task.isFinished);
+});
+
 // The graded tasks for the class that a user is viewing
 const classTasks = computed(() => {
   let sortedTasks = {
@@ -684,70 +695,76 @@ const averageGrade = computed(() => {
 });
 
 const recommendedTask = computed(() => {
-  // Only compare tasks from today onwards
-  // This line ets the local 12AM time for the day
-  let currentDate = new Date();
-  currentDate.setHours(0, 0, 0, 0);
+  if (taskList.value.length) {
+    if (gradedTaskList.value.length && classList.value.length) {
+      // Only compare tasks from today onwards
+      // This line ets the local 12AM time for the day
+      let currentDate = new Date();
+      currentDate.setHours(0, 0, 0, 0);
 
-  // Find the Date of the closest, upcoming graded task
-  let closestTaskDate = new Date(
-    gradedTaskList.value.find((task) => {
-      let deadlineDate = new Date(task?.deadline);
-      return (
-        deadlineDate.getTime() >= currentDate.getTime() && // Deadline is today onwards
-        deadlineDate.getTime() > new Date().getTime()
-      ); // Deadline hasn't passed
-    })?.deadline,
-  );
+      // Find the Date of the closest, upcoming graded task
+      let closestTaskDate = new Date(
+        gradedTaskList.value.find((task) => {
+          let deadlineDate = new Date(task?.deadline);
+          return (
+            deadlineDate.getTime() >= currentDate.getTime() && // Deadline is today onwards
+            deadlineDate.getTime() > new Date().getTime()
+          ); // Deadline hasn't passed
+        })?.deadline,
+      );
 
-  closestTaskDate.setHours(0, 0, 0, 0); // Set the time of the closest deadline day to midnight
+      closestTaskDate.setHours(0, 0, 0, 0); // Set the time of the closest deadline day to midnight
 
-  // Find all graded tasks that are due on the same day as the closest one discovered
-  let candidates = gradedTaskList.value.filter((task) => {
-    let taskDeadline = new Date(task?.deadline);
+      // Find all graded tasks that are due on the same day as the closest one discovered
+      let candidates = gradedTaskList.value.filter((task) => {
+        let taskDeadline = new Date(task?.deadline);
 
-    // Filter candidates by order of important details
-    // This check will stop as soon as one of them returns false
-    return (
-      taskDeadline.getTime() >= closestTaskDate.getTime() && // If the task is later than the closest date
-      task.isFinished == false && // If the task is not yet finished
-      taskDeadline.getDay() === closestTaskDate.getDay() && // If the task is in the same day
-      taskDeadline.getMonth() === closestTaskDate.getMonth() && // If the task is in the same month
-      taskDeadline.getFullYear() === closestTaskDate.getFullYear()
-    ); // If the task is in the same year
-  });
+        // Filter candidates by order of important details
+        // This check will stop as soon as one of them returns false
+        return (
+          taskDeadline.getTime() >= closestTaskDate.getTime() && // If the task is later than the closest date
+          task.isFinished == false && // If the task is not yet finished
+          taskDeadline.getDay() === closestTaskDate.getDay() && // If the task is in the same day
+          taskDeadline.getMonth() === closestTaskDate.getMonth() && // If the task is in the same month
+          taskDeadline.getFullYear() === closestTaskDate.getFullYear()
+        ); // If the task is in the same year
+      });
 
-  // Create an array of 0s to be used in storing weight
-  let mostWeight = 0; // Highest weight
-  let vipIndex = 0; // Index of the candidate with the highest weight
+      // Create an array of 0s to be used in storing weight
+      let mostWeight = 0; // Highest weight
+      let vipIndex = 0; // Index of the candidate with the highest weight
 
-  for (let i in candidates) {
-    let currentAverage =
-      getTotalGrade(candidates, "actualGrade") /
-      getTotalGrade(candidates, "taskGrade");
-    let classFolder = classList.value.find((folder) => {
-      return folder?._id === candidates[i].folderID;
-    });
-    let deadlineHour = new Date(candidates[i]?.deadline).getHours();
-    let weight = 0;
+      for (let i in candidates) {
+        let currentAverage =
+          getTotalGrade(candidates, "actualGrade") /
+          getTotalGrade(candidates, "taskGrade");
+        let classFolder = classList.value.find((folder) => {
+          return folder?._id === candidates[i].folderID;
+        });
+        let deadlineHour = new Date(candidates[i]?.deadline).getHours();
+        let weight = 0;
 
-    weight += candidates[i].taskGrade / 100; // Add weight based on final grade worth
-    weight += 1 - currentAverage; // Add weight based on current grade average
-    weight += classFolder?.priority ? 0.5 : 0; // Add weight based on whether the class is a major or elective
-    weight += (24 - deadlineHour) / 100; // Add weight based on how soon in the day it's due
+        weight += candidates[i].taskGrade / 100; // Add weight based on final grade worth
+        weight += 1 - currentAverage; // Add weight based on current grade average
+        weight += classFolder?.priority ? 0.5 : 0; // Add weight based on whether the class is a major or elective
+        weight += (24 - deadlineHour) / 100; // Add weight based on how soon in the day it's due
 
-    if (weight > mostWeight) {
-      // Update the "recommended" candidate based on weight
-      mostWeight = weight;
-      vipIndex = i;
+        if (weight > mostWeight) {
+          // Update the "recommended" candidate based on weight
+          mostWeight = weight;
+          vipIndex = i;
+        }
+      }
+
+      if (candidates.length > vipIndex && candidates[vipIndex]) {
+        return candidates[vipIndex];
+      }
+    } else if (!allTasksFinished.value) {
+      return taskList.value[0];
     }
   }
 
-  if (candidates.length > vipIndex && candidates[vipIndex]) {
-    return candidates[vipIndex];
-  } else {
-    return null;
-  }
+  return null;
 });
 
 function getTotalGrade(gradeArray, gradeType) {
@@ -770,8 +787,8 @@ async function addTask() {
 
   resetTaskData();
 
-  currentTask.value = newTask;
   priorityTask.value = recommendedTask.value;
+  currentTask.value = newTask;
 }
 
 async function editTask() {
@@ -787,8 +804,8 @@ async function editTask() {
   await coreStore.editTask(currentTask.value?._id, updatedTask);
 
   resetTaskData();
-  currentTask.value = updatedTask;
   priorityTask.value = recommendedTask.value;
+  currentTask.value = updatedTask;
 }
 
 async function deleteTask() {
@@ -806,7 +823,11 @@ async function changeStatus(newStatus) {
 
   await coreStore.editTask(currentTask.value?._id, currentTask.value);
 
-  priorityTask.value = recommendedTask.value;
+  if (allTasksFinished.value) {
+    priorityTask.value = "";
+  } else {
+    priorityTask.value = recommendedTask.value;
+  }
 }
 
 async function prefillEditForm() {

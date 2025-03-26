@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
+const sanitize = require("mongo-sanitize");
 const { hashPassword, comparePassword } = require("../utils/helpers");
 
 // Register a new user
@@ -21,7 +22,8 @@ async function register(req, res) {
   if (password !== password_confirm)
     return res.status(422).json({ message: "Passwords do not match" });
 
-  const userExists = await User.exists({ email });
+  const sanitizedEmail = sanitize(email);
+  const userExists = await User.exists({ email: sanitizedEmail });
 
   if (userExists) return res.sendStatus(409);
 
@@ -29,11 +31,11 @@ async function register(req, res) {
     const hashedPassword = await hashPassword(password);
 
     await User.create({
-      email,
-      username,
+      email: sanitize(email),
+      username: sanitize(username),
       password: hashedPassword,
-      first_name,
-      last_name,
+      first_name: sanitize(first_name),
+      last_name: sanitize(last_name),
     });
 
     return res.sendStatus(201);
@@ -49,7 +51,8 @@ async function login(req, res) {
   if (!email || !password)
     return res.status(422).json({ message: "Missing fields" });
 
-  const user = await User.findOne({ email });
+  const sanitizedEmail = sanitize(email);
+  const user = await User.findOne({ email: sanitizedEmail });
 
   if (!user)
     return res.status(401).json({ message: "Email or password is incorrect" });
@@ -149,9 +152,12 @@ async function refresh(req, res) {
 async function deleteTestUser(req, res) {
   try {
     const { email } = req.body;
-    if (!email) return res.status(400).json({ message: "Email is required" });
+    const sanitizedEmail = sanitize(email);
 
-    await User.deleteOne({ email }); // Delete user from DB
+    if (!sanitizedEmail)
+      return res.status(400).json({ message: "Email is required" });
+
+    await User.deleteOne({ email: sanitizedEmail }); // Delete user from DB
     return res.status(200).json({ message: "User deleted" });
   } catch (error) {
     return res.status(500).json({ message: "Error deleting user" });

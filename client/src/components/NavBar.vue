@@ -11,6 +11,7 @@
         >
           <img
             :src="require(`@/assets/img/Y2L_Logo.png`)"
+            alt="Yearn2Learn"
             width="40"
             class="object-fit-scale me-2"
           />
@@ -39,7 +40,7 @@
             class="nav-link active"
             href="#"
           >
-            Flash Cards
+            Flashcards
           </router-link>
         </li>
         <li class="nav-item">

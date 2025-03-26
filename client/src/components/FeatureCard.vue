@@ -3,7 +3,7 @@
     :to="{ name: routeName }"
     class="card text-reset text-decoration-none h-100"
   >
-    <div v-if="featureName" class="card-header">
+    <div v-if="featureName !== 'Feature'" class="card-header">
       <i :class="'me-1 bi bi-' + bootstrapIconCode" />
       {{ featureName }}
     </div>
@@ -19,7 +19,7 @@
 <script setup>
 defineProps({
   bootstrapIconCode: { type: String, default: "question-circle" },
-  featureName: { type: String },
+  featureName: { type: String, default: "Feature" },
   routeName: { type: String, default: "home" },
   description: { type: String, default: "No description available." },
 });
