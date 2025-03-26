@@ -2,6 +2,7 @@
   <div
     class="container-fluid text-start d-flex flex-column navbar-offset vh-navbar-offset"
   >
+    <NavBar />
     <div class="row justify-content-md-center mt-4">
       <div class="col-8">
         <div class="row">
@@ -10,7 +11,11 @@
           </div>
         </div>
         <div class="row mb-5">
-          <div v-for="feature in featureInfo" :key="feature[2]" class="col">
+          <div
+            v-for="feature in featureInfo"
+            :key="feature[2]"
+            class="col"
+          >
             <FeatureCard
               :bootstrap-icon-code="feature[0]"
               :feature-name="feature[1]"
@@ -37,8 +42,12 @@
               <div class="col border-bottom border-card mb-3" />
             </div>
 
-            <div v-if="!noteList.length" class="text-muted text-center">
-              <i>There are no Notes to show. Visit the Notes page to write some!</i>
+            <div
+              v-if="!noteList.length"
+              class="text-muted text-center"
+            >
+              <i>There are no Notes to show. Visit the Notes page to write
+                some!</i>
             </div>
 
             <div class="row mb-5">
@@ -54,7 +63,7 @@
                   :route-name="'notes'"
                   :description="
                     'Last opened on ' +
-                    new Date(note.updatedAt).toLocaleString()
+                      new Date(note.updatedAt).toLocaleString()
                   "
                 />
               </div>
@@ -67,8 +76,12 @@
               <div class="col border-bottom border-card mb-3" />
             </div>
 
-            <div v-if="!flashcardSetList.length" class="text-muted text-center">
-              <i>There are no Flashcard Sets to show. Visit the Flashcards page to create some!</i>
+            <div
+              v-if="!flashcardSetList.length"
+              class="text-muted text-center"
+            >
+              <i>There are no Flashcard Sets to show. Visit the Flashcards page
+                to create some!</i>
             </div>
 
             <div class="row mb-5">
@@ -115,6 +128,7 @@
 
 <script setup>
 import FeatureCard from "@/components/FeatureCard.vue";
+import NavBar from "@/components/NavBar.vue";
 import bootstrap from "bootstrap/dist/js/bootstrap.bundle.js";
 import { useCoreStore } from "@/store/core";
 import { computed, onBeforeMount } from "vue"; // reactive, computed, onMounted,

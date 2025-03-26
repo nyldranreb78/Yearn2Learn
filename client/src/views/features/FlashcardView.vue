@@ -2,6 +2,7 @@
   <div
     class="container-fluid text-start d-flex flex-column navbar-offset vh-navbar-offset"
   >
+    <NavBar />
     <div class="row justify-content-md-center mt-4">
       <div class="col-6">
         <div class="row">
@@ -27,7 +28,10 @@
             :disabled="!filteredList.length"
             @click="showAnswer = !showAnswer"
           >
-            <div v-if="filteredList.length" class="my-auto">
+            <div
+              v-if="filteredList.length"
+              class="my-auto"
+            >
               <h4 v-if="showAnswer">
                 {{ filteredList[flashcardIndex].answer }}
               </h4>
@@ -37,10 +41,8 @@
             </div>
 
             <div v-else>
-              <i
-                >Create a flashcard by clicking the "Create Flashcard" button on
-                the right.</i
-              >
+              <i>Create a flashcard by clicking the "Create Flashcard" button on
+                the right.</i>
             </div>
           </button>
 
@@ -110,7 +112,9 @@
                         class="form-select form-select-sm"
                         @change="setInput = ''"
                       >
-                        <option value>Select or create set</option>
+                        <option value>
+                          Select or create set
+                        </option>
                         <option
                           v-for="setName in flashcardSetList"
                           :key="setName"
@@ -133,7 +137,7 @@
                     class="form-control form-control-sm"
                     placeholder="New Flashcard Set Name"
                     :required="!flashcardData.setName"
-                  />
+                  >
                 </div>
               </form>
             </div>
@@ -146,7 +150,9 @@
                     v-model="setNameFilter"
                     class="form-select form-select-sm"
                   >
-                    <option value>All</option>
+                    <option value>
+                      All
+                    </option>
                     <option
                       v-for="setName in flashcardSetList"
                       :key="setName"
@@ -159,8 +165,14 @@
               </div>
             </div>
 
-            <div v-show="!showForm" class="row mt-auto">
-              <div v-show="flashcardList.length" class="col-12 mt-2">
+            <div
+              v-show="!showForm"
+              class="row mt-auto"
+            >
+              <div
+                v-show="flashcardList.length"
+                class="col-12 mt-2"
+              >
                 <button
                   type="button"
                   class="btn btn-sm w-100"
@@ -175,7 +187,10 @@
                 </button>
               </div>
 
-              <div v-show="flashcardList.length" class="col-12 mt-2">
+              <div
+                v-show="flashcardList.length"
+                class="col-12 mt-2"
+              >
                 <button
                   type="button"
                   class="btn btn-sm btn-primary w-100"
@@ -197,7 +212,10 @@
               </div>
             </div>
 
-            <div v-show="showForm" class="row mt-auto">
+            <div
+              v-show="showForm"
+              class="row mt-auto"
+            >
               <div class="col-auto pe-1">
                 <button
                   type="button"
@@ -227,18 +245,22 @@
           </div>
         </div>
 
-        <div v-show="showQuestionList" class="row mt-3">
+        <div
+          v-show="showQuestionList"
+          class="row mt-3"
+        >
           <div class="col p-0">
             <h4>Question List</h4>
           </div>
         </div>
 
-        <div v-show="!filteredList.length" class="row">
+        <div
+          v-show="!filteredList.length"
+          class="row"
+        >
           <div class="col text-center m-4">
-            <i class="text-muted"
-              >There are no questions to show. Click on the "Create Flashcard"
-              button to add one.</i
-            >
+            <i class="text-muted">There are no questions to show. Click on the "Create Flashcard"
+              button to add one.</i>
           </div>
         </div>
 
@@ -247,7 +269,10 @@
           id="cardList"
           class="row card"
         >
-          <div id="cardList" class="col">
+          <div
+            id="cardList"
+            class="col"
+          >
             <div
               v-for="flashcard in filteredList"
               id="cardList"
@@ -264,12 +289,8 @@
 
               <div class="col">
                 <div v-if="isDeleteMode && flashcard === currentFlashcard">
-                  <small class="text-danger"
-                    ><i
-                      >Are you sure you want to delete this question? This is
-                      irreversible!</i
-                    ></small
-                  >
+                  <small class="text-danger"><i>Are you sure you want to delete this question? This is
+                    irreversible!</i></small>
                 </div>
 
                 <div v-else>
@@ -297,7 +318,7 @@
                     </a>
                   </li>
 
-                  <li><hr class="dropdown-divider my-1" /></li>
+                  <li><hr class="dropdown-divider my-1"></li>
 
                   <li>
                     <a
@@ -335,6 +356,7 @@
 </template>
 
 <script setup lang="js">
+import NavBar from "@/components/NavBar.vue";
 import { ref, reactive, watch, computed, onBeforeMount } from "vue";
 import { useCoreStore } from "@/store/core";
 

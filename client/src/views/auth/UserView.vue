@@ -1,10 +1,16 @@
 <template>
   <div id="user">
+    <NavBar />
     <div class="container navbar-offset">
       <Suspense>
         <template #default>
-          <div v-if="user" class="card card-body mt-4">
-            <h5 class="card-title">Username: {{ user.username }}</h5>
+          <div
+            v-if="user"
+            class="card card-body mt-4"
+          >
+            <h5 class="card-title">
+              Username: {{ user.username }}
+            </h5>
             <h6 class="card-subtitle mb-2 text-muted">
               Email: {{ user.email }}
             </h6>
@@ -29,6 +35,7 @@
 </template>
 
 <script setup lang="js">
+import NavBar from "@/components/NavBar.vue";
 import { useAuthStore } from "../../store/auth";
 import { computed, onMounted } from "vue";
 
