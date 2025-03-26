@@ -130,7 +130,7 @@ const timerDesc = "Choose between a generic or Pomodoro Method timer.";
 const featureInfo = [
   // [Bootstrap Icon Code, Feature Name, Vue Route]
   ["journal-text", "Notes", "notes", noteDesc],
-  ["card-heading", "Flash Cards", "flashcards", flashcardDesc],
+  ["card-heading", "Flashcards", "flashcards", flashcardDesc],
   ["calendar2-check", "Task Management", "tasks", goalDesc], // TODO: change this later
   ["stopwatch", "Timer", null, timerDesc],
 ];
