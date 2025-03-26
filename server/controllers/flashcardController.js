@@ -63,7 +63,7 @@ async function createFlashcard(req, res) {
 
     await newFlashcard.save();
 
-    return res.status(201).json(newFlashcard);
+    return res.status(201).json({ flashcard: newFlashcard });
   } catch (error) {
     return res.status(500).json({ message: "Error creating flashcard" });
   }
