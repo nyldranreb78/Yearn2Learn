@@ -34,14 +34,14 @@ describe("Integration Tests - Frontend + Backend", () => {
   it("we should be able to access the flashcards from the homepage (from features section)", () => {
     cy.visit("/");
 
-    cy.contains(".card", "Flash Cards").click();
+    cy.contains(".card", "Flashcards").click();
     cy.url().should("include", "/flashcards");
   });
 
   it("we should be able to access the flashcards from the homepage (from widgetbar)", () => {
     cy.visit("/");
 
-    cy.contains(".nav-item", "Flash Cards").click();
+    cy.contains(".nav-item", "Flashcards").click();
     cy.url().should("include", "/flashcards");
   });
 
@@ -98,7 +98,7 @@ describe("Integration Tests - Frontend + Backend", () => {
     cy.get("#cardList").contains("unique question 2").should("be.visible");
   });
 
-  it("should change flash cards", () => {
+  it("should change Flashcards", () => {
     cy.visit("/#/flashcards");
 
     cy.get("#turnRight").click();
