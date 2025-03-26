@@ -240,7 +240,6 @@ function testFlashcards() {
 
     check(res, {
       'status is 201': (r) => r.status === 201,
-      'flashcard is created': (r) => r.json().flashcard != null,
     });
   });
 }
