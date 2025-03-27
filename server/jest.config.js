@@ -22,12 +22,7 @@ const config = {
 
   // Indicates whether the coverage information should be collected while executing the test
   collectCoverage: true,
-
-  // An array of glob patterns indicating a set of files for which coverage information should be collected
-  collectCoverageFrom: [
-    'src/**/*.{js.vue}',
-    '!src/main.js',
-  ],
+  coverageProvider: 'v8',
 
   // The directory where Jest should output its coverage files
   coverageDirectory: "../coverage",
@@ -45,6 +40,7 @@ const config = {
     //"json",
     //"text",
     "lcov",
+    "html"
     //"clover"
   ],
 
