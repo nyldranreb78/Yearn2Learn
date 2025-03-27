@@ -5,9 +5,9 @@
   "scripts": {
     "serve": "npm run lint -- --fix && vue-cli-service serve",
     "build": "npm run lint -- --fix && vue-cli-service build",
-    "test:unit": "vue-cli-service test:unit",
+    "test:unit": "vue-cli-service test:unit --coverage",
     "test:integration": "vue-cli-service test:integration",
-    "test": "vue-cli-service test:unit",
+    "test": "vue-cli-service test:unit --coverage",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src",
     "format": "prettier .  --write",
     "start": "npm run lint -- --fix && vue-cli-service serve",
@@ -85,6 +85,15 @@
     "not ie 11"
   ],
   "jest": {
-    "preset": "@vue/cli-plugin-unit-jest"
+    "preset": "@vue/cli-plugin-unit-jest",
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "src/**/*.{js.vue}",
+      "!src/main.js"
+    ],
+    "coverageProvider": "v8",
+    "coverageReporters": [
+      "lcov"
+    ]
   }
 }
