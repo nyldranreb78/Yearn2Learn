@@ -17,6 +17,9 @@ const config = {
   // Automatically clear mock calls, instances, contexts and results before every test
   clearMocks: true,
 
+  // Using jest-sonar-reporter for generating results
+  testResultsProcessor: "jest-sonar-reporter",
+
   // Indicates whether the coverage information should be collected while executing the test
   collectCoverage: true,
 
@@ -27,7 +30,7 @@ const config = {
   ],
 
   // The directory where Jest should output its coverage files
-  // coverageDirectory: undefined,
+  coverageDirectory: "../coverage",
 
   // An array of regexp pattern strings used to skip coverage collection
   // coveragePathIgnorePatterns: [
@@ -35,7 +38,7 @@ const config = {
   // ],
 
   // Indicates which provider should be used to instrument code for coverage
-  coverageProvider: "v8",
+  //coverageProvider: "v8",
 
   // A list of reporter names that Jest uses when writing coverage reports
   coverageReporters: [
@@ -148,7 +151,7 @@ const config = {
   // snapshotSerializers: [],
 
   // The test environment that will be used for testing
-  // testEnvironment: "jest-environment-node",
+  //testEnvironment: "jest-environment-node",
 
   // Options that will be passed to the testEnvironment
   // testEnvironmentOptions: {},

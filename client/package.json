@@ -87,6 +87,7 @@
   ],
   "jest": {
     "preset": "@vue/cli-plugin-unit-jest",
+    "testResultsProcessor": "jest-sonar-reporter",
     "collectCoverage": true,
     "collectCoverageFrom": [
       "src/**/*.{js.vue}",
@@ -95,10 +96,10 @@
     "coverageProvider": "v8",
     "coverageReporters": [
       "lcov"
-    ]
+    ],
+    "coverageDirectory": "../coverage"
   },
   "jestSonar": {
-    "sonar56x": true,
     "reportPath": "coverage",
     "reportFile": "test-report.xml",
     "indent": 4

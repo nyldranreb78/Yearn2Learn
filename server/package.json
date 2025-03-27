@@ -32,7 +32,6 @@
     "prettier": "^3.5.3"
   },
   "jestSonar": {
-    "sonar56x": true,
     "reportPath": "coverage",
     "reportFile": "test-report.xml",
     "indent": 4
