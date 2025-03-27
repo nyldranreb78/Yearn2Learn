@@ -621,6 +621,7 @@ onMounted(() => {
     // Then check for new ones every 5 seconds
     setInterval(() => {
       if (
+        classList.value.length &&
         priorityTask.value &&
         new Date().getTime() > new Date(priorityTask.value.deadline).getTime()
       ) {
@@ -676,12 +677,15 @@ const recommendedTask = computed(() => {
 
       // Find the Date of the closest, upcoming graded task
       let closestTaskDate = getClosestTaskDate(currentDate);
-      closestTaskDate?.setHours(0, 0, 0, 0); // Set the time to midnight
+      console.log(closestTaskDate)
+      if(closestTaskDate){
+        closestTaskDate?.setHours(0, 0, 0, 0); // Set the time to midnight
 
-      // Find all graded tasks that are due on the same day as the closest one discovered
-      let candidateTasks = getRecommendableTasksForDate(closestTaskDate);
+        // Find all graded tasks that are due on the same day as the closest one discovered
+        let candidateTasks = getRecommendableTasksForDate(closestTaskDate);
 
-      return getRecommendedTask(candidateTasks)
+        return getRecommendedTask(candidateTasks)
+      }
     } else if (!allTasksFinished.value) {
       return taskList.value[0];
     }
@@ -754,77 +758,6 @@ const totalActualGrade = computed(() => {
 const averageGrade = computed(() => {
   return totalActualGrade.value / totalTaskGrade.value;
 });
-
-// Find the Date of the closest, upcoming graded task
-async function getClosestTaskDate(fromDate){
-  return new Date(
-    gradedTaskList.value.find((task) => {
-      let deadlineDate = new Date(task?.deadline);
-      return (
-        deadlineDate.getTime() >= fromDate.getTime() && // Deadline is today onwards
-        deadlineDate.getTime() > new Date().getTime()
-      ); // Deadline hasn't passed
-    })?.deadline,
-  );
-}
-
-// Get all tasks that are valid for recommendations on a given day
-async function getRecommendableTasksForDate(date){
-  return gradedTaskList.value.filter((task) => {
-    let taskDeadline = new Date(task?.deadline);
-
-    // Filter candidates by order of important details
-    // This check will stop as soon as one of them returns false
-    return (
-      task.isFinished == false &&                       // If the task is not yet finished
-      taskDeadline.getTime() >= date.getTime() &&       // If the task is later than the closest date
-      taskDeadline.getDay() === date.getDay() &&        // If the task is in the same day
-      taskDeadline.getMonth() === date.getMonth() &&    // If the task is in the same month
-      taskDeadline.getFullYear() === date.getFullYear() // If the task is in the same year
-    ); 
-  });
-}
-
-// Get the recommended task among an array of tasks based on weight
-async function getRecommendedTask(taskArray){
-  let recommendedTask = null;
-  let recommendedIndex = 0; // Index of the candidate with the highest weight
-  let mostWeight = 0; // The highest weight value
-
-  for (let i in taskArray) {
-    let weight = 0;
-
-    // For adding weight when the deadline time is sooner 
-    let deadlineHour = new Date(taskArray[i]?.deadline).getHours();
-
-    // For adding weight when the average grade for the class is lower
-    let currentAverage =
-      getTotalGrade(taskArray, "actualGrade") /
-      getTotalGrade(taskArray, "taskGrade");
-
-    // For adding weight when the class is a major course
-    let classPriority = classList.value.find((folder) => {
-      return folder?._id === taskArray[i].folderID;
-    }).priority;
-
-    weight += taskArray[i].taskGrade / 100; // Add weight based on final grade worth
-    weight += 1 - currentAverage; // Add weight based on current grade average
-    weight += classPriority ? 0.5 : 0; // Add weight based on whether the class is a major or elective
-    weight += (24 - deadlineHour) / 100; // Add weight based on how soon in the day it's due
-
-    if (weight > mostWeight) {
-      // Update the "recommended" candidate based on weight
-      mostWeight = weight;
-      recommendedIndex = i;
-    }
-  }
-
-  if (taskArray.length > recommendedIndex && taskArray[recommendedIndex]) {
-    recommendedTask = taskArray[recommendedIndex];
-  }
-
-  return recommendedTask;
-}
 
 async function addTask() {
   const newTask = {
@@ -931,6 +864,82 @@ async function closeModal() {
     const modal = document.querySelector("#add_edit_task_form");
     bootstrap.Modal.getOrCreateInstance(modal).hide();
   }
+}
+
+// Getter functions
+// Find the Date of the closest, upcoming graded task
+function getClosestTaskDate(fromDate){
+  const closestTask = gradedTaskList.value.find((task) => {
+    let deadlineDate = new Date(task?.deadline);
+    return (
+      deadlineDate.getTime() >= fromDate.getTime() && // Deadline is today onwards
+      deadlineDate.getTime() > new Date().getTime()   // Deadline hasn't passed
+    );
+  })
+
+  if(closestTask){
+    return new Date(closestTask.deadline);
+  } else {
+    return null;
+  }
+}
+
+// Get all tasks that are valid for recommendations on a given day
+function getRecommendableTasksForDate(date){
+  return gradedTaskList.value.filter((task) => {
+    let taskDeadline = new Date(task?.deadline);
+
+    // Filter candidates by order of important details
+    // This check will stop as soon as one of them returns false
+    return (
+      task.isFinished == false &&                       // If the task is not yet finished
+      taskDeadline.getTime() >= date.getTime() &&       // If the task is later than the closest date
+      taskDeadline.getDay() === date.getDay() &&        // If the task is in the same day
+      taskDeadline.getMonth() === date.getMonth() &&    // If the task is in the same month
+      taskDeadline.getFullYear() === date.getFullYear() // If the task is in the same year
+    ); 
+  });
+}
+
+// Get the recommended task among an array of tasks based on weight
+function getRecommendedTask(taskArray){
+  let recommendedTask = null;
+  let recommendedIndex = 0; // Index of the candidate with the highest weight
+  let mostWeight = 0; // The highest weight value
+
+  for (let i in taskArray) {
+    let weight = 0;
+
+    // For adding weight when the deadline time is sooner 
+    let deadlineHour = new Date(taskArray[i]?.deadline).getHours();
+
+    // For adding weight when the average grade for the class is lower
+    let currentAverage =
+      getTotalGrade(taskArray, "actualGrade") /
+      getTotalGrade(taskArray, "taskGrade");
+
+    // For adding weight when the class is a major course
+    let classPriority = classList.value.find((folder) => {
+      return folder?._id === taskArray[i].folderID;
+    }).priority;
+
+    weight += taskArray[i].taskGrade / 100; // Add weight based on final grade worth
+    weight += 1 - currentAverage; // Add weight based on current grade average
+    weight += classPriority ? 0.5 : 0; // Add weight based on whether the class is a major or elective
+    weight += (24 - deadlineHour) / 100; // Add weight based on how soon in the day it's due
+
+    if (weight > mostWeight) {
+      // Update the "recommended" candidate based on weight
+      mostWeight = weight;
+      recommendedIndex = i;
+    }
+  }
+
+  if (taskArray.length > recommendedIndex && taskArray[recommendedIndex]) {
+    recommendedTask = taskArray[recommendedIndex];
+  }
+
+  return recommendedTask;
 }
 
 function getTaskStatus(isFinished) {
