@@ -5,9 +5,9 @@
   "scripts": {
     "serve": "npm run lint -- --fix && vue-cli-service serve",
     "build": "npm run lint -- --fix && vue-cli-service build",
-    "test:unit": "vue-cli-service test:unit --coverage",
+    "test:unit": "vue-cli-service test:unit --coverage --watchAll",
     "test:integration": "vue-cli-service test:integration",
-    "test": "vue-cli-service test:unit --coverage",
+    "test": "vue-cli-service test:unit --coverage --watchAll",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src",
     "format": "prettier .  --write",
     "start": "npm run lint -- --fix && vue-cli-service serve",
