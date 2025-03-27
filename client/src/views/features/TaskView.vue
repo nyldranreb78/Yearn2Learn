@@ -672,11 +672,11 @@ const recommendedTask = computed(() => {
       // Only compare tasks from today onwards
       // This line ets the local 12AM time for the day
       let currentDate = new Date();
-      currentDate.setHours(0, 0, 0, 0); // Set the time to midnight
+      currentDate?.setHours(0, 0, 0, 0); // Set the time to midnight
 
       // Find the Date of the closest, upcoming graded task
       let closestTaskDate = getClosestTaskDate(currentDate);
-      closestTaskDate.setHours(0, 0, 0, 0); // Set the time to midnight
+      closestTaskDate?.setHours(0, 0, 0, 0); // Set the time to midnight
 
       // Find all graded tasks that are due on the same day as the closest one discovered
       let candidateTasks = getRecommendableTasksForDate(closestTaskDate);
@@ -854,7 +854,7 @@ async function editTask() {
     isFinished: taskData?.actualGrade ? true : currentTask.value.isFinished,
   };
 
-  await coreStore.editTask(currentTask.value?._id, updatedTask);
+  await coreStore.editTask(currentTask?.value._id, updatedTask);
 
   resetTaskData();
   priorityTask.value = recommendedTask.value;
@@ -874,7 +874,16 @@ async function deleteTask() {
 async function changeStatus(newStatus) {
   currentTask.value.isFinished = newStatus;
 
-  await coreStore.editTask(currentTask.value?._id, currentTask.value);
+  const updatedTask = {
+    name: currentTask.value?.name,
+    deadline: currentTask.value?.deadline,
+    folderID: currentTask.value?.folderID,
+    taskGrade: currentTask.value?.taskGrade,
+    actualGrade: newStatus? currentTask.value?.actualGrade : null,
+    isFinished: newStatus,
+  };
+
+  await coreStore.editTask(currentTask.value?._id, updatedTask);
 
   if (allTasksFinished.value) {
     priorityTask.value = "";

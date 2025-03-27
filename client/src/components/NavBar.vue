@@ -69,9 +69,9 @@
 
         <li class="nav-item dropdown">
           <button
+            id="timerFeature"
             type="button"
             role="button"
-            id="timerFeature"
             class="nav-link dropdown-toggle active"
             href="#"
             data-bs-toggle="dropdown"
