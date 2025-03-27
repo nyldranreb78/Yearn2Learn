@@ -50,6 +50,7 @@
     "eslint": "^8.57.1",
     "eslint-plugin-jest": "^28.11.0",
     "jest": "^27.0.5",
+    "jest-sonar-reporter": "^2.0.0",
     "sass": "^1.32.7",
     "sass-loader": "^12.0.0"
   },
@@ -95,5 +96,11 @@
     "coverageReporters": [
       "lcov"
     ]
+  },
+  "jestSonar": {
+    "sonar56x": true,
+    "reportPath": "coverage",
+    "reportFile": "test-report.xml",
+    "indent": 4
   }
 }
