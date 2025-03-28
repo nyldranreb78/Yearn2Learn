@@ -56,14 +56,11 @@ describe("Integration Tests - Frontend + Backend", () => {
 
   it("should create a single flash card", () => {
     cy.visit("/#/flashcards");
-
-    //<button type="button" class="btn btn-sm btn-primary w-100"><i class="bi bi-plus-lg me-1"></i> Create Flashcard </button>
     cy.get("#createFlashcard").click();
     cy.get("#questionInput").type("unique question 1");
     cy.get("#answerInput").type("unique answer 1");
     cy.get("#newFlashcardSet").type("Group1");
     cy.get("#createOrSaveChanges").click();
-    //cy.get('[class="col-3 border-end"]').should('have.text','Some witty unique question #1')
     cy.get("#cardList").contains("unique question 1");
   });
 
@@ -115,4 +112,28 @@ describe("Integration Tests - Frontend + Backend", () => {
     cy.get("button").contains("Hide List").click();
     cy.get("#cardList").should("not.be.visible");
   });
+
+  it("should delete the most recent flashcard", () => {
+    cy.visit("/#/flashcards");
+    cy.get('.btn.btn-sm.shadow-none.border-0.note-menu').first().click();
+    cy.get('.dropdown-item.px-2.text-danger').contains("Delete").click()
+    cy.get('.btn.btn-sm.btn-danger').contains("Confirm Deletion").click()
+    cy.get("#cardList").contains("unique question 2").should('not.exist');
+  });
+  it("should delete last flashcard", () => {
+    cy.visit("/#/flashcards");
+    cy.get('.btn.btn-sm.shadow-none.border-0.note-menu').first().click();
+    cy.get('.dropdown-item.px-2.text-danger').contains("Delete").click()
+    cy.get('.btn.btn-sm.btn-danger').contains("Confirm Deletion").click()
+    cy.get("#cardList").contains("unique question 1").should('not.exist');
+  });
+  it("shouldn't see any flashcards at this point", () => {
+    cy.visit("/#/flashcards");
+
+    cy.get('[class="col text-center m-4"]').should(
+      "have.text",
+      'There are no questions to show. Click on the "Create Flashcard" button to add one.',
+    );
+  });
+
 });
