@@ -46,7 +46,7 @@ const config = {
     ["jest-sonar", {
       "outputDirectory": "coverage",
       "outputName": "server-coverage-report.xml",
-      "reportedFilePath": "absolute"
+      "reportedFilePath": "relative"
     }]
   ],
 

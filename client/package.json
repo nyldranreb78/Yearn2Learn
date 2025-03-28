@@ -98,7 +98,7 @@
       ["jest-sonar", {
         "outputDirectory": "coverage",
         "outputName": "client-coverage-report.xml",
-        "reportedFilePath": "absolute"
+        "reportedFilePath": "relative"
       }]
     ],
     "coverageDirectory": "../client/coverage"
