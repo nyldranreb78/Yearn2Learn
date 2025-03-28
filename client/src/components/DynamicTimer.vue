@@ -2,12 +2,15 @@
   <div class="container-fluid">
     <div class="row m-0">
       <div class="col-12 px-1 text-start">
-        <label for="mode_select"><small>Mode</small></label>
+        <label
+          class="mode"
+          for="mode_select"
+        ><small>Mode</small></label>
 
         <select
           id="mode_select"
           v-model="isPomodoroMode"
-          class="form-select form-select-sm mb-2"
+          class="form-select form-select-sm mb-2 timer-header"
         >
           <option
             :value="false"
@@ -268,9 +271,25 @@ async function emitTimer() {
 </script>
 
 <style scoped>
+@import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap");
+
 .time-display[disabled] {
   color: black;
   background-color: white;
   border-color: black;
+}
+
+.mode {
+  font-family: "Libre Baskerville", sans-serif;
+  color: white;
+}
+
+.timer-header {
+  font-family: "Libre Baskerville", sans-serif;
+}
+
+.btn-group-vertical button{
+  background-color: white !important;
+  color: black !important;
 }
 </style>

@@ -6,7 +6,9 @@
       <div class="col-6">
         <div class="row">
           <div class="col p-0">
-            <h4>Flashcards</h4>
+            <h4 class="section-header">
+              Flashcards
+            </h4>
           </div>
         </div>
 
@@ -249,7 +251,9 @@
           class="row mt-3"
         >
           <div class="col p-0">
-            <h4>Question List</h4>
+            <h4 class="section-header">
+              Question List
+            </h4>
           </div>
         </div>
 
@@ -514,6 +518,12 @@ onBeforeMount(() => {
 </script>
 
 <style>
+@import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap");
+
+.section-header {
+  font-family: "Libre Baskerville", sans-serif;
+}
+
 .flash-card-ui {
   height: 400px;
 }
