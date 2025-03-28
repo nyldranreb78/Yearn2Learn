@@ -84,7 +84,11 @@
             v-if="!recentNotes.length"
             class="text-muted text-center"
           >
-            <i>No recent notes available. Start writing one!</i>
+            <i>
+              No recent notes available. Start writing one by clicking the 
+              <i class="bi bi-list bg-secondary rounded-circle text-white p-2" /> 
+              button on the left!
+            </i>
           </div>
 
           <ul class="list-group">
@@ -126,14 +130,16 @@
           <div class="row justify-content-center p-0 m-0 vh-100">
             <div class="p-0">
               <QuillEditor
-                id="textEditor"
-                ref="textEditor"
+                id="text_editor"
+                ref="text_editor"
                 v-model:content="textEditorData.content"
                 class="bg-white border-top-0"
                 theme="snow"
                 toolbar="#fixed_toolbar"
                 content-type="html"
-                @text-change="autoSaveNoteChanges()"
+                @focus="autoSaveOn = true"
+                @blur="autoSaveOn = false"
+                @text-change="autoSaveOn? autoSaveNoteChanges() : null"
               />
             </div>
           </div>
@@ -156,6 +162,7 @@
         </div>
 
         <div
+          v-if="currentNote"
           id="fixed_toolbar"
           class="col-6 border-0 mx-auto"
         >
@@ -212,13 +219,13 @@
   <!--SIDEBAR-->
   <div
     id="side_bar_left"
-    class="offcanvas offcanvas-start navbar-offset"
-    data-bs-scroll="true"
-    data-bs-backdrop="false"
+    class="offcanvas offcanvas-start border-top navbar-offset"
+    data-bs-scroll="false"
+    data-bs-backdrop="true"
     tabindex="-1"
   >
     <!--SIDEBAR HEADER-->
-    <div class="offcanvas-header d-inline-block pb-0">
+    <div class="offcanvas-header d-inline-block pb-0 mb-3">
       <h5 class="offcanvas-title">
         <div class="row">
           <div class="col-2 text-start align-middle">
@@ -240,7 +247,7 @@
           <div class="col text-end align-middle pt-1">
             <button
               v-show="folderList.length"
-              id="editFolderButton"
+              id="edit_folder_button"
               type="button"
               class="btn btn-edit-form py-0 px-1 ms-2"
               @click="toggleEditMode()"
@@ -289,7 +296,7 @@
                 <div class="col">
                   <small>Folder Name</small>
                   <input
-                    id="folderName"
+                    id="folder_name"
                     v-model="folderData.name"
                     type="text"
                     class="form-control"
@@ -303,7 +310,7 @@
                 <div class="col">
                   <div class="form-check form-switch">
                     <input
-                      id="classToggle"
+                      id="class_toggle"
                       v-model="isAClass"
                       type="checkbox"
                       role="switch"
@@ -312,7 +319,7 @@
                     >
                     <label
                       class="form-check-label"
-                      for="classToggle"
+                      for="class_toggle"
                     >Does this folder represent a class?</label>
                   </div>
                 </div>
@@ -325,7 +332,7 @@
                 <small>Priority</small>
                 <div class="col">
                   <select
-                    id="folderPriority"
+                    id="folder_priority"
                     v-model="folderData.priority"
                     class="form-select"
                     required
@@ -349,7 +356,7 @@
               <div class="row">
                 <div class="col">
                   <button
-                    id="addFolderButton"
+                    id="add_folder_button"
                     type="submit"
                     class="btn btn-primary w-100"
                   >
@@ -386,7 +393,7 @@
               type="button"
               class="accordion-button collapsed"
               data-bs-toggle="collapse"
-              :data-bs-target="'#folderID' + folder._id"
+              :data-bs-target="'#folder_id_' + folder._id"
             >
               <strong class="text-truncate">{{ folder.name }}</strong>
             </button>
@@ -394,7 +401,7 @@
 
           <!--NOTES LIST FOR EACH FOLDER-->
           <div
-            :id="'folderID' + folder._id"
+            :id="'folder_id_' + folder._id"
             class="accordion-collapse collapse"
           >
             <div class="accordion-body pt-0 pb-0 ps-3 pe-0 fs-6 mb-2">
@@ -504,7 +511,7 @@
                       type="button"
                       class="btn btn-close"
                       data-bs-toggle="collapse"
-                      :data-bs-target="'#folderID' + folder._id + 'edit'"
+                      :data-bs-target="'#folder_id_' + folder._id + '_edit'"
                       @click="closeEditFolderForm()"
                     />
                   </div>
@@ -514,7 +521,7 @@
                       type="button"
                       class="btn btn-edit-form py-0 px-1 me-2"
                       data-bs-toggle="collapse"
-                      :data-bs-target="'#folderID' + folder._id + 'edit'"
+                      :data-bs-target="'#folder_id_' + folder._id + '_edit'"
                       @click="openEditFolderForm(folder)"
                     >
                       <i class="bi bi-pencil-square" />
@@ -537,7 +544,7 @@
 
           <div
             v-if="currentEditingFolderId === folder._id"
-            :id="'folderID' + folder._id + 'edit'"
+            :id="'folder_id_' + folder._id + '_edit'"
             class="accordion-collapse collapse"
             :class="{ show: currentEditingFolderId === folder._id }"
             data-bs-parent="#folder_edit_form"
@@ -579,7 +586,7 @@
                       type="submit"
                       class="btn btn-success w-100"
                       data-bs-toggle="collapse"
-                      :data-bs-target="'#folderID' + folder._id + 'edit'"
+                      :data-bs-target="'#folder_id_' + folder._id + '_edit'"
                     >
                       <i class="bi bi-floppy-fill" />
                     </button>
@@ -625,7 +632,7 @@
             <div class="row">
               <div class="input-group mb-2">
                 <input
-                  id="noteTitle"
+                  id="note_title"
                   v-model="noteData.title"
                   type="text"
                   class="form-control"
@@ -634,7 +641,7 @@
                 >
 
                 <button
-                  id="submitNoteButton"
+                  id="submit_note_button"
                   type="submit"
                   class="btn"
                   :class="currentNote ? 'btn-success' : 'btn-secondary'"
@@ -706,6 +713,7 @@
 
             <div class="col text-end">
               <button
+                id="delete_form_button"
                 class="btn btn-sm btn-danger ms-3"
                 data-bs-dismiss="modal"
                 @click="folderEditMode ? deleteFolder() : deleteNote()"
@@ -724,6 +732,7 @@
 // @ is an alias to /src
 import bootstrap from "bootstrap/dist/js/bootstrap.bundle.js";
 import { ref, reactive, computed, onBeforeMount, onBeforeUnmount } from "vue";
+import { onBeforeRouteLeave } from "vue-router";
 import { useCoreStore } from "@/store/core";
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
@@ -744,10 +753,11 @@ const mouseOnMenu = ref(false);
 const isAClass = ref(false);
 
 // Text editor variables
-const textEditor = ref(); // Required by Vue Quill for data binding
+const text_editor = ref(); // Required by Vue Quill for data binding
 const saveStatus = ref("");
 const saveStatusTimeoutID = ref("");
 const autoSaveTimeoutID = ref("");
+const autoSaveOn = ref(false);
 
 const folderData = reactive({
   name: "",
@@ -956,6 +966,8 @@ async function resetNoteData() {
 async function openNotes(folder, note) {
   // Do nothing if the mouse was inside the vertical menu button
   if (!mouseOnMenu.value) {
+    currentNote.value = "";
+
     // If moving to a new note, save the changes
     if (currentNote.value) {
       if (currentNote.value.content !== textEditorData.content) {
@@ -1015,6 +1027,11 @@ async function closeModal() {
   }
 }
 
+async function closeSideBar() {
+  const sideBar = document.querySelector("#side_bar_left");
+  bootstrap.Offcanvas.getOrCreateInstance(sideBar).hide();
+}
+
 onBeforeMount(() => {
   useCoreStore().fetchData();
 
@@ -1038,10 +1055,18 @@ onBeforeUnmount(async () => {
     await saveNoteChanges(currentNote.value);
   }
 });
+
+onBeforeRouteLeave(() => {
+  closeSideBar();
+})
 </script>
 
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap");
+
+.offcanvas-backdrop {
+  margin-top: 70px;
+}
 
 .section-header {
   font-family: "Libre Baskerville", sans-serif;
@@ -1060,5 +1085,10 @@ onBeforeUnmount(async () => {
 .note-item:hover {
   background-color: #e6e6e6 !important;
   cursor: pointer;
+}
+
+.ql-snow .ql-picker.ql-expanded .ql-picker-options {
+    bottom: 100%;
+    top: auto;
 }
 </style>

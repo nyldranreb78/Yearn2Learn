@@ -12,33 +12,37 @@
           </div>
         </div>
 
-        <div class="row align-items-start">
+        <div class="row align-items-start mb-5">
           <button
-            id="turnLeft"
+            id="turn_left"
             type="button"
             class="col-auto btn btn-light flash-card-ui fs-4 text-muted"
             :disabled="!filteredList.length"
-            @click="flashcardIndex--"
+            @click="skipFlashcard(-1)"
           >
             <i class="bi bi-caret-left-fill" />
           </button>
 
           <button
-            id="currFlashcard"
-            class="col btn btn-light flash-card flash-card-ui border text-center text-truncate"
+            id="current_flashcard"
+            class="col btn flash-card-ui text-center text-truncate"
+            :class="showAnswer? 'btn-secondary' : 'btn-light flash-card'"
             :disabled="!filteredList.length"
             @click="showAnswer = !showAnswer"
+            @mouseenter="showAltText = true"
+            @mouseleave="showAltText = false"
           >
             <div
               v-if="filteredList.length"
-              class="my-auto"
+              class="my-auto fs-4"
             >
-              <h4 v-if="showAnswer">
-                {{ filteredList[flashcardIndex].answer }}
-              </h4>
-              <h4 v-else>
-                {{ filteredList[flashcardIndex].question }}
-              </h4>
+              <span v-if="showAnswer">
+                {{ showAltText? "Return to the question" : filteredList[flashcardIndex].answer }}
+              </span>
+
+              <span v-else>
+                {{ showAltText? "Click to reveal the answer" : filteredList[flashcardIndex].question }}
+              </span>
             </div>
 
             <div v-else>
@@ -48,11 +52,11 @@
           </button>
 
           <button
-            id="turnRight"
+            id="turn_right"
             type="button"
             class="col-auto btn btn-light flash-card-ui fs-4 text-muted"
             :disabled="!filteredList.length"
-            @click="flashcardIndex++"
+            @click="skipFlashcard(1)"
           >
             <i class="bi bi-caret-right-fill" />
           </button>
@@ -79,7 +83,7 @@
                 <div class="col-12 mt-2">
                   <label><small>Question</small></label>
                   <textarea
-                    id="questionInput"
+                    id="question_input"
                     v-model="flashcardData.question"
                     rows="2"
                     type="text"
@@ -91,7 +95,7 @@
                 <div class="col-12 mt-2">
                   <label><small>Answer</small></label>
                   <textarea
-                    id="answerInput"
+                    id="answer_input"
                     v-model="flashcardData.answer"
                     rows="3"
                     type="text"
@@ -132,7 +136,7 @@
                   class="col-12 mt-2"
                 >
                   <input
-                    id="newFlashcardSet"
+                    id="new_flashcard_set"
                     v-model="setInput"
                     type="text"
                     class="form-control form-control-sm"
@@ -184,7 +188,7 @@
                     class="bi me-1"
                     :class="showQuestionList ? 'bi-eye-slash' : 'bi-eye'"
                   />
-                  {{ showQuestionList ? "Hide List" : "Show Full List" }}
+                  {{ showQuestionList ? "Hide Question List" : "Show Question List" }}
                 </button>
               </div>
 
@@ -203,7 +207,7 @@
 
               <div class="col-12 mt-2">
                 <button
-                  id="createFlashcard"
+                  id="create_flashcard"
                   type="button"
                   class="btn btn-sm btn-primary w-100"
                   @click="showForm = true"
@@ -229,7 +233,7 @@
 
               <div class="col ps-0">
                 <button
-                  id="createOrSaveChanges"
+                  id="create_or_save_changes"
                   type="submit"
                   form="flashcard_form"
                   class="btn btn-sm w-100"
@@ -246,10 +250,7 @@
           </div>
         </div>
 
-        <div
-          v-show="showQuestionList"
-          class="row mt-3"
-        >
+        <div class="row mt-3">
           <div class="col p-0">
             <h4 class="section-header">
               Question List
@@ -258,33 +259,24 @@
         </div>
 
         <div
-          v-show="!filteredList.length"
-          class="row"
-        >
-          <div class="col text-center m-4">
-            <i class="text-muted">There are no questions to show. Click on the "Create Flashcard"
-              button to add one.</i>
-          </div>
-        </div>
-
-        <div
-          v-show="showQuestionList && filteredList.length"
-          id="cardList"
+          v-if="filteredList.length"
+          v-show="showQuestionList"
+          id="card_list"
           class="row card"
         >
           <div
-            id="cardList"
+            id="card_list"
             class="col"
           >
             <div
               v-for="flashcard in filteredList"
-              id="cardList"
+              id="card_list"
               :key="flashcard._id"
               class="row border-bottom p-2"
             >
               <div
                 v-if="!isDeleteMode || flashcard !== currentFlashcard"
-                id="cardList"
+                id="card_list"
                 class="col-3 border-end"
               >
                 {{ flashcard.question }}
@@ -353,6 +345,25 @@
             </div>
           </div>
         </div>
+
+        <div
+          v-else
+          class="row"
+        >
+          <div class="col text-center m-4">
+            <i class="text-muted">There are no questions to show. Click on the "Create Flashcard" button to add one.</i>
+          </div>
+        </div>
+
+        <div
+          v-if="filteredList.length"
+          v-show="!showQuestionList"
+          class="row"
+        >
+          <div class="col text-center m-4">
+            <i class="text-muted">The question list is hidden to avoid spoiling the answers. Click on the "Show Question List" button to view or edit them.</i>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -365,7 +376,8 @@ import { useCoreStore } from "@/store/core";
 const coreStore = useCoreStore();
 
 const showAnswer = ref(false);
-const showQuestionList = ref(true);
+const showAltText = ref(false);
+const showQuestionList = ref(false);
 const showForm = ref(false);
 
 const isEditMode = ref(false);
@@ -445,6 +457,7 @@ async function addFlashcard() {
 
   resetFlashcardData();
   currentFlashcard.value = newFlashcard;
+  showQuestionList.value = true;
 }
 
 async function editFlashcard() {
@@ -498,6 +511,11 @@ async function resetFlashcardData() {
   showForm.value = false;
   isEditMode.value = false;
   isDeleteMode.value = false;
+}
+
+async function skipFlashcard(numSkipped) {
+  flashcardIndex.value += numSkipped;
+  showAnswer.value = false;
 }
 
 // Trigger the shuffle logic in the filteredList (computed) logic

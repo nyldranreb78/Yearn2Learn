@@ -76,7 +76,6 @@
 
 <script setup lang="js">
 import { useAuthStore } from "../../store/auth";
-import { useCoreStore } from "@/store/core";
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 
@@ -107,10 +106,6 @@ async function submit() {
       console.error("Login failed:", err);
       errorMessage.value = "Invalid email or password. Please try again.";
     });
-
-  await useCoreStore().fetchData();
-  await useCoreStore().fetchTasks();
-  await useCoreStore().fetchFlashcards();
 }
 </script>
 

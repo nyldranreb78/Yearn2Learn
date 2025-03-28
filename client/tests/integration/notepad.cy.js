@@ -27,8 +27,8 @@ describe("Integration Tests - Frontend + Backend", () => {
     cy.get(".btn-circle").first().click();
     cy.contains("Add New Folder").click();
 
-    cy.get("#folderName").type("Test Folder");
-    cy.get("#addFolderButton").click();
+    cy.get("#folder_name").type("Test Folder");
+    cy.get("#add_folder_button").click();
     cy.contains("Test Folder").should("be.visible");
   });
 
@@ -39,10 +39,10 @@ describe("Integration Tests - Frontend + Backend", () => {
     cy.get(".btn-circle").first().click();
     cy.contains("Add New Folder").click();
 
-    cy.get("#folderName").type("Test Class Folder with Priority");
-    cy.get("#classToggle").click();
+    cy.get("#folder_name").type("Test Class Folder with Priority");
+    cy.get("#class_toggle").click();
     cy.get(".form-select").should("be.visible").last().select("true");
-    cy.get("#addFolderButton").click();
+    cy.get("#add_folder_button").click();
     cy.contains("Test Class Folder with Priority").should("be.visible");
   });
 
@@ -53,9 +53,10 @@ describe("Integration Tests - Frontend + Backend", () => {
     cy.get(".btn-circle").first().click();
     cy.get(".accordion-item").first().click();
     cy.contains("Create new note").click();
-    cy.get("#noteTitle").type("Test Note Title");
-
-    cy.get("#submitNoteButton").click();
+    //cy.get("#note_title").type("Test Note Title");
+    
+    cy.get("#submit_note_button").type("Test Note Title", {force: true})
+    cy.get("#submit_note_button").click();
 
     cy.contains("Test Note Title").should("exist");
     cy.get(".bi-arrow-left").first().click();
@@ -77,9 +78,9 @@ describe("Integration Tests - Frontend + Backend", () => {
     cy.visit("/#/notes");
 
     cy.get(".btn-circle").first().click();
-    cy.get("#editFolderButton").click();
+    cy.get("#edit_folder_button").click();
     cy.contains("Test Folder").get(".bi-trash3-fill").first().click();
-    cy.get("#delete_form button").contains("Delete").click();
+    cy.get("#delete_form_button").contains("Delete").click();
   });
 });
 

@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import { useAuthStore } from "@/store/auth";
+import { useCoreStore } from "@/store/core";
 
 const routes = [
   {
@@ -51,12 +52,17 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore();
+  const coreStore = useCoreStore();
   const isAuthenticated = authStore.isAuthenticated;
 
   // If the route requires authentication and the user is NOT logged in
   if (to.meta.requiresAuth && !isAuthenticated) {
     next({ name: "login" }); // Redirect to login page
   } else {
+    await coreStore.fetchData();
+    await coreStore.fetchTasks();
+    await coreStore.fetchFlashcards();
+
     next(); // Proceed to route
   }
 });
