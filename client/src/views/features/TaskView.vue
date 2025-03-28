@@ -3,16 +3,14 @@
     class="container-fluid text-start d-flex flex-column navbar-offset vh-navbar-offset"
   >
     <div class="row justify-content-md-center mt-4">
-      <div class="col-8">
+      <div class="col-10">
         <div class="row">
           <!--Task List-->
           <div class="col-9 pe-3">
             <div class="row mb-3">
-              <div class="col text-start">
-                <h4 class="section-header">
-                  Task List
-                </h4>
-              </div>
+              <h4 class="section-header">
+                Task List
+              </h4>
 
               <div class="col text-end pe-0">
                 <div
@@ -972,5 +970,6 @@ onBeforeMount(() => {
 
 .section-header {
   font-family: "Libre Baskerville", sans-serif;
+  margin-left: -20px;
 }
 </style>

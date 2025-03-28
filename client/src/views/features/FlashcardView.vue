@@ -3,10 +3,10 @@
     class="container-fluid text-start d-flex flex-column navbar-offset vh-navbar-offset"
   >
     <div class="row justify-content-md-center mt-4">
-      <div class="col-6">
+      <div class="col-10">
         <div class="row">
           <div class="col p-0">
-            <h4 class="section-header">
+            <h4 class="section-header ms-3">
               Flashcards
             </h4>
           </div>
@@ -36,16 +36,25 @@
               v-if="filteredList.length"
               class="my-auto fs-4"
             >
-              <span v-if="showAnswer">
+              <span
+                v-if="showAnswer"
+                class="text-wrap text-break"
+              >
                 {{ showAltText? "Return to the question" : filteredList[flashcardIndex].answer }}
               </span>
 
-              <span v-else>
+              <span
+                v-else
+                class="text-wrap text-break"
+              >
                 {{ showAltText? "Click to reveal the answer" : filteredList[flashcardIndex].question }}
               </span>
             </div>
 
-            <div v-else>
+            <div
+              v-else
+              class="text-wrap text-break"
+            >
               <i>Create a flashcard by clicking the "Create Flashcard" button on
                 the right.</i>
             </div>
@@ -252,7 +261,7 @@
 
         <div class="row mt-3">
           <div class="col p-0">
-            <h4 class="section-header">
+            <h4 class="section-header ms-3">
               Question List
             </h4>
           </div>
@@ -262,7 +271,7 @@
           v-if="filteredList.length"
           v-show="showQuestionList"
           id="card_list"
-          class="row card"
+          class="row card mb-3 ms-4"
         >
           <div
             id="card_list"
@@ -540,6 +549,7 @@ onBeforeMount(() => {
 
 .section-header {
   font-family: "Libre Baskerville", sans-serif;
+  margin-bottom: 10px;
 }
 
 .flash-card-ui {
