@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="navbar navbar-expand-lg navbar-fixed-size fixed-top bg-white border-bottom"
+    class="navbar navbar-expand-lg navbar-fixed-size fixed-top bg-white border-bottom shadow-sm"
   >
     <div class="container-fluid">
       <strong>
@@ -84,7 +84,7 @@
             Timer
           </button>
 
-          <ul class="dropdown-menu z-3">
+          <ul class="dropdown-menu y2l-red z-3">
             <li>
               <div>
                 <DynamicTimer @time-up="(n) => timerNotification(n)" />
@@ -112,7 +112,7 @@
               <li>
                 <router-link
                   :to="{ name: 'user' }"
-                  class="dropdown-item"
+                  class="dropdown-item txt-y2l-blue"
                 >
                   Profile
                 </router-link>
@@ -120,7 +120,7 @@
               <li><hr class="dropdown-divider"></li>
               <li>
                 <button
-                  class="dropdown-item text-danger"
+                  class="dropdown-item txt-y2l-red"
                   @click="logout"
                 >
                   Logout
@@ -164,6 +164,7 @@
 
 <script setup lang="js">
 import { useAuthStore } from "../store/auth";
+import { useCoreStore } from "@/store/core";
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import DynamicTimer from "./DynamicTimer.vue";
@@ -175,6 +176,7 @@ const toastMessage = ref("");
 const toastTime = ref("");
 
 const authStore = useAuthStore();
+const coreStore = useCoreStore();
 const router = useRouter();
 
 const user = computed(() => {
@@ -190,6 +192,7 @@ async function logout() {
     .logout()
     .then((res) => {
       console.log("Logout successful:", res);
+      coreStore.$reset();
       router.push({ name: "login" });
     })
     .catch((err) => {
@@ -283,20 +286,7 @@ async function setToast(color, message, time) {
   font-weight: bold !important;
 }
 
-.dropdown-menu {
-  background-color: #2F5597;
-}
-
-.dropdown-item {
-  color: #ffc000 !important;
-}
-
 .dropdown-item:hover {
   text-decoration: underline;
-  background-color: #2F5597
-}
-
-.dropdown-item.text-danger {
-  color: #ea4d21 !important;
 }
 </style>

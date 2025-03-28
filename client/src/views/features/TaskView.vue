@@ -3,16 +3,14 @@
     class="container-fluid text-start d-flex flex-column navbar-offset vh-navbar-offset"
   >
     <div class="row justify-content-md-center mt-4">
-      <div class="col-8">
+      <div class="col-10">
         <div class="row">
           <!--Task List-->
           <div class="col-9 pe-3">
             <div class="row mb-3">
-              <div class="col text-start">
-                <h4 class="section-header">
-                  Task List
-                </h4>
-              </div>
+              <h4 class="section-header">
+                Task List
+              </h4>
 
               <div class="col text-end pe-0">
                 <div
@@ -209,18 +207,17 @@
                     class="mt-4"
                   >
                     <b><small>Our Message:</small></b><br>
-                    We recommend prioritizing this task!
+                    Consider prioritizing this task!
                     <span v-if="gradedTaskList.length">
-                      <br>This task is worth
-                      <b>{{ currentTask.taskGrade }}%</b> of your final grade in
-                      a
-                      <b>{{
-                        currentClass?.priority ? " Major" : "n Elective"
-                      }}
-                        course</b>
-                      that you're averaging
-                      <b>{{ (averageGrade * 100).toFixed(1) + "%" }}</b> on.
-                      <br><br>See full class progress breakdown below.
+                      <br>This task is
+                      <span v-if="currentTask.taskGrade">worth <b>{{ currentTask.taskGrade }}%</b> of your final grade </span>
+                      for a <b>{{ currentClass?.priority ? " Major" : "n Elective" }} course</b>
+                      <span v-if="averageGrade">
+                        that you're averaging
+                        <b>{{ (averageGrade * 100).toFixed(1) + "%" }}</b> on.
+                        <br><br>See full class progress breakdown below.
+                      </span>
+                      <span v-else>.</span>
                     </span>
                   </div>
                 </div>
@@ -253,7 +250,7 @@
                       class="form-select"
                     >
                       <option
-                        value
+                        :value="''"
                         disabled
                       >
                         Select
@@ -393,7 +390,7 @@
             <div class="col-12">
               <label class="form-label">Task Name</label>
               <input
-                id="taskName"
+                id="task_name"
                 v-model="taskData.name"
                 type="text"
                 class="form-control"
@@ -403,7 +400,7 @@
             <div class="col-12">
               <label class="form-label">Deadline</label>
               <input
-                id="taskDeadline"
+                id="task_deadline"
                 v-model="taskData.deadline"
                 class="form-control"
                 type="datetime-local"
@@ -413,7 +410,7 @@
             <div class="col-12">
               <div class="form-check form-switch">
                 <input
-                  id="isForClass"
+                  id="is_for_class"
                   v-model="isForClass"
                   class="form-check-input"
                   type="checkbox"
@@ -432,7 +429,7 @@
                   <div class="col">
                     <label class="form-label">Class</label>
                     <select
-                      id="taskClass"
+                      id="task_class"
                       v-model="taskData.folderID"
                       class="form-select"
                       @change="resetWeight"
@@ -457,12 +454,12 @@
                 >
                   <div class="col-6">
                     <label
-                      for="taskGrade"
+                      for="task_grade"
                       class="form-label"
                     >Grade weight in %
                       <small class="text-muted">(optional)</small></label>
                     <input
-                      id="taskGrade"
+                      id="task_grade"
                       v-model="taskData.taskGrade"
                       type="number"
                       class="form-control"
@@ -473,14 +470,14 @@
 
                   <div class="col-6">
                     <label
-                      for="actualGrade"
+                      for="actual_grade"
                       class="form-label"
                     >Grade received
                       <small class="text-muted">(if applicable)</small></label>
                     <div class="row">
                       <div class="col">
                         <input
-                          id="actualGrade"
+                          id="actual_grade"
                           v-model="taskData.actualGrade"
                           type="number"
                           class="form-control"
@@ -973,5 +970,6 @@ onBeforeMount(() => {
 
 .section-header {
   font-family: "Libre Baskerville", sans-serif;
+  margin-left: -20px;
 }
 </style>
