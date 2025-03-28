@@ -447,6 +447,8 @@ describe("show", () => {
 });
 
 describe("update", () => {
+  let req, res;
+
   beforeEach(() => {
     req = {
       params: {

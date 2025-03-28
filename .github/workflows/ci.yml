@@ -37,10 +37,6 @@ jobs:
     - working-directory: ./server
       run: npm run build --if-present
     #- run: npm run build --if-present
-    - name: SonarQube Scan
-      uses: SonarSource/sonarqube-scan-action@v4
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
     
   deploy:
@@ -61,6 +57,8 @@ jobs:
           issue-body: "Please look over code to see if it meets coding standards"
           exclude-workflow-initiator-as-approver: false
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
@@ -98,6 +96,10 @@ jobs:
       - working-directory: ./server
         run: npm test
         #should trigger the cd pipeline
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v4
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Trigger another workflow
         uses: benc-uk/workflow-dispatch@v1
         with:

@@ -99,9 +99,7 @@ async function update(req, res) {
       ? req.body.actualGrade
       : task.actualGrade;
     task.deadline = req.body.deadline ? req.body.deadline : task.deadline;
-    task.isFinished = req.body.isFinished
-      ? req.body.isFinished
-      : task.isFinished;
+    task.isFinished = req.body.isFinished;
 
     await task.save();
     return res.status(200).json({ task: task });

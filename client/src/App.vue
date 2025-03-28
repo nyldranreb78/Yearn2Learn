@@ -14,7 +14,9 @@ const isInUserManagement = computed(() => {
 
 <template>
   <div id="app">
-    <div v-show="!isInUserManagement"><NavBar /></div>
+    <div v-show="!isInUserManagement">
+      <NavBar />
+    </div>
 
     <RouterView />
   </div>
