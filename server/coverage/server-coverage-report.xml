@@ -1,0 +1,117 @@
+<testExecutions version="1">
+<file path="C:\COMP4350\Yearn2Learn\server\__tests__\controller\auth.test.js">
+<testCase name="User Registration should register a user successfully and return 201" duration="8" />
+<testCase name="User Registration should return 422 if passwords do not match" duration="0" />
+<testCase name="User Registration should return 409 if user already exists" duration="1" />
+<testCase name="User Registration should return 400 if an error occurs during registration" duration="0" />
+<testCase name="User Login should login a user successfully and return 200 with a token" duration="2" />
+<testCase name="User Login should return 401 if credentials are incorrect" duration="1" />
+<testCase name="User Login should return 422 if required fields are missing" duration="1" />
+<testCase name="User Logout should logout a user successfully and return 204" duration="2" />
+<testCase name="User Logout should return 204 if no refresh token is found" duration="0" />
+<testCase name="Refresh Token should return a new access token if refresh token is valid" duration="18" />
+<testCase name="Refresh Token should return 401 if refresh token is missing" duration="0" />
+<testCase name="Refresh Token should return 403 if refresh token is invalid" duration="3" />
+<testCase name="Refresh Token should return 403 if token verification fails" duration="1" />
+<testCase name="Refresh Token should return 403 if decoded ID does not match user ID" duration="1" />
+</file>
+<file path="C:\COMP4350\Yearn2Learn\server\__tests__\controller\flashcards.test.js">
+<testCase name="Flashcard Controller should return 401 if user ID is invalid in index" duration="9" />
+<testCase name="Flashcard Controller should return flashcards for valid user in index" duration="1" />
+<testCase name="Flashcard Controller should return 500 when index encounters an error" duration="4" />
+<testCase name="Flashcard Controller should return flashcards for logged-in user" duration="1" />
+<testCase name="Flashcard Controller should return 500 if fetching flashcards fails" duration="0" />
+<testCase name="Flashcard Controller should create a flashcard successfully" duration="1" />
+<testCase name="Flashcard Controller should return 500 if flashcard creation fails" duration="0" />
+<testCase name="Flashcard Controller should update flashcard details if user is authorized" duration="0" />
+<testCase name="Flashcard Controller should return 403 if user is not the owner of the flashcard" duration="0" />
+<testCase name="Flashcard Controller should delete a flashcard if user is authorized" duration="1" />
+<testCase name="Flashcard Controller should return 404 if flashcard is not found" duration="0" />
+<testCase name="Flashcard Controller should return 400 if setName is missing" duration="0" />
+<testCase name="Flashcard Controller should return 200 with flashcards if found" duration="0" />
+<testCase name="Flashcard Controller should return 404 if no flashcards are found" duration="0" />
+</file>
+<file path="C:\COMP4350\Yearn2Learn\server\__tests__\controller\folder.test.js">
+<testCase name="index should return 401 if ID is not valid" duration="7" />
+<testCase name="index should return 200 and all folders of that user" duration="1" />
+<testCase name="index should return 500 if error occurs" duration="0" />
+<testCase name="create should return 401 if ID is not valid" duration="1" />
+<testCase name="create should return 500 if user is not found" duration="0" />
+<testCase name="create should return 201 and the created folder" duration="1" />
+<testCase name="create should return 500 if error occurs" duration="0" />
+<testCase name="show should return 401 if ID is not valid" duration="0" />
+<testCase name="show should return 404 if folder is not found" duration="0" />
+<testCase name="show should return 403 if user is not the author of the folder" duration="1" />
+<testCase name="show should return 200 and the folder" duration="0" />
+<testCase name="show should handle error" duration="1" />
+<testCase name="update should return 401 if ID is not valid" duration="0" />
+<testCase name="update should return 404 if folder is not found" duration="0" />
+<testCase name="update should return 403 if user is not the author of the folder" duration="0" />
+<testCase name="update should return 200 and the updated folder if all conditions are met" duration="0" />
+<testCase name="update should handle error" duration="1" />
+<testCase name="remove should return 401 if ID is not valid" duration="0" />
+<testCase name="remove should return 404 if folder is not found" duration="1" />
+<testCase name="remove should return 403 if the user is not the author of the folder" duration="0" />
+<testCase name="remove should return 200 and the deleted folder if all conditions are met" duration="0" />
+<testCase name="remove should handle error" duration="0" />
+</file>
+<file path="C:\COMP4350\Yearn2Learn\server\__tests__\controller\task.test.js">
+<testCase name="index should return 401 if no id" duration="6" />
+<testCase name="index should return all tasks if id is valid" duration="0" />
+<testCase name="index should return 500 if error" duration="0" />
+<testCase name="create should return 401 if no id" duration="0" />
+<testCase name="create should return 404 if user not found" duration="1" />
+<testCase name="create should create task if user found" duration="0" />
+<testCase name="create should return 500 if error" duration="1" />
+<testCase name="show should return 401 if no id" duration="0" />
+<testCase name="show should return 404 if task not found" duration="0" />
+<testCase name="show should return 401 if user is not author" duration="1" />
+<testCase name="show should return 200 and task if user is author" duration="0" />
+<testCase name="show should return 500 if error" duration="0" />
+<testCase name="update should return 401 if no id" duration="1" />
+<testCase name="update should return 404 if task not found" duration="0" />
+<testCase name="update should return 401 if user is not author" duration="0" />
+<testCase name="update should return 200 and the updated task if user is author" duration="3" />
+<testCase name="update should return 500 if error" duration="1" />
+<testCase name="remove should return 401 if ID is not valid" duration="0" />
+<testCase name="remove should return 404 if task not found" duration="1" />
+<testCase name="remove should return 401 if user is not author" duration="0" />
+<testCase name="remove should return 200 and delete if user is author" duration="1" />
+<testCase name="remove should return 500 if error" duration="0" />
+</file>
+<file path="C:\COMP4350\Yearn2Learn\server\__tests__\controller\note.test.js">
+<testCase name="index should return unauthorized if ID is not valid" duration="6" />
+<testCase name="index should return notes for valid ID" duration="0" />
+<testCase name="index should handle errors" duration="1" />
+<testCase name="getNotesInFolder should return 404 if folder not found" duration="0" />
+<testCase name="getNotesInFolder should return 403 if user is not the author of the folder" duration="1" />
+<testCase name="getNotesInFolder should return 200 with notes in folder" duration="1" />
+<testCase name="getNotesInFolder should return 404 if notes not found" duration="0" />
+<testCase name="getNotesInFolder should handle errors with Folder.findOne" duration="0" />
+<testCase name="getNotesInFolder should handle errors with Note.find" duration="1" />
+<testCase name="create should return 401 if ID is not valid" duration="0" />
+<testCase name="create should return 500 if id is valid but user is not found" duration="0" />
+<testCase name="create should return 201 with new note" duration="0" />
+<testCase name="create should handle errors" duration="1" />
+<testCase name="createInFolder should return 401 if ID is not valid" duration="0" />
+<testCase name="createInFolder should return 500 if user is not found" duration="1" />
+<testCase name="createInFolder should return 404 if folder is not found" duration="0" />
+<testCase name="createInFolder should return 403 if user is not the author of the folder" duration="1" />
+<testCase name="createInFolder should return 201 if all conditions are met" duration="1" />
+<testCase name="show should return 401 if ID is not valid" duration="1" />
+<testCase name="show should return 404 if note is not found" duration="0" />
+<testCase name="show should return 403 if user is not the author of the note" duration="0" />
+<testCase name="show should return 200 when all condition are met" duration="1" />
+<testCase name="show should handle errors" duration="0" />
+<testCase name="update should return 401 if ID is not valid" duration="0" />
+<testCase name="update should return 404 if note is not found" duration="1" />
+<testCase name="update should return 403 if user is not the author of the note" duration="0" />
+<testCase name="update should return 200 if all conditions are met and update the note" duration="1" />
+<testCase name="update should handle errors" duration="0" />
+<testCase name="remove should return 401 if ID is not valid" duration="0" />
+<testCase name="remove should return 404 if note is not found" duration="1" />
+<testCase name="remove should return 403 if user is not the author of the note" duration="0" />
+<testCase name="remove should return 200 if all conditions are met and remove the note" duration="0" />
+<testCase name="remove should handle errors" duration="1" />
+</file>
+</testExecutions>

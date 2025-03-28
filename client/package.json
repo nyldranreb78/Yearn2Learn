@@ -50,7 +50,7 @@
     "eslint": "^8.57.1",
     "eslint-plugin-jest": "^28.11.0",
     "jest": "^27.0.5",
-    "jest-sonar-reporter": "^2.0.0",
+    "jest-sonar": "^0.2.16",
     "sass": "^1.32.7",
     "sass-loader": "^12.0.0"
   },
@@ -87,18 +87,20 @@
   ],
   "jest": {
     "preset": "@vue/cli-plugin-unit-jest",
-    "testResultsProcessor": "jest-sonar-reporter",
     "collectCoverage": true,
     "coverageProvider": "v8",
     "coverageReporters": [
       "lcov",
       "html"
     ],
-    "coverageDirectory": "../coverage"
-  },
-  "jestSonar": {
-    "reportPath": "coverage",
-    "reportFile": "test-report.xml",
-    "indent": 4
+    "reporters": [
+      "default",
+      ["jest-sonar", {
+        "outputDirectory": "coverage",
+        "outputName": "client-coverage-report.xml",
+        "reportedFilePath": "absolute"
+      }]
+    ],
+    "coverageDirectory": "../client/coverage"
   }
 }

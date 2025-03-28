@@ -17,15 +17,12 @@ const config = {
   // Automatically clear mock calls, instances, contexts and results before every test
   clearMocks: true,
 
-  // Using jest-sonar-reporter for generating results
-  testResultsProcessor: "jest-sonar-reporter",
-
   // Indicates whether the coverage information should be collected while executing the test
   collectCoverage: true,
   coverageProvider: 'v8',
 
   // The directory where Jest should output its coverage files
-  coverageDirectory: "../coverage",
+  coverageDirectory: "../server/coverage",
 
   // An array of regexp pattern strings used to skip coverage collection
   // coveragePathIgnorePatterns: [
@@ -40,8 +37,17 @@ const config = {
     //"json",
     //"text",
     "lcov",
-    "html"
+    "html",
     //"clover"
+  ],
+
+  reporters: [
+    "default",
+    ["jest-sonar", {
+      "outputDirectory": "coverage",
+      "outputName": "server-coverage-report.xml",
+      "reportedFilePath": "absolute"
+    }]
   ],
 
   // An object that configures minimum threshold enforcement for coverage results
