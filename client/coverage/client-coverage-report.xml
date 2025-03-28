@@ -1,0 +1,14 @@
+<testExecutions version="1">
+<file path="tests\unit\DynamicTimer.spec.js">
+<testCase name="DynamicTimer.vue loads default Generic timer UI on mount" duration="37" />
+<testCase name="DynamicTimer.vue loads Pomodoro timer UI upon switching to Pomodoro mode" duration="14" />
+<testCase name="DynamicTimer.vue displays time (in seconds) with the HH:MM:SS format" duration="7" />
+<testCase name="DynamicTimer.vue automatically stops after the timer is depleted" duration="1016" />
+<testCase name="DynamicTimer.vue does not allow time to increase beyond 24 hours (86,400 seconds)" duration="6" />
+<testCase name="DynamicTimer.vue does not allow time to decrease below 0 seconds" duration="6" />
+<testCase name="DynamicTimer.vue will not play when time is set or changed to 0" duration="8" />
+<testCase name="DynamicTimer.vue resets General timer to 0 upon switching to Pomodoro and back" duration="10" />
+<testCase name="DynamicTimer.vue resets Pomodoro timer to 25:00 upon switching to General and back" duration="8" />
+<testCase name="DynamicTimer.vue resets time to default and halts all operations upon clicking the reset button" duration="7" />
+</file>
+</testExecutions>

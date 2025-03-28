@@ -72,16 +72,17 @@
         </li>
 
         <li class="nav-item dropdown">
-          <a
+          <button
             id="timerFeature"
+            type="button"
+            role="button"
             class="nav-link dropdown-toggle active"
             href="#"
-            role="button"
             data-bs-toggle="dropdown"
             data-bs-auto-close="outside"
           >
             Timer
-          </a>
+          </button>
 
           <ul class="dropdown-menu z-3">
             <li>

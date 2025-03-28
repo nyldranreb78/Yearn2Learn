@@ -66,10 +66,10 @@ describe("Integration Tests - Frontend + Backend", () => {
     cy.visit("/#/notes");
     cy.get(".btn-circle").first().click();
     cy.get(".accordion-item").first().click();
-    cy.get(".note-menu").click();
-    cy.contains("Delete").click();
+    cy.get(".note-menu").first().click();
+    cy.contains("Delete").first().click();
 
-    cy.get("button").contains("Delete").click();
+    cy.get("button").contains("Delete").first().click();
   });
 
   // Delete one folder

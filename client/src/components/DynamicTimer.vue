@@ -260,7 +260,8 @@ async function resetTime() {
 
 //emitTimer - emit to parent that timer is up
 async function emitTimer() {
-  var timerType = 0;
+  let timerType = 0;
+  
   if (isPomodoroMode.value) {
     timerType = 1;
   }
