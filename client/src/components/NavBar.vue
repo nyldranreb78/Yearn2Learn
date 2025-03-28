@@ -34,6 +34,7 @@
           <router-link
             :to="{ name: 'home' }"
             class="nav-link active"
+            active-class="active-nav"
             href="#"
           >
             Home
@@ -43,6 +44,7 @@
           <router-link
             :to="{ name: 'notes' }"
             class="nav-link active"
+            active-class="active-nav"
             href="#"
           >
             Notes
@@ -52,6 +54,7 @@
           <router-link
             :to="{ name: 'flashcards' }"
             class="nav-link active"
+            active-class="active-nav"
             href="#"
           >
             Flashcards
@@ -61,6 +64,7 @@
           <router-link
             :to="{ name: 'tasks' }"
             class="nav-link active"
+            active-class="active-nav"
             href="#"
           >
             Task Management
@@ -226,6 +230,31 @@ async function setToast(color, message, time) {
 </script>
 
 <style scoped>
+@import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap");
+
+.navbar {
+  font-family: "Libre Baskerville", sans-serif;
+  border-bottom: 3px solid;
+  border-image-source: linear-gradient(to right, #ea4d21, #ffc000, #2F5597);
+  border-image-slice: 1;
+}
+
+.navbar .nav-link {
+  color: #213e53;
+  font-weight: 550;
+  transition: color 0.3s ease-in-out, border-bottom 0.3s ease-in-out;
+}
+
+.navbar .nav-link:hover {
+  color: #2F5597;
+}
+
+.active-nav {
+  color: #2F5597 !important;
+  font-weight: bold;
+  border-bottom: 3px solid #2F5597;
+}
+
 .navbar-fixed-size {
   height: 70px;
 }
@@ -251,5 +280,22 @@ async function setToast(color, message, time) {
 .btn-warning.router-link-exact-active {
   color: #2f5597 !important;
   font-weight: bold !important;
+}
+
+.dropdown-menu {
+  background-color: #2F5597;
+}
+
+.dropdown-item {
+  color: #ffc000 !important;
+}
+
+.dropdown-item:hover {
+  text-decoration: underline;
+  background-color: #2F5597
+}
+
+.dropdown-item.text-danger {
+  color: #ea4d21 !important;
 }
 </style>

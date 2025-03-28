@@ -7,15 +7,17 @@
         <div class="row">
           <!--Task List-->
           <div class="col-9 pe-3">
-            <div class="row">
+            <div class="row mb-3">
               <div class="col text-start">
-                <h4>Task List</h4>
+                <h4 class="section-header">
+                  Task List
+                </h4>
               </div>
 
               <div class="col text-end pe-0">
                 <div
                   type="button"
-                  class="btn btn-sm btn-secondary"
+                  class="btn btn-sm btn-primary"
                   data-bs-toggle="modal"
                   data-bs-target="#add_edit_task_form"
                   @click="resetTaskData"
@@ -924,3 +926,11 @@ onBeforeMount(() => {
   }
 });
 </script>
+
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap");
+
+.section-header {
+  font-family: "Libre Baskerville", sans-serif;
+}
+</style>
