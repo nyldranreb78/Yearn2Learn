@@ -885,19 +885,24 @@ function getClosestTaskDate(fromDate){
 
 // Get all tasks that are valid for recommendations on a given day
 function getRecommendableTasksForDate(date){
-  return gradedTaskList.value.filter((task) => {
-    let taskDeadline = new Date(task?.deadline);
+  if(date){
+    return gradedTaskList.value.filter((task) => {
+      let taskDeadline = new Date(task?.deadline);
 
-    // Filter candidates by order of important details
-    // This check will stop as soon as one of them returns false
-    return (
-      task.isFinished == false &&                       // If the task is not yet finished
-      taskDeadline.getTime() >= date.getTime() &&       // If the task is later than the closest date
-      taskDeadline.getDay() === date.getDay() &&        // If the task is in the same day
-      taskDeadline.getMonth() === date.getMonth() &&    // If the task is in the same month
-      taskDeadline.getFullYear() === date.getFullYear() // If the task is in the same year
-    ); 
-  });
+      // Filter candidates by order of important details
+      // This check will stop as soon as one of them returns false
+      return (
+        task.isFinished == false &&                       // If the task is not yet finished
+        taskDeadline?.getTime() >= date.getTime() &&       // If the task is later than the closest date
+        taskDeadline?.getDay() === date.getDay() &&        // If the task is in the same day
+        taskDeadline?.getMonth() === date.getMonth() &&    // If the task is in the same month
+        taskDeadline?.getFullYear() === date.getFullYear() // If the task is in the same year
+      ); 
+    });
+  } else {
+    return null;
+  }
+  
 }
 
 // Get the recommended task among an array of tasks based on weight
@@ -934,7 +939,7 @@ function getRecommendedTask(taskArray){
     }
   }
 
-  if (taskArray.length > recommendedIndex && taskArray[recommendedIndex]) {
+  if (taskArray && taskArray.length > recommendedIndex && taskArray[recommendedIndex]) {
     recommendedTask = taskArray[recommendedIndex];
   }
 

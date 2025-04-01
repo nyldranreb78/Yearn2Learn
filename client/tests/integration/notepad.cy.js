@@ -53,13 +53,11 @@ describe("Integration Tests - Frontend + Backend", () => {
     cy.get(".btn-circle").first().click();
     cy.get(".accordion-item").first().click();
     cy.contains("Create new note").click();
-    //cy.get("#note_title").type("Test Note Title");
     
-    cy.get("#submit_note_button").type("Test Note Title", {force: true})
+    cy.get("#note_title").type("Test Note Title");
     cy.get("#submit_note_button").click();
 
     cy.contains("Test Note Title").should("exist");
-    cy.get(".bi-arrow-left").first().click();
   });
 
   // Delete the note that was added

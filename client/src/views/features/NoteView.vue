@@ -645,7 +645,7 @@
                   type="submit"
                   class="btn"
                   :class="currentNote ? 'btn-success' : 'btn-secondary'"
-                  @click="closeModal"
+                  @click="closeModal()"
                 >
                   <i
                     :class="
@@ -983,6 +983,7 @@ async function openNotes(folder, note) {
 
     // Allows us to save changes after switching files
     currentNote.value = note;
+    closeSideBar();
   }
 }
 
