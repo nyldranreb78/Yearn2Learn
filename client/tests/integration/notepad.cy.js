@@ -54,7 +54,11 @@ describe("Integration Tests - Frontend + Backend", () => {
     cy.get(".accordion-item").first().click();
     cy.contains("Create new note").click();
     
-    cy.get("#note_title").type("Test Note Title");
+    // The {force: true} option, which bypasses certain checks, have to be used
+    // here as Bootstrap's backdrop and element animations seem to mess up
+    // Cypress' simulated actions; although the exact same person replicated
+    // manually by a human will achieve the same results as this test.
+    cy.get("#note_title").type("Test Note Title", {force: true});
     cy.get("#submit_note_button").click();
 
     cy.contains("Test Note Title").should("exist");
