@@ -23,7 +23,7 @@
 
       <div
         v-if="isAuthenticated"
-        class="vr ms-2 me-3"
+        class="vr ms-2 me-4"
       />
 
       <ul
@@ -73,7 +73,7 @@
 
         <li class="nav-item dropdown">
           <button
-            id="timerFeature"
+            id="timer_feature"
             type="button"
             role="button"
             class="nav-link dropdown-toggle active"
@@ -133,17 +133,15 @@
     </div>
   </nav>
 
-  <div class="d-flex justify-content-end fixed-top navbar-offset z-0">
+  <div class="d-flex fixed-top navbar-offset z-2">
     <div
-      id="timerAlert"
-      :class="
-        'toast timer-toast align-items-center border-0 mt-3 me-4 text-bg-' +
-          toastColor
-      "
+      id="timer_alert"
+      class="toast align-items-center border-0 rounded-0 w-100"
+      :class="'text-bg-' + toastColor"
       role="alert"
     >
-      <div class="d-flex">
-        <div class="toast-body">
+      <div class="d-flex fs-5">
+        <div class="toast-body px-2 py-1 w-100">
           <span v-if="isPomodoro">
             Pomodoro cycle started: <b>{{ toastMessage }}</b> for the next
             <u>{{ toastTime }} minutes</u>.
@@ -151,11 +149,11 @@
 
           <span v-else>{{ toastMessage }}</span>
         </div>
+
         <button
           type="button"
-          class="btn-close btn-close-white me-2 m-auto"
+          class="btn-close btn-close-white me-2 m-auto fs-6"
           data-bs-dismiss="toast"
-          aria-label="Close"
         />
       </div>
     </div>
@@ -201,7 +199,7 @@ async function logout() {
 }
 
 async function timerNotification(timerInfo) {
-  const timerToast = document.querySelector("#timerAlert");
+  const timerToast = document.querySelector("#timer_alert");
   const notification = bootstrap.Toast.getOrCreateInstance(timerToast);
 
   if (timerInfo[0] == 0) {
@@ -244,13 +242,13 @@ async function setToast(color, message, time) {
 }
 
 .navbar .nav-link {
-  color: #213e53;
+  color: #2F5597 !important;
   font-weight: 550;
   transition: color 0.3s ease-in-out, border-bottom 0.3s ease-in-out;
 }
 
 .navbar .nav-link:hover {
-  color: #2F5597;
+  color: #213E53 !important;
 }
 
 .active-nav {
@@ -265,10 +263,6 @@ async function setToast(color, message, time) {
 
 .nav-item {
   list-style: none !important;
-}
-
-.timer-toast {
-  width: 300px !important;
 }
 
 .nav-item::before,

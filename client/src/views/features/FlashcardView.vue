@@ -27,6 +27,7 @@
             id="current_flashcard"
             class="col btn flash-card-ui text-center text-truncate"
             :class="showAnswer? 'btn-secondary' : 'btn-light flash-card'"
+            title="Open the Question List to see the full text."
             :disabled="!filteredList.length"
             @click="showAnswer = !showAnswer"
             @mouseenter="showAltText = true"
@@ -149,6 +150,7 @@
                     v-model="setInput"
                     type="text"
                     class="form-control form-control-sm"
+                    maxlength="50"
                     placeholder="New Flashcard Set Name"
                     :required="!flashcardData.setName"
                   >
@@ -540,6 +542,7 @@ onBeforeMount(() => {
 
   if (coreStore.currentFlashcardSet) {
     setNameFilter.value = coreStore.currentFlashcardSet;
+    coreStore.resetCurrentData();
   }
 });
 </script>

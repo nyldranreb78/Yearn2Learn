@@ -17,7 +17,10 @@
         </div>
 
         <div class="row">
-          <div class="col ps-0">
+          <div
+            ref="feature_showcase"
+            class="col"
+          >
             <h4 class="section-header">
               Features
             </h4>
@@ -44,7 +47,10 @@
             <h4 class="section-header">
               Upcoming Tasks
             </h4>
-            <div class="task-scroll card p-3">
+            <div
+              class="card task-scroll overflow-auto p-3"
+              :style="'max-height: ' + featureShowcaseHeight + 'px;'"
+            >
               <div class="row">
                 <div
                   v-if="!upcomingTasks.length"
@@ -76,7 +82,7 @@
               Quick Access
             </h4>
              
-            <div class="row mb-2 pe-2">
+            <div class="row pe-2">
               <div class="col-auto">
                 <h6><i class="bi bi-journal-text me-1" /> Recent Notes</h6>
               </div>
@@ -95,7 +101,7 @@
               <div
                 v-for="note in quickAccessNotes"
                 :key="note._id"
-                class="col-md-6 col-lg-4"
+                class="col-md-6 col-lg-4 mt-2 mb-2"
                 @mouseenter="coreStore.setNote(note)"
               >
                 <FeatureCard
@@ -112,7 +118,7 @@
           </div>
         </div>
 
-        <div class="row mb-2 pe-2">
+        <div class="row pe-2">
           <div class="col-auto">
             <h6><i class="bi bi-card-heading me-1" /> Flash Card Sets</h6>
           </div>
@@ -131,7 +137,7 @@
           <div
             v-for="set in quickAccessFlashcards"
             :key="set"
-            class="col-2"
+            class="col-2 mt-2 mb-2"
             @mouseenter="coreStore.setFlashcardSet(set)"
           >
             <FeatureCard
@@ -151,10 +157,11 @@ import FeatureCard from "@/components/FeatureCard.vue";
 import bootstrap from "bootstrap/dist/js/bootstrap.bundle.js";
 import { useCoreStore } from "@/store/core";
 import { useAuthStore } from "../store/auth";
-import { ref, onMounted, computed, onBeforeMount } from "vue"; // reactive, computed, onMounted,
+import { ref, onMounted, computed, onBeforeMount, useTemplateRef } from "vue"; // reactive, computed, onMounted,
 
 const coreStore = useCoreStore();
 const authStore = useAuthStore();
+const featureShowcase = useTemplateRef("feature_showcase");
 
 const noteDesc = "Write and edit your notes, organized by folders.";
 const flashcardDesc =
@@ -224,8 +231,16 @@ const flashcardSetList = computed(() => {
   return flashcards.slice(0, Math.min(6, flashcards.length));
 });
 
+const featureShowcaseHeight = computed(() => {
+  if(featureShowcase.value){
+    return featureShowcase.value.offsetHeight;
+  } else {
+    return null;
+  }
+})
+
 async function showTimer(autoCloseAttribute) {
-  const timerMenu = document.querySelector("#timerFeature");
+  const timerMenu = document.querySelector("#timer_feature");
   timerMenu.setAttribute("data-bs-auto-close", autoCloseAttribute);
 
   const dropdown = new bootstrap.Dropdown(timerMenu);
