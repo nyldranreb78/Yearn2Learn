@@ -1,6 +1,6 @@
 <template>
   <div
-    class="container-fluid text-start d-flex flex-column navbar-offset vh-navbar-offset"
+    class="container-fluid text-start d-flex flex-column navbar-offset vh-navbar-offset p-5"
   >
     <!--MAIN SCREEN-->
     <!--The table grid divides the screen into three with the text editor in the middle-->
@@ -389,10 +389,15 @@
       <div v-show="!folderEditMode">
         <div
           v-for="category in folderCategories"
-          v-bind:key="category[0]"
+          :key="category[0]"
           class="accordion accordion-flush mb-4"
         >
-          <h5 v-show="categorizeFolder(category[1])?.length" class="text-start mb-2">{{ category[0] }}</h5>
+          <h5
+            v-show="categorizeFolder(category[1])?.length"
+            class="text-start mb-2"
+          >
+            {{ category[0] }}
+          </h5>
           <div
             v-for="folder in categorizeFolder(category[1])"
             :key="folder._id"
@@ -439,7 +444,10 @@
                     @click="openNotes(folder, note)"
                   >
                     <div class="row p-0">
-                      <div class="col-10 text-start text-truncate" :title="note.title">
+                      <div
+                        class="col-10 text-start text-truncate"
+                        :title="note.title"
+                      >
                         <span class="align-middle">{{ note.title }}</span>
                       </div>
 
@@ -511,7 +519,10 @@
               class="accordion-button d-inline-block accordion-edit collapsed bg-light"
             >
               <div class="row">
-                <div class="col-9 text-start align-middle text-truncate" :title="folder.name">
+                <div
+                  class="col-9 text-start align-middle text-truncate"
+                  :title="folder.name"
+                >
                   <strong>{{ folder.name }}</strong>
                 </div>
 
@@ -628,9 +639,15 @@
           <form @submit.prevent="currentNote ? renameNote() : addNote()">
             <div class="row">
               <div class="col-10 text-start text-truncate">
-                <span v-if="currentNote" :title="currentNote.title">Rename {{ currentNote.title }}</span>
+                <span
+                  v-if="currentNote"
+                  :title="currentNote.title"
+                >Rename {{ currentNote.title }}</span>
 
-                <span v-else :title="currentNote.title">Create new note for {{ currentFolder.name }}</span>
+                <span
+                  v-else
+                  :title="currentNote.title"
+                >Create new note for {{ currentFolder.name }}</span>
               </div>
 
               <div class="col-2 text-end">
@@ -699,7 +716,10 @@
             Are you sure you want to delete the
             {{ folderEditMode ? "folder" : "note" }} named
             <div class="row justify-content-center p-0 my-2">
-              <div class="col-9 text-truncate" :title="folderEditMode ? currentFolder.name : currentNote.title">
+              <div
+                class="col-9 text-truncate"
+                :title="folderEditMode ? currentFolder.name : currentNote.title"
+              >
                 <strong>{{
                   folderEditMode ? currentFolder.name : currentNote.title
                 }}</strong>

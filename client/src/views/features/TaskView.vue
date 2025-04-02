@@ -1,6 +1,6 @@
 <template>
   <div
-    class="container-fluid text-start d-flex flex-column navbar-offset vh-navbar-offset"
+    class="container-fluid text-start d-flex flex-column navbar-offset vh-navbar-offset p-5"
   >
     <div class="row justify-content-md-center mt-4">
       <div class="col-10">
@@ -38,28 +38,29 @@
 
             <div
               v-for="category in taskCategories"
-              v-bind:key="category[1]"
+              :key="category[1]"
               class="mb-5"
             >
-              <h5
-                v-show="filteredTasks[category[1]].length"
-                class="mb-2"
-              >
-                <b>{{ category[0] }}</b>
-              </h5>
+              <div v-show="filteredTasks[category[1]].length">
+                <h5 class="mb-2">
+                  <b>{{ category[0] }}</b>
+                </h5>
 
-              <div class="row border-bottom border-secondary pb-1 mb-1">
-                <div class="col-4">
-                  <b>Task</b>
-                </div>
-                <div class="col-3">
-                  <b>Linked Class</b>
-                </div>
-                <div class="col-3">
-                  <b>Deadline</b>
-                </div>
-                <div class="col-2">
-                  <b>Status</b>
+                <div
+                  class="row border-bottom border-secondary pb-1 mb-1"
+                >
+                  <div class="col-4">
+                    <b>Task</b>
+                  </div>
+                  <div class="col-3">
+                    <b>Linked Class</b>
+                  </div>
+                  <div class="col-3">
+                    <b>Deadline</b>
+                  </div>
+                  <div class="col-2">
+                    <b>Status</b>
+                  </div>
                 </div>
               </div>
 
@@ -79,10 +80,21 @@
                   @click="currentTask = task"
                 >
                   <div class="row">
-                    <div class="col-4 text-truncate" :title="task?.name">
+                    <div
+                      class="col-4 text-truncate"
+                      :title="task?.name"
+                    >
+                      <i
+                        v-if="task._id === priorityTask?._id"
+                        class="bi bi-patch-exclamation-fill me-1"
+                      />
+
                       {{ task?.name }}
                     </div>
-                    <div class="col-3 text-truncate" :title="task.folderID ? getClass(task.folderID)?.name : 'No title available.'">
+                    <div
+                      class="col-3 text-truncate"
+                      :title="task.folderID ? getClass(task.folderID)?.name : 'No title available.'"
+                    >
                       {{ task.folderID ? getClass(task.folderID)?.name : "" }}
                     </div>
                     <div class="col-3">
@@ -342,8 +354,8 @@
                       <button
                         type="button"
                         class="btn p-0"
-                        @click="currentTask = task"
                         :title="task?.name"
+                        @click="currentTask = task"
                       >
                         <b><u>{{ task?.name }}:</u></b>
                       </button>

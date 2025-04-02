@@ -1,6 +1,6 @@
 <template>
   <div
-    class="container-fluid text-start d-flex flex-column navbar-offset vh-navbar-offset"
+    class="container-fluid text-start d-flex flex-column navbar-offset vh-navbar-offset p-5"
   >
     <div class="row justify-content-md-center mt-4">
       <div class="col-10">
@@ -72,7 +72,7 @@
           </button>
 
           <div
-            class="col-3 card ms-3 py-2"
+            class="col-3 card ms-3 py-2 overflow-auto"
             :class="showForm ? 'flash-card-ui' : ''"
           >
             <h6 class="border-bottom pb-2">
