@@ -1,6 +1,6 @@
 <template>
   <div
-    class="container-fluid text-start d-flex flex-column navbar-offset vh-navbar-offset p-5"
+    class="container-fluid text-start d-flex flex-column navbar-offset vh-navbar-offset pb-5"
   >
     <div class="row justify-content-md-center mt-4">
       <div class="col-10">
@@ -155,6 +155,32 @@
                     :required="!flashcardData.setName"
                   >
                 </div>
+
+                <div class="col-auto mt-2 pe-1">
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-secondary"
+                    @click="resetFlashcardData()"
+                  >
+                    Cancel
+                  </button>
+                </div>
+
+                <div class="col mt-2 ps-1">
+                  <button
+                    id="create_or_save_changes"
+                    type="submit"
+                    form="flashcard_form"
+                    class="btn btn-sm w-100"
+                    :class="isEditMode ? 'btn-success' : 'btn-primary'"
+                  >
+                    <i
+                      class="bi me-1"
+                      :class="isEditMode ? 'bi-floppy-fill' : 'bi-plus-lg'"
+                    />
+                    {{ isEditMode ? "Save Changes" : "Create" }}
+                  </button>
+                </div>
               </form>
             </div>
 
@@ -224,37 +250,6 @@
                   @click="showForm = true"
                 >
                   <i class="bi bi-plus-lg me-1" /> Create Flashcard
-                </button>
-              </div>
-            </div>
-
-            <div
-              v-show="showForm"
-              class="row mt-auto"
-            >
-              <div class="col-auto pe-1">
-                <button
-                  type="button"
-                  class="btn btn-sm btn-secondary"
-                  @click="resetFlashcardData()"
-                >
-                  Cancel
-                </button>
-              </div>
-
-              <div class="col ps-0">
-                <button
-                  id="create_or_save_changes"
-                  type="submit"
-                  form="flashcard_form"
-                  class="btn btn-sm w-100"
-                  :class="isEditMode ? 'btn-success' : 'btn-primary'"
-                >
-                  <i
-                    class="bi me-1"
-                    :class="isEditMode ? 'bi-floppy-fill' : 'bi-plus-lg'"
-                  />
-                  {{ isEditMode ? "Save Changes" : "Create" }}
                 </button>
               </div>
             </div>

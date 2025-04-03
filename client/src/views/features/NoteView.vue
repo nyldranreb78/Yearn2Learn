@@ -1,6 +1,6 @@
 <template>
   <div
-    class="container-fluid text-start d-flex flex-column navbar-offset vh-navbar-offset p-5"
+    class="container-fluid text-start d-flex flex-column navbar-offset vh-navbar-offset pb-5"
   >
     <!--MAIN SCREEN-->
     <!--The table grid divides the screen into three with the text editor in the middle-->
@@ -225,7 +225,7 @@
   <!--SIDEBAR-->
   <div
     id="side_bar_left"
-    class="offcanvas offcanvas-start border-top navbar-offset"
+    class="offcanvas offcanvas-start border-top navbar-offset z-1"
     data-bs-scroll="false"
     data-bs-backdrop="true"
     tabindex="-1"
@@ -1034,20 +1034,23 @@ async function autoSaveNoteChanges() {
   try {
     saveStatus.value = "Saving...";
 
-    // Auto-save 1 second after changes are made
+    // Clear previous timeouts to avoid stacking them
+    clearTimeout(saveStatusTimeoutID.value);
     clearTimeout(autoSaveTimeoutID.value);
+
+    // Auto-save 1 second after changes are made
     autoSaveTimeoutID.value = setTimeout(async () => {
       await saveNoteChanges(currentNote.value);
       saveStatus.value = "Saved!";
     }, 1000);
 
-    // Let the user know changes have been saved for 5 seconds
+    // Let the user know (for 3 seconds) that changes have been saved
     clearTimeout(saveStatusTimeoutID.value);
     saveStatusTimeoutID.value = setTimeout(async () => {
       if (autoSaveTimeoutID.value) {
         saveStatus.value = "";
       }
-    }, 5000);
+    }, 3000);
   } catch (error) {
     console.error(
       "Error updating note:",
@@ -1135,5 +1138,9 @@ onBeforeRouteLeave(() => {
 .ql-snow .ql-picker.ql-expanded .ql-picker-options {
     bottom: 100%;
     top: auto;
+}
+
+.offcanvas-backdrop.show {
+  z-index: 0;
 }
 </style>

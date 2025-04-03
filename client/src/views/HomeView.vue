@@ -1,6 +1,6 @@
 <template>
   <div
-    class="container-fluid text-start d-flex flex-column navbar-offset vh-navbar-offset p-5"
+    class="container-fluid text-start d-flex flex-column navbar-offset vh-navbar-offset pb-5"
   >
     <div class="row mt-4 justify-content-md-center">
       <div class="col-8">

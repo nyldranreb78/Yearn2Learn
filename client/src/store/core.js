@@ -147,6 +147,7 @@ export const useCoreStore = defineStore("core", {
         };
 
         await this.authStore.updateNote(noteId, updatedNote);
+        await this.fetchData();
       } catch (error) {
         console.error(
           "Error updating note:",
