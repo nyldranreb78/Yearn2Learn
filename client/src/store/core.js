@@ -42,6 +42,12 @@ export const useCoreStore = defineStore("core", {
       }
     },
 
+    async resetCurrentData() {
+      this.currentNote = "";
+      this.currentTask = "";
+      this.currentFlashcardSet = "";
+    },
+
     // FOLDERS
     async addFolder(folderName, folderPriority) {
       // Add the new folder to the list
@@ -141,6 +147,7 @@ export const useCoreStore = defineStore("core", {
         };
 
         await this.authStore.updateNote(noteId, updatedNote);
+        await this.fetchData();
       } catch (error) {
         console.error(
           "Error updating note:",

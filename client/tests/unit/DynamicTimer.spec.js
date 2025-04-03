@@ -17,9 +17,9 @@ describe("DynamicTimer.vue", () => {
 
     // The 3 labels seen by the user in the timer UI
     // Displays the time in HH:MM:SS format
-    hourDisplay = wrapper.find("#timeDisplay3600");
-    minuteDisplay = wrapper.find("#timeDisplay60");
-    secondDisplay = wrapper.find("#timeDisplay1");
+    hourDisplay = wrapper.find("#time_display_3600");
+    minuteDisplay = wrapper.find("#time_display_60");
+    secondDisplay = wrapper.find("#time_display_1");
 
     // Triggers the main timer logic
     playButton = wrapper.find("#btnPlayToggle");

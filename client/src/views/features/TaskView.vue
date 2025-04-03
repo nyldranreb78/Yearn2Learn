@@ -1,44 +1,28 @@
 <template>
   <div
-    class="container-fluid text-start d-flex flex-column navbar-offset vh-navbar-offset"
+    class="container-fluid text-start d-flex flex-column navbar-offset vh-navbar-offset pb-5"
   >
     <div class="row justify-content-md-center mt-4">
-      <div class="col-8">
+      <div class="col-10">
         <div class="row">
           <!--Task List-->
-          <div class="col-9 pe-3">
+          <div class="col-9 pe-4">
             <div class="row mb-3">
-              <div class="col text-start">
-                <h4 class="section-header">
-                  Task List
-                </h4>
-              </div>
+              <h4 class="col-8 section-header">
+                Task Management
+              </h4>
 
               <div class="col text-end pe-0">
-                <div
+                <button
                   type="button"
                   class="btn btn-sm btn-primary"
                   data-bs-toggle="modal"
                   data-bs-target="#add_edit_task_form"
                   @click="resetTaskData"
                 >
+                  <i class="bi bi-plus-lg me-1" />
                   New Task
-                </div>
-              </div>
-            </div>
-
-            <div class="row pb-1 border-bottom border-secondary">
-              <div class="col-4">
-                <b>Task</b>
-              </div>
-              <div class="col-3">
-                <b>Linked Class</b>
-              </div>
-              <div class="col-3">
-                <b>Deadline</b>
-              </div>
-              <div class="col-2">
-                <b>Status</b>
+                </button>
               </div>
             </div>
 
@@ -53,47 +37,87 @@
             </div>
 
             <div
-              v-for="task in taskList"
-              :key="task?._id"
-              class="row"
+              v-for="category in taskCategories"
+              :key="category[1]"
+              class="mb-5"
             >
-              <button
-                type="button"
-                class="btn text-start"
-                :class="
-                  task?._id === priorityTask?._id
-                    ? 'btn-warning shadow-none'
-                    : 'btn-light'
-                "
-                @click="currentTask = task"
-              >
-                <div class="row">
-                  <div class="col-4 text-truncate">
-                    {{ task?.name }}
-                  </div>
-                  <div class="col-3 text-truncate">
-                    {{ task.folderID ? getClass(task.folderID)?.name : "" }}
+              <div v-show="filteredTasks[category[1]].length">
+                <h5 class="mb-2">
+                  <b>{{ category[0] }}</b>
+                </h5>
+
+                <div
+                  class="row border-bottom border-secondary pb-1 mb-1"
+                >
+                  <div class="col-4">
+                    <b>Task</b>
                   </div>
                   <div class="col-3">
-                    {{
-                      task?.deadline
-                        ? new Date(task?.deadline).toLocaleString()
-                        : ""
-                    }}
+                    <b>Linked Class</b>
                   </div>
-                  <div
-                    class="col-2"
-                    :class="task.isFinished ? 'text-success' : 'text-primary'"
-                  >
-                    <b>{{ getTaskStatus(task.isFinished) }}</b>
+                  <div class="col-3">
+                    <b>Deadline</b>
+                  </div>
+                  <div class="col-2">
+                    <b>Status</b>
                   </div>
                 </div>
-              </button>
+              </div>
+
+              <div
+                v-for="task in filteredTasks[category[1]]"
+                :key="task?._id"
+                class="row"
+              >
+                <button
+                  type="button"
+                  class="btn text-start"
+                  :class="
+                    task?._id === priorityTask?._id
+                      ? 'btn-warning shadow-none'
+                      : 'btn-light'
+                  "
+                  @click="currentTask = task"
+                >
+                  <div class="row">
+                    <div
+                      class="col-4 text-truncate"
+                      :title="task?.name"
+                    >
+                      <i
+                        v-if="task._id === priorityTask?._id"
+                        class="bi bi-patch-exclamation-fill me-1"
+                      />
+
+                      {{ task?.name }}
+                    </div>
+                    <div
+                      class="col-3 text-truncate"
+                      :title="task.folderID ? getClass(task.folderID)?.name : 'No title available.'"
+                    >
+                      {{ task.folderID ? getClass(task.folderID)?.name : "" }}
+                    </div>
+                    <div class="col-3">
+                      {{
+                        task?.deadline
+                          ? new Date(task?.deadline).toLocaleString()
+                          : ""
+                      }}
+                    </div>
+                    <div
+                      class="col-2"
+                      :class="task.isFinished ? 'text-success' : 'text-primary'"
+                    >
+                      <b>{{ getTaskStatus(task.isFinished) }}</b>
+                    </div>
+                  </div>
+                </button>
+              </div>
             </div>
           </div>
 
           <!--Task Details and Class Progress-->
-          <div class="col-3 bg-transparent z-3">
+          <div class="col-3 bg-transparent">
             <!--Task Details Card-->
             <div class="card">
               <div
@@ -209,18 +233,17 @@
                     class="mt-4"
                   >
                     <b><small>Our Message:</small></b><br>
-                    We recommend prioritizing this task!
+                    Consider prioritizing this task!
                     <span v-if="gradedTaskList.length">
-                      <br>This task is worth
-                      <b>{{ currentTask.taskGrade }}%</b> of your final grade in
-                      a
-                      <b>{{
-                        currentClass?.priority ? " Major" : "n Elective"
-                      }}
-                        course</b>
-                      that you're averaging
-                      <b>{{ (averageGrade * 100).toFixed(1) + "%" }}</b> on.
-                      <br><br>See full class progress breakdown below.
+                      <br>This task is
+                      <span v-if="currentTask.taskGrade">worth <b>{{ currentTask.taskGrade }}%</b> of your final grade </span>
+                      for <b>{{ currentClass?.priority ? " a Major" : " an Elective" }} course</b>
+                      <span v-if="averageGrade">
+                        that you're averaging
+                        <b>{{ (averageGrade * 100).toFixed(1) + "%" }}</b> on.
+                        <br><br>See full class progress breakdown below.
+                      </span>
+                      <span v-else>.</span>
                     </span>
                   </div>
                 </div>
@@ -299,6 +322,7 @@
                       <button
                         type="button"
                         class="btn p-0"
+                        :title="task?.name"
                         @click="currentTask = task"
                       >
                         <b><u>{{ task?.name }}:</u></b>
@@ -330,6 +354,7 @@
                       <button
                         type="button"
                         class="btn p-0"
+                        :title="task?.name"
                         @click="currentTask = task"
                       >
                         <b><u>{{ task?.name }}:</u></b>
@@ -393,17 +418,18 @@
             <div class="col-12">
               <label class="form-label">Task Name</label>
               <input
-                id="taskName"
+                id="task_name"
                 v-model="taskData.name"
                 type="text"
                 class="form-control"
+                maxlength="100"
                 required
               >
             </div>
             <div class="col-12">
               <label class="form-label">Deadline</label>
               <input
-                id="taskDeadline"
+                id="task_deadline"
                 v-model="taskData.deadline"
                 class="form-control"
                 type="datetime-local"
@@ -413,7 +439,7 @@
             <div class="col-12">
               <div class="form-check form-switch">
                 <input
-                  id="isForClass"
+                  id="is_for_class"
                   v-model="isForClass"
                   class="form-check-input"
                   type="checkbox"
@@ -432,7 +458,7 @@
                   <div class="col">
                     <label class="form-label">Class</label>
                     <select
-                      id="taskClass"
+                      id="task_class"
                       v-model="taskData.folderID"
                       class="form-select"
                       @change="resetWeight"
@@ -457,12 +483,12 @@
                 >
                   <div class="col-6">
                     <label
-                      for="taskGrade"
+                      for="task_grade"
                       class="form-label"
                     >Grade weight in %
                       <small class="text-muted">(optional)</small></label>
                     <input
-                      id="taskGrade"
+                      id="task_grade"
                       v-model="taskData.taskGrade"
                       type="number"
                       class="form-control"
@@ -473,14 +499,14 @@
 
                   <div class="col-6">
                     <label
-                      for="actualGrade"
+                      for="actual_grade"
                       class="form-label"
                     >Grade received
                       <small class="text-muted">(if applicable)</small></label>
                     <div class="row">
                       <div class="col">
                         <input
-                          id="actualGrade"
+                          id="actual_grade"
                           v-model="taskData.actualGrade"
                           type="number"
                           class="form-control"
@@ -599,12 +625,25 @@ import { useCoreStore } from "@/store/core";
 import bootstrap from "bootstrap/dist/js/bootstrap.bundle.js";
 
 const coreStore = useCoreStore(); // Central source of state
+
+// Element show/render booleans
+const isEditMode = ref(false);
+const isForClass = ref(false);
+
+// Task display related
 const currentClass = ref(""); // The class currently being viewed by the user
 const currentTask = ref(""); // The task currently being viewed by the user
 const priorityTask = ref(""); // The recommended task based on weights
-
-const isEditMode = ref(false);
-const isForClass = ref(false);
+const filteredTasks = reactive({
+  upcoming: "",
+  pastDue: "",
+  finished: ""
+});
+const taskCategories = [
+  ["Upcoming", "upcoming"],
+  ["Past Due", "pastDue"],
+  ["Finished", "finished"]
+]
 
 // Form Data
 const taskData = reactive({
@@ -661,10 +700,19 @@ watch(taskData, (newValue) => {
 
 // Update the currentClass when currentTask is updated
 watch(currentTask, (newValue) => {
-  if (newValue) {
+  if (newValue && newValue.folderID) {
     currentClass.value = classList.value.find((classFolder) => {
       return classFolder?._id === newValue.folderID;
     });
+  } else {
+    currentClass.value = "";
+  }
+});
+
+// When a task is updated, update the filtered tasks
+watch(filteredTasks, (newValue) => {
+  if (newValue) {
+    resetFilteredTasks();
   }
 });
 
@@ -742,6 +790,27 @@ const gradedTaskList = computed(() => {
   });
 });
 
+// List of Upcoming Tasks
+const upcomingTaskList = computed(() => {
+  return coreStore.tasks.filter((task) => {
+    return !task.isFinished && new Date(task.deadline).getTime() > new Date().getTime();
+  });
+});
+
+// List of Past Due Tasks
+const pastDueTaskList = computed(() => {
+  return coreStore.tasks.filter((task) => {
+    return !task.isFinished && new Date(task.deadline).getTime() <= new Date().getTime();
+  });
+});
+
+// List of Finished Tasks
+const finishedTaskList = computed(() => {
+  return coreStore.tasks.filter((task) => {
+    return task.isFinished;
+  });
+});
+
 // Boolean value that checks if every task is finished
 const allTasksFinished = computed(() => {
   return coreStore.tasks.every((task) => task.isFinished);
@@ -773,6 +842,7 @@ async function addTask() {
   await coreStore.addTask(newTask);
 
   resetTaskData();
+  resetFilteredTasks();
 
   priorityTask.value = recommendedTask.value;
   currentTask.value = newTask;
@@ -791,6 +861,8 @@ async function editTask() {
   await coreStore.editTask(currentTask?.value._id, updatedTask);
 
   resetTaskData();
+  resetFilteredTasks();
+
   priorityTask.value = recommendedTask.value;
   currentTask.value = updatedTask;
 }
@@ -803,6 +875,8 @@ async function deleteTask() {
   if (currentTask.value?._id === priorityTask.value?._id) {
     currentTask.value = "";
   }
+  
+  resetFilteredTasks();
 }
 
 async function changeStatus(newStatus) {
@@ -818,6 +892,8 @@ async function changeStatus(newStatus) {
   };
 
   await coreStore.editTask(currentTask.value?._id, updatedTask);
+
+  resetFilteredTasks();
 
   if (allTasksFinished.value) {
     priorityTask.value = "";
@@ -869,6 +945,13 @@ async function closeModal() {
 
 // GETTER FUNCTIONS
 // It is necessary for our use case that these are synchronous
+function resetFilteredTasks(){
+  filteredTasks.upcoming = upcomingTaskList.value;
+  filteredTasks.pastDue = pastDueTaskList.value;
+  filteredTasks.finished = finishedTaskList.value;
+}
+
+
 // Find the Date of the closest, upcoming graded task
 function getClosestTaskDate(fromDate){
   const closestTask = gradedTaskList.value.find((task) => {
@@ -888,19 +971,24 @@ function getClosestTaskDate(fromDate){
 
 // Get all tasks that are valid for recommendations on a given day
 function getRecommendableTasksForDate(date){
-  return gradedTaskList.value.filter((task) => {
-    let taskDeadline = new Date(task?.deadline);
+  if(date){
+    return gradedTaskList.value.filter((task) => {
+      let taskDeadline = new Date(task?.deadline);
 
-    // Filter candidates by order of important details
-    // This check will stop as soon as one of them returns false
-    return (
-      task.isFinished == false &&                       // If the task is not yet finished
-      taskDeadline.getTime() >= date.getTime() &&       // If the task is later than the closest date
-      taskDeadline.getDay() === date.getDay() &&        // If the task is in the same day
-      taskDeadline.getMonth() === date.getMonth() &&    // If the task is in the same month
-      taskDeadline.getFullYear() === date.getFullYear() // If the task is in the same year
-    ); 
-  });
+      // Filter candidates by order of important details
+      // This check will stop as soon as one of them returns false
+      return (
+        task.isFinished == false &&                       // If the task is not yet finished
+        taskDeadline?.getTime() >= date.getTime() &&       // If the task is later than the closest date
+        taskDeadline?.getDay() === date.getDay() &&        // If the task is in the same day
+        taskDeadline?.getMonth() === date.getMonth() &&    // If the task is in the same month
+        taskDeadline?.getFullYear() === date.getFullYear() // If the task is in the same year
+      ); 
+    });
+  } else {
+    return null;
+  }
+  
 }
 
 // Get the recommended task among an array of tasks based on weight
@@ -937,7 +1025,7 @@ function getRecommendedTask(taskArray){
     }
   }
 
-  if (taskArray.length > recommendedIndex && taskArray[recommendedIndex]) {
+  if (taskArray && taskArray.length > recommendedIndex && taskArray[recommendedIndex]) {
     recommendedTask = taskArray[recommendedIndex];
   }
 
@@ -964,7 +1052,10 @@ onBeforeMount(() => {
 
   if (coreStore.currentTask) {
     currentTask.value = coreStore.currentTask;
+    coreStore.resetCurrentData();
   }
+
+  resetFilteredTasks();
 });
 </script>
 
@@ -973,5 +1064,6 @@ onBeforeMount(() => {
 
 .section-header {
   font-family: "Libre Baskerville", sans-serif;
+  margin-left: -20px;
 }
 </style>

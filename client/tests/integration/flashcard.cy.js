@@ -56,12 +56,12 @@ describe("Integration Tests - Frontend + Backend", () => {
 
   it("should create a single flash card", () => {
     cy.visit("/#/flashcards");
-    cy.get("#createFlashcard").click();
-    cy.get("#questionInput").type("unique question 1");
-    cy.get("#answerInput").type("unique answer 1");
-    cy.get("#newFlashcardSet").type("Group1");
-    cy.get("#createOrSaveChanges").click();
-    cy.get("#cardList").contains("unique question 1");
+    cy.get("#create_flashcard").click();
+    cy.get("#question_input").type("unique question 1");
+    cy.get("#answer_input").type("unique answer 1");
+    cy.get("#new_flashcard_set").type("Group1");
+    cy.get("#create_or_save_changes").click();
+    cy.get("#card_list").contains("unique question 1");
   });
 
   it("should check that the set name Group1 was added to the filter", () => {
@@ -74,59 +74,61 @@ describe("Integration Tests - Frontend + Backend", () => {
   it("should flip the flashcard when it is clicked", () => {
     cy.visit("/#/flashcards");
 
-    cy.get("#currFlashcard").should("have.text", "unique question 1").click();
-    cy.get("#currFlashcard").should("have.text", "unique answer 1");
+    cy.get("#current_flashcard").should("have.text", "unique question 1").click();
+    cy.get("#current_flashcard").should("have.text", "Return to the question");
     //<button type="button" class="btn btn-sm btn-primary w-100"><i class="bi bi-plus-lg me-1"></i> Create Flashcard </button>
   });
 
   it("should create one more card for the same set(Group1)", () => {
     cy.visit("/#/flashcards");
 
-    cy.get("#createFlashcard").click();
-    cy.get("#questionInput").type("unique question 2");
-    cy.get("#answerInput").type("unique answer 2");
-    cy.get("#newFlashcardSet").type("Group1");
-    cy.get("#createOrSaveChanges").click();
+    cy.get("#create_flashcard").click();
+    cy.get("#question_input").type("unique question 2");
+    cy.get("#answer_input").type("unique answer 2");
+    cy.get("#new_flashcard_set").type("Group1");
+    cy.get("#create_or_save_changes").click();
 
     cy.get(".form-select").should("exist");
     cy.get(".form-select").contains("Group1").should("exist");
 
-    cy.get("#cardList").contains("unique question 1").should("be.visible");
-    cy.get("#cardList").contains("unique question 2").should("be.visible");
+    cy.get("#card_list").contains("unique question 1").should("be.visible");
+    cy.get("#card_list").contains("unique question 2").should("be.visible");
   });
 
   it("should change Flashcards", () => {
     cy.visit("/#/flashcards");
 
-    cy.get("#turnRight").click();
-    cy.get("#currFlashcard").should("have.text", "unique question 1");
-    cy.get("#turnLeft").click();
-    cy.get("#currFlashcard").should("have.text", "unique question 2");
+    cy.get("#turn_right").click();
+    cy.get("#current_flashcard").should("have.text", "unique question 1");
+    cy.get("#turn_left").click();
+    cy.get("#current_flashcard").should("have.text", "unique question 2");
   });
 
-  it("should hide list when the 'Hide List' Button is clicked", () => {
+  it("should show list when the 'Show Question List' button is clicked", () => {
     cy.visit("/#/flashcards");
 
-    cy.get("#cardList").should("be.visible");
-
-    cy.get("button").contains("Hide List").click();
-    cy.get("#cardList").should("not.be.visible");
+    cy.get("button").contains("Show Question List").click();
+    cy.get("#card_list").should("be.visible");
   });
 
   it("should delete the most recent flashcard", () => {
     cy.visit("/#/flashcards");
+    cy.get("button").contains("Show Question List").click();
     cy.get('.btn.btn-sm.shadow-none.border-0.note-menu').first().click();
     cy.get('.dropdown-item.px-2.text-danger').contains("Delete").click()
     cy.get('.btn.btn-sm.btn-danger').contains("Confirm Deletion").click()
-    cy.get("#cardList").contains("unique question 2").should('not.exist');
+    cy.get("#card_list").contains("unique question 2").should('not.exist');
   });
+
   it("should delete last flashcard", () => {
     cy.visit("/#/flashcards");
+    cy.get("button").contains("Show Question List").click();
     cy.get('.btn.btn-sm.shadow-none.border-0.note-menu').first().click();
     cy.get('.dropdown-item.px-2.text-danger').contains("Delete").click()
     cy.get('.btn.btn-sm.btn-danger').contains("Confirm Deletion").click()
-    cy.get("#cardList").contains("unique question 1").should('not.exist');
+    cy.get("#card_list").contains("unique question 1").should('not.exist');
   });
+
   it("shouldn't see any flashcards at this point", () => {
     cy.visit("/#/flashcards");
 

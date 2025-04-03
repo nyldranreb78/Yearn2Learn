@@ -1,6 +1,6 @@
 <template>
   <div
-    class="container-fluid text-start d-flex flex-column navbar-offset vh-navbar-offset"
+    class="container-fluid text-start d-flex flex-column navbar-offset vh-navbar-offset pb-5"
   >
     <!--MAIN SCREEN-->
     <!--The table grid divides the screen into three with the text editor in the middle-->
@@ -84,7 +84,11 @@
             v-if="!recentNotes.length"
             class="text-muted text-center"
           >
-            <i>No recent notes available. Start writing one!</i>
+            <i>
+              No recent notes available. Start writing one by clicking the 
+              <i class="bi bi-list bg-secondary rounded-circle text-white p-2" /> 
+              button on the left!
+            </i>
           </div>
 
           <ul class="list-group">
@@ -111,29 +115,21 @@
         v-if="currentNote"
         class="row"
       >
-        <div class="col-12 position-relative">
-          <button
-            class="btn btn-secondary btn-sm mt-4 position-absolute"
-            style="right: -15px;"
-            @click="closeNote"
-          >
-            Back to Recent Notes
-          </button>
-        </div>
-
         <!-- Text Editor -->
         <div class="col-8 mx-auto p-0">
           <div class="row justify-content-center p-0 m-0 vh-100">
             <div class="p-0">
               <QuillEditor
-                id="textEditor"
-                ref="textEditor"
+                id="text_editor"
+                ref="text_editor"
                 v-model:content="textEditorData.content"
                 class="bg-white border-top-0"
                 theme="snow"
                 toolbar="#fixed_toolbar"
                 content-type="html"
-                @text-change="autoSaveNoteChanges()"
+                @focus="autoSaveOn = true"
+                @blur="autoSaveOn = false"
+                @text-change="autoSaveOn? autoSaveNoteChanges() : null"
               />
             </div>
           </div>
@@ -145,8 +141,11 @@
         v-show="currentNote"
         class="row border bg-light bottom-toolbar fixed-bottom m-0 p-0"
       >
-        <div class="col-3">
-          <div class="fs-6 text-truncate ms-1 me-5 mt-1 pe-5">
+        <div class="col-2">
+          <div
+            class="fs-6 text-truncate ms-1 me-5 mt-1 pe-5"
+            :title="textEditorData.folderName + ' / ' + textEditorData.noteTitle"
+          >
             <span
               v-show="currentNote"
               class="align-middle"
@@ -156,8 +155,9 @@
         </div>
 
         <div
+          v-if="currentNote"
           id="fixed_toolbar"
-          class="col-6 border-0 mx-auto"
+          class="col-6 border-0 ps-0"
         >
           <!-- Font size selector -->
           <select class="ql-size me-4">
@@ -196,8 +196,21 @@
           <button class="ql-code-block" />
         </div>
 
-        <div class="col-3">
-          <div class="fs-6 text-truncate text-end me-1 ms-5 mt-1 se-5">
+        <div class="col-2">
+          <div class="fs-6 text-end me-2 ms-5 mt-1 se-5">
+            <button
+              class="btn btn-light btn-sm ms-auto"
+              style="right: -15px;"
+              @click="closeNote"
+            >
+              <i class="bi bi-arrow-left" />
+              Back to Recent Notes
+            </button>
+          </div>
+        </div>
+
+        <div class="col-2">
+          <div class="fs-6 text-end me-1 ms-5 mt-1 se-5">
             <span
               v-show="currentNote"
               class="align-middle"
@@ -212,13 +225,13 @@
   <!--SIDEBAR-->
   <div
     id="side_bar_left"
-    class="offcanvas offcanvas-start navbar-offset"
-    data-bs-scroll="true"
-    data-bs-backdrop="false"
+    class="offcanvas offcanvas-start border-top navbar-offset z-1"
+    data-bs-scroll="false"
+    data-bs-backdrop="true"
     tabindex="-1"
   >
     <!--SIDEBAR HEADER-->
-    <div class="offcanvas-header d-inline-block pb-0">
+    <div class="offcanvas-header d-inline-block pb-0 mb-3">
       <h5 class="offcanvas-title">
         <div class="row">
           <div class="col-2 text-start align-middle">
@@ -240,7 +253,7 @@
           <div class="col text-end align-middle pt-1">
             <button
               v-show="folderList.length"
-              id="editFolderButton"
+              id="edit_folder_button"
               type="button"
               class="btn btn-edit-form py-0 px-1 ms-2"
               @click="toggleEditMode()"
@@ -289,10 +302,11 @@
                 <div class="col">
                   <small>Folder Name</small>
                   <input
-                    id="folderName"
+                    id="folder_name"
                     v-model="folderData.name"
                     type="text"
                     class="form-control"
+                    maxlength="50"
                     placeholder="e.g. COMP 4350"
                     required
                   >
@@ -303,7 +317,7 @@
                 <div class="col">
                   <div class="form-check form-switch">
                     <input
-                      id="classToggle"
+                      id="class_toggle"
                       v-model="isAClass"
                       type="checkbox"
                       role="switch"
@@ -312,7 +326,7 @@
                     >
                     <label
                       class="form-check-label"
-                      for="classToggle"
+                      for="class_toggle"
                     >Does this folder represent a class?</label>
                   </div>
                 </div>
@@ -325,7 +339,7 @@
                 <small>Priority</small>
                 <div class="col">
                   <select
-                    id="folderPriority"
+                    id="folder_priority"
                     v-model="folderData.priority"
                     class="form-select"
                     required
@@ -349,7 +363,7 @@
               <div class="row">
                 <div class="col">
                   <button
-                    id="addFolderButton"
+                    id="add_folder_button"
                     type="submit"
                     class="btn btn-primary w-100"
                   >
@@ -372,100 +386,113 @@
       </div>
 
       <!--COLLAPSIBLE FOLDER LIST-->
-      <div
-        v-show="!folderEditMode"
-        class="accordion accordion-flush"
-      >
+      <div v-show="!folderEditMode">
         <div
-          v-for="folder in folderList"
-          :key="folder._id"
-          class="accordion-item"
+          v-for="category in folderCategories"
+          :key="category[0]"
+          class="accordion accordion-flush mb-4"
         >
-          <h2 class="accordion-header">
-            <button
-              type="button"
-              class="accordion-button collapsed"
-              data-bs-toggle="collapse"
-              :data-bs-target="'#folderID' + folder._id"
-            >
-              <strong class="text-truncate">{{ folder.name }}</strong>
-            </button>
-          </h2>
-
-          <!--NOTES LIST FOR EACH FOLDER-->
-          <div
-            :id="'folderID' + folder._id"
-            class="accordion-collapse collapse"
+          <h5
+            v-show="categorizeFolder(category[1])?.length"
+            class="text-start mb-2"
           >
-            <div class="accordion-body pt-0 pb-0 ps-3 pe-0 fs-6 mb-2">
-              <div class="list-group sharp-top-border">
-                <!--ADD NOTE FORM TRIGGER-->
-                <button
-                  type="button"
-                  class="list-group-item list-group-item-action ps-3 py-1 border-top-0"
-                  data-bs-toggle="modal"
-                  data-bs-target="#add_edit_note_form"
-                  @click="passCurrentFolder(folder)"
-                >
-                  <i class="bi bi-plus-lg me-1" /> Create new note
-                </button>
+            {{ category[0] }}
+          </h5>
+          <div
+            v-for="folder in categorizeFolder(category[1])"
+            :key="folder._id"
+            class="accordion-item"
+          >
+            <h2 class="accordion-header">
+              <button
+                type="button"
+                class="accordion-button collapsed"
+                data-bs-toggle="collapse"
+                :data-bs-target="'#folder_id_' + folder._id"
+                :title="folder.name"
+              >
+                <strong class="text-truncate">{{ folder.name }}</strong>
+              </button>
+            </h2>
 
-                <div
-                  v-for="note in [...folder.notes].sort((noteA, noteB) => {
-                    return (
-                      new Date(noteB.updatedAt) - new Date(noteA.updatedAt)
-                    );
-                  })"
-                  :key="note._id"
-                  class="list-group-item list-group-item-action ps-3 pe-2 py-1"
-                  @click="openNotes(folder, note)"
-                >
-                  <div class="row p-0">
-                    <div class="col-10 text-start text-truncate">
-                      <span class="align-middle">{{ note.title }}</span>
-                    </div>
+            <!--NOTES LIST FOR EACH FOLDER-->
+            <div
+              :id="'folder_id_' + folder._id"
+              class="accordion-collapse collapse"
+            >
+              <div class="accordion-body pt-0 pb-0 ps-3 pe-0 fs-6 mb-2">
+                <div class="list-group sharp-top-border">
+                  <!--ADD NOTE FORM TRIGGER-->
+                  <button
+                    type="button"
+                    class="list-group-item list-group-item-action ps-3 py-1 border-top-0"
+                    data-bs-toggle="modal"
+                    data-bs-target="#add_edit_note_form"
+                    @click="passCurrentFolder(folder)"
+                  >
+                    <i class="bi bi-plus-lg me-1" /> Create new note
+                  </button>
 
-                    <div class="col-2 text-end align-middle">
-                      <button
-                        type="button"
-                        class="btn btn-sm shadow-none note-menu"
-                        data-bs-toggle="dropdown"
-                        @mouseover="mouseOnMenu = true"
-                        @mouseleave="mouseOnMenu = false"
-                        @click="passCurrentNote(folder, note)"
+                  <div
+                    v-for="note in [...folder.notes].sort((noteA, noteB) => {
+                      return (
+                        new Date(noteB.updatedAt) - new Date(noteA.updatedAt)
+                      );
+                    })"
+                    :key="note._id"
+                    class="list-group-item list-group-item-action ps-3 pe-2 py-1"
+                    @click="openNotes(folder, note)"
+                  >
+                    <div class="row p-0">
+                      <div
+                        class="col-10 text-start text-truncate"
+                        :title="note.title"
                       >
-                        <i class="bi bi-three-dots-vertical" />
-                      </button>
+                        <span class="align-middle">{{ note.title }}</span>
+                      </div>
 
-                      <ul
-                        class="dropdown-menu py-1"
-                        @mouseover="mouseOnMenu = true"
-                        @mouseleave="mouseOnMenu = false"
-                      >
-                        <li>
-                          <a
-                            class="dropdown-item px-2"
-                            data-bs-toggle="modal"
-                            data-bs-target="#add_edit_note_form"
-                            @click="passCurrentNote(folder, note)"
-                          >
-                            Rename
-                          </a>
-                        </li>
+                      <div class="col-2 text-end align-middle">
+                        <button
+                          type="button"
+                          class="btn btn-sm shadow-none note-menu"
+                          data-bs-toggle="dropdown"
+                          @mouseover="mouseOnMenu = true"
+                          @mouseleave="mouseOnMenu = false"
+                          @click="passCurrentNote(folder, note)"
+                        >
+                          <i class="bi bi-three-dots-vertical" />
+                        </button>
 
-                        <li><hr class="dropdown-divider my-1"></li>
+                        <ul
+                          class="dropdown-menu py-1"
+                          @mouseover="mouseOnMenu = true"
+                          @mouseleave="mouseOnMenu = false"
+                        >
+                          <li>
+                            <a
+                              class="dropdown-item px-2"
+                              data-bs-toggle="modal"
+                              data-bs-target="#add_edit_note_form"
+                              @click="passCurrentNote(folder, note)"
+                            >
+                              Rename
+                            </a>
+                          </li>
 
-                        <li>
-                          <a
-                            class="dropdown-item px-2 text-danger"
-                            data-bs-toggle="modal"
-                            data-bs-target="#delete_form"
-                            @click="passCurrentNote(folder, note)"
-                          >
-                            Delete
-                          </a>
-                        </li>
-                      </ul>
+                          <li><hr class="dropdown-divider my-1"></li>
+
+                          <li>
+                            <a
+                              class="dropdown-item px-2 text-danger"
+                              data-bs-toggle="modal"
+                              data-bs-target="#delete_form"
+                              @click="passCurrentNote(folder, note)"
+                            >
+                              Delete
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -492,7 +519,10 @@
               class="accordion-button d-inline-block accordion-edit collapsed bg-light"
             >
               <div class="row">
-                <div class="col-9 text-start align-middle text-truncate">
+                <div
+                  class="col-9 text-start align-middle text-truncate"
+                  :title="folder.name"
+                >
                   <strong>{{ folder.name }}</strong>
                 </div>
 
@@ -504,7 +534,7 @@
                       type="button"
                       class="btn btn-close"
                       data-bs-toggle="collapse"
-                      :data-bs-target="'#folderID' + folder._id + 'edit'"
+                      :data-bs-target="'#folder_id_' + folder._id + '_edit'"
                       @click="closeEditFolderForm()"
                     />
                   </div>
@@ -514,7 +544,7 @@
                       type="button"
                       class="btn btn-edit-form py-0 px-1 me-2"
                       data-bs-toggle="collapse"
-                      :data-bs-target="'#folderID' + folder._id + 'edit'"
+                      :data-bs-target="'#folder_id_' + folder._id + '_edit'"
                       @click="openEditFolderForm(folder)"
                     >
                       <i class="bi bi-pencil-square" />
@@ -537,7 +567,7 @@
 
           <div
             v-if="currentEditingFolderId === folder._id"
-            :id="'folderID' + folder._id + 'edit'"
+            :id="'folder_id_' + folder._id + '_edit'"
             class="accordion-collapse collapse"
             :class="{ show: currentEditingFolderId === folder._id }"
             data-bs-parent="#folder_edit_form"
@@ -551,6 +581,7 @@
                       v-model="folderData.name"
                       type="text"
                       class="form-control"
+                      maxlength="50"
                       placeholder="e.g. COMP 4350"
                       required
                     >
@@ -579,7 +610,7 @@
                       type="submit"
                       class="btn btn-success w-100"
                       data-bs-toggle="collapse"
-                      :data-bs-target="'#folderID' + folder._id + 'edit'"
+                      :data-bs-target="'#folder_id_' + folder._id + '_edit'"
                     >
                       <i class="bi bi-floppy-fill" />
                     </button>
@@ -608,9 +639,15 @@
           <form @submit.prevent="currentNote ? renameNote() : addNote()">
             <div class="row">
               <div class="col-10 text-start text-truncate">
-                <span v-if="currentNote">Rename {{ currentNote.title }}</span>
+                <span
+                  v-if="currentNote"
+                  :title="currentNote.title"
+                >Rename {{ currentNote.title }}</span>
 
-                <span v-else>Create new note for {{ currentFolder.name }}</span>
+                <span
+                  v-else
+                  :title="currentNote.title"
+                >Create new note for {{ currentFolder.name }}</span>
               </div>
 
               <div class="col-2 text-end">
@@ -625,20 +662,21 @@
             <div class="row">
               <div class="input-group mb-2">
                 <input
-                  id="noteTitle"
+                  id="note_title"
                   v-model="noteData.title"
                   type="text"
                   class="form-control"
+                  maxlength="100"
                   placeholder="e.g. Midterm Notes"
                   required
                 >
 
                 <button
-                  id="submitNoteButton"
+                  id="submit_note_button"
                   type="submit"
                   class="btn"
                   :class="currentNote ? 'btn-success' : 'btn-secondary'"
-                  @click="closeModal"
+                  @click="closeModal()"
                 >
                   <i
                     :class="
@@ -678,7 +716,10 @@
             Are you sure you want to delete the
             {{ folderEditMode ? "folder" : "note" }} named
             <div class="row justify-content-center p-0 my-2">
-              <div class="col-9 text-truncate">
+              <div
+                class="col-9 text-truncate"
+                :title="folderEditMode ? currentFolder.name : currentNote.title"
+              >
                 <strong>{{
                   folderEditMode ? currentFolder.name : currentNote.title
                 }}</strong>
@@ -706,6 +747,7 @@
 
             <div class="col text-end">
               <button
+                id="delete_form_button"
                 class="btn btn-sm btn-danger ms-3"
                 data-bs-dismiss="modal"
                 @click="folderEditMode ? deleteFolder() : deleteNote()"
@@ -724,6 +766,7 @@
 // @ is an alias to /src
 import bootstrap from "bootstrap/dist/js/bootstrap.bundle.js";
 import { ref, reactive, computed, onBeforeMount, onBeforeUnmount } from "vue";
+import { onBeforeRouteLeave } from "vue-router";
 import { useCoreStore } from "@/store/core";
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
@@ -734,6 +777,11 @@ const coreStore = useCoreStore();
 const currentFolder = ref("");
 const currentNote = ref("");
 const searchQuery = ref("");
+const folderCategories = [
+  ["Major Requirement", true],
+  ["Elective Course", false],
+  ["Generic", null]
+];
 
 // Folder form variables
 const folderFormInProgress = ref(false);
@@ -744,10 +792,11 @@ const mouseOnMenu = ref(false);
 const isAClass = ref(false);
 
 // Text editor variables
-const textEditor = ref(); // Required by Vue Quill for data binding
+const text_editor = ref(); // Required by Vue Quill for data binding
 const saveStatus = ref("");
 const saveStatusTimeoutID = ref("");
 const autoSaveTimeoutID = ref("");
+const autoSaveOn = ref(false);
 
 const folderData = reactive({
   name: "",
@@ -956,6 +1005,8 @@ async function resetNoteData() {
 async function openNotes(folder, note) {
   // Do nothing if the mouse was inside the vertical menu button
   if (!mouseOnMenu.value) {
+    currentNote.value = "";
+
     // If moving to a new note, save the changes
     if (currentNote.value) {
       if (currentNote.value.content !== textEditorData.content) {
@@ -971,6 +1022,7 @@ async function openNotes(folder, note) {
 
     // Allows us to save changes after switching files
     currentNote.value = note;
+    closeSideBar();
   }
 }
 
@@ -982,20 +1034,23 @@ async function autoSaveNoteChanges() {
   try {
     saveStatus.value = "Saving...";
 
-    // Auto-save 1 second after changes are made
+    // Clear previous timeouts to avoid stacking them
+    clearTimeout(saveStatusTimeoutID.value);
     clearTimeout(autoSaveTimeoutID.value);
+
+    // Auto-save 1 second after changes are made
     autoSaveTimeoutID.value = setTimeout(async () => {
       await saveNoteChanges(currentNote.value);
       saveStatus.value = "Saved!";
     }, 1000);
 
-    // Let the user know changes have been saved for 5 seconds
+    // Let the user know (for 3 seconds) that changes have been saved
     clearTimeout(saveStatusTimeoutID.value);
     saveStatusTimeoutID.value = setTimeout(async () => {
       if (autoSaveTimeoutID.value) {
         saveStatus.value = "";
       }
-    }, 5000);
+    }, 3000);
   } catch (error) {
     console.error(
       "Error updating note:",
@@ -1015,11 +1070,21 @@ async function closeModal() {
   }
 }
 
+async function closeSideBar() {
+  const sideBar = document.querySelector("#side_bar_left");
+  bootstrap.Offcanvas.getOrCreateInstance(sideBar).hide();
+}
+
+function categorizeFolder(priority) {
+  return folderList.value.filter(folder => folder.priority === priority)
+}
+
 onBeforeMount(() => {
   useCoreStore().fetchData();
 
   if (coreStore.currentNote) {
     currentNote.value = coreStore.currentNote;
+    coreStore.resetCurrentData();
 
     const folderName = folderList.value.find(
       (folder) => folder._id === currentNote.value.folder
@@ -1038,10 +1103,18 @@ onBeforeUnmount(async () => {
     await saveNoteChanges(currentNote.value);
   }
 });
+
+onBeforeRouteLeave(() => {
+  closeSideBar();
+})
 </script>
 
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap");
+
+.offcanvas-backdrop {
+  margin-top: 70px;
+}
 
 .section-header {
   font-family: "Libre Baskerville", sans-serif;
@@ -1060,5 +1133,14 @@ onBeforeUnmount(async () => {
 .note-item:hover {
   background-color: #e6e6e6 !important;
   cursor: pointer;
+}
+
+.ql-snow .ql-picker.ql-expanded .ql-picker-options {
+    bottom: 100%;
+    top: auto;
+}
+
+.offcanvas-backdrop.show {
+  z-index: 0;
 }
 </style>

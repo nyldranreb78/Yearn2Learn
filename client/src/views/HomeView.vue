@@ -1,6 +1,6 @@
 <template>
   <div
-    class="container-fluid text-start d-flex flex-column navbar-offset vh-navbar-offset"
+    class="container-fluid text-start d-flex flex-column navbar-offset vh-navbar-offset pb-5"
   >
     <div class="row mt-4 justify-content-md-center">
       <div class="col-8">
@@ -10,30 +10,34 @@
               Welcome, {{ user.username }}!
             </h2>
 
-            <p class="quote-text">
+            <h5 class="quote-text">
               {{ randomQuote }}
-            </p>
+            </h5>
           </div>
         </div>
 
         <div class="row">
-          <div class="col ps-0">
+          <div
+            ref="feature_showcase"
+            class="col"
+          >
             <h4 class="section-header">
               Features
             </h4>
             <div class="row row-cols-2 g-3">
               <div
-                v-for="feature in featureInfo"
-                :key="feature[2]"
+                v-for="(n, i) in featureTitle.length"
+                :key="n"
                 class="col"
               >
                 <FeatureCard
-                  :bootstrap-icon-code="feature[0]"
-                  :feature-name="feature[1]"
-                  :route-name="feature[2]"
-                  :description="feature[3]"
-                  @click="feature[2] ? null : showTimer('false')"
-                  @mouseleave="feature[2] ? null : showTimer('outside')"
+                  :header-class="featureHeaderClass[i]"
+                  :bootstrap-icon-code="featureIcon[i]"
+                  :feature-name="featureTitle[i]"
+                  :route-name="featureRoute[i]"
+                  :description="featureDesc[i]"
+                  @click="featureRoute[i] ? null : showTimer('false')"
+                  @mouseleave="featureRoute[i] ? null : showTimer('outside')"
                 />
               </div>
             </div>
@@ -43,16 +47,19 @@
             <h4 class="section-header">
               Upcoming Tasks
             </h4>
-            <div class="task-scroll card p-3">
+            <div
+              class="card task-scroll overflow-auto p-3"
+              :style="'max-height: ' + featureShowcaseHeight + 'px;'"
+            >
               <div class="row">
                 <div
-                  v-if="!taskList.length"
+                  v-if="!upcomingTasks.length"
                   class="text-muted text-center"
                 >
                   <i>No Upcoming Tasks!</i>
                 </div>
                 <div
-                  v-for="task in taskList"
+                  v-for="task in upcomingTasks"
                   :key="task._id"
                   class="col-12 mb-3"
                   @mouseenter="coreStore.setTask(task)"
@@ -75,7 +82,7 @@
               Quick Access
             </h4>
              
-            <div class="row mb-2 pe-2">
+            <div class="row pe-2">
               <div class="col-auto">
                 <h6><i class="bi bi-journal-text me-1" /> Recent Notes</h6>
               </div>
@@ -83,7 +90,7 @@
             </div>
 
             <div
-              v-if="!noteList.length"
+              v-if="!quickAccessNotes.length"
               class="text-muted text-center"
             >
               <i>There are no Notes to show. Visit the Notes page to write
@@ -92,9 +99,9 @@
 
             <div class="row mb-5">
               <div
-                v-for="note in noteList"
+                v-for="note in quickAccessNotes"
                 :key="note._id"
-                class="col-md-6 col-lg-4"
+                class="col-md-6 col-lg-4 mt-2 mb-2"
                 @mouseenter="coreStore.setNote(note)"
               >
                 <FeatureCard
@@ -111,7 +118,7 @@
           </div>
         </div>
 
-        <div class="row mb-2 pe-2">
+        <div class="row pe-2">
           <div class="col-auto">
             <h6><i class="bi bi-card-heading me-1" /> Flash Card Sets</h6>
           </div>
@@ -119,7 +126,7 @@
         </div>
 
         <div
-          v-if="!flashcardSetList.length"
+          v-if="!quickAccessFlashcards.length"
           class="text-muted text-center"
         >
           <i>There are no Flashcard Sets to show. Visit the Flashcards page
@@ -128,9 +135,9 @@
 
         <div class="row mb-5">
           <div
-            v-for="set in flashcardSetList"
+            v-for="set in quickAccessFlashcards"
             :key="set"
-            class="col-2"
+            class="col-2 mt-2 mb-2"
             @mouseenter="coreStore.setFlashcardSet(set)"
           >
             <FeatureCard
@@ -149,30 +156,43 @@
 import FeatureCard from "@/components/FeatureCard.vue";
 import bootstrap from "bootstrap/dist/js/bootstrap.bundle.js";
 import { useCoreStore } from "@/store/core";
-import { ref, onMounted, computed, onBeforeMount } from "vue"; // reactive, computed, onMounted,
+import { useAuthStore } from "../store/auth";
+import { ref, onMounted, computed, onBeforeMount, useTemplateRef } from "vue"; // reactive, computed, onMounted,
 
 const coreStore = useCoreStore();
-import { useAuthStore } from "../store/auth";
-
 const authStore = useAuthStore();
-
-const user = computed(() => {
-  return authStore.userDetail;
-});
+const featureShowcase = useTemplateRef("feature_showcase");
 
 const noteDesc = "Write and edit your notes, organized by folders.";
 const flashcardDesc =
   "Create your own set of Q&A cards and test yourself with them.";
-const goalDesc = "Keep track of your tasks, goals, and grade progress.";
+const taskDesc = "Keep track of your tasks, goals, and grade progress.";
 const timerDesc = "Choose between a generic or Pomodoro Method timer.";
 
-const featureInfo = [
-  // [Bootstrap Icon Code, Feature Name, Vue Route]
-  ["journal-text", "Notes", "notes", noteDesc],
-  ["card-heading", "Flashcards", "flashcards", flashcardDesc],
-  ["calendar2-check", "Task Management", "tasks", goalDesc], // TODO: change this later
-  ["stopwatch", "Timer", null, timerDesc],
+const featureHeaderClass = ["y2l-blue text-white", "y2l-red text-white", "text-bg-success", "y2l-yellow"]
+const featureIcon = ["journal-text", "card-heading", "calendar2-check", "stopwatch"];
+const featureTitle = ["Notes", "Flashcards", "Task Management", "Timer"]
+const featureRoute = ["notes", "flashcards", "tasks", null]
+const featureDesc = [noteDesc, flashcardDesc, taskDesc, timerDesc]
+
+const quotes = [
+  "Believe in yourself and all that you are.",
+  "You are capable of amazing things!",
+  "Every day is a new beginning.",
+  "You’ve got this! Keep pushing forward.",
+  "Great things take time, keep going!",
+  "Small steps each day lead to big results.",
+  "Dream big, work hard, stay focused."
 ];
+
+const randomQuote = ref("");
+const upcomingTasks = ref("");
+const quickAccessNotes = ref("");
+const quickAccessFlashcards = ref("");
+
+const user = computed(() => {
+  return authStore.userDetail;
+});
 
 const noteList = computed(() => {
   // Find all folders
@@ -198,7 +218,7 @@ const taskList = computed(() => {
 
   return tasks
     .filter((task) => {
-      return task.taskGrade != null;
+      return new Date(task.deadline).getTime() > new Date().getTime() && !task.isFinished;
     })
     .slice(0, Math.min(4, tasks.length));
 });
@@ -211,8 +231,16 @@ const flashcardSetList = computed(() => {
   return flashcards.slice(0, Math.min(6, flashcards.length));
 });
 
+const featureShowcaseHeight = computed(() => {
+  if(featureShowcase.value){
+    return featureShowcase.value.offsetHeight;
+  } else {
+    return null;
+  }
+})
+
 async function showTimer(autoCloseAttribute) {
-  const timerMenu = document.querySelector("#timerFeature");
+  const timerMenu = document.querySelector("#timer_feature");
   timerMenu.setAttribute("data-bs-auto-close", autoCloseAttribute);
 
   const dropdown = new bootstrap.Dropdown(timerMenu);
@@ -221,26 +249,18 @@ async function showTimer(autoCloseAttribute) {
   }
 }
 
-const quotes = [
-  "Believe in yourself and all that you are.",
-  "You are capable of amazing things!",
-  "Every day is a new beginning.",
-  "You’ve got this! Keep pushing forward.",
-  "Great things take time, keep going!",
-  "Small steps each day lead to big results.",
-  "Dream big, work hard, stay focused."
-];
-
-const randomQuote = ref("");
-
 onMounted(() => {
+  upcomingTasks.value = taskList.value;
+  quickAccessNotes.value = noteList.value;
+  quickAccessFlashcards.value = flashcardSetList.value;
+
   randomQuote.value = quotes[Math.floor(Math.random() * quotes.length)];
 });
 
-onBeforeMount(() => {
-  useCoreStore().fetchData();
-  useCoreStore().fetchFlashcards();
-  useCoreStore().fetchTasks();
+onBeforeMount(async () => {
+  await useCoreStore().fetchData();
+  await useCoreStore().fetchFlashcards();
+  await useCoreStore().fetchTasks();
 });
 </script>
 

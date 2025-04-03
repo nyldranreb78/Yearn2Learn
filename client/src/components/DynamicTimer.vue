@@ -3,14 +3,14 @@
     <div class="row m-0">
       <div class="col-12 px-1 text-start">
         <label
-          class="mode"
+          class="mode text-white"
           for="mode_select"
         ><small>Mode</small></label>
 
         <select
           id="mode_select"
           v-model="isPomodoroMode"
-          class="form-select form-select-sm mb-2 timer-header"
+          class="form-select form-select-sm mb-2 shadow timer-header"
         >
           <option
             :value="false"
@@ -29,33 +29,33 @@
       <div
         v-for="timeDisplay in timeDisplayData"
         :key="timeDisplay[1]"
-        class="col-4 text-center p-0"
+        class="col-4 text-center py-0 px-1"
       >
-        <div class="btn-group-vertical">
+        <div class="btn-group-vertical shadow w-100">
           <button
             v-if="!isPomodoroMode"
             type="button"
-            class="btn btn-sm btn-outline-dark px-2 py-0"
-            :disabled="isPomodoroMode || timeRemaining >= timeMax"
+            class="btn btn-sm btn-outline-light border-bottom px-2 py-0"
+            :disabled="timeRemaining >= timeMax"
             @click="increaseTime(timeDisplay[1])"
           >
             <i class="bi bi-caret-up-fill" />
           </button>
 
-          <label
-            :id="'timeDisplay' + timeDisplay[1]"
+          <button
+            :id="'time_display_' + timeDisplay[1]"
             type="button"
-            class="btn btn-outline-dark time-display px-2 pe-none"
-            disabled
+            class="btn btn-sm btn-outline-light border-top p-2"
+            :class="isPomodoroMode? 'rounded' : ''"
           >
             {{ timeDisplay[0] }}
-          </label>
+          </button>
 
           <button
             v-if="!isPomodoroMode"
             type="button"
-            class="btn btn-sm btn-outline-dark px-2 py-0"
-            :disabled="isPomodoroMode || timeRemaining <= 0"
+            class="btn btn-sm btn-outline-light border-top px-2 py-0"
+            :disabled="timeRemaining <= 0"
             @click="decreaseTime(timeDisplay[1])"
           >
             <i class="bi bi-caret-down-fill" />
@@ -71,7 +71,7 @@
       <div class="col-6 d-grid px-1">
         <button
           type="button"
-          class="btn btn-sm btn-block btn-success px-0 py-1"
+          class="btn btn-sm btn-block btn-light shadow px-0 py-1"
           @click="increaseTime(5 * 60)"
         >
           +5m
@@ -81,7 +81,7 @@
       <div class="col-6 d-grid px-1">
         <button
           type="button"
-          class="btn btn-sm btn-block btn-success px-0 py-1"
+          class="btn btn-sm btn-block btn-light shadow px-0 py-1"
           @click="increaseTime(15 * 60)"
         >
           +15m
@@ -94,7 +94,7 @@
         <button
           id="btnPlayToggle"
           type="button"
-          class="btn btn-block btn-primary px-0 py-1"
+          class="btn btn-block btn-primary border-0 y2l-blue shadow px-0 py-1"
           @click="togglePause()"
         >
           <i :class="isPlaying ? 'bi bi-pause-fill' : 'bi bi-play-fill'" />
@@ -105,7 +105,7 @@
         <button
           id="btnReset"
           type="button"
-          class="btn btn-block btn-secondary px-0 py-1"
+          class="btn btn-block btn-warning y2l-yellow shadow px-0 py-1"
           @click="resetTime()"
         >
           <i class="bi bi-arrow-counterclockwise" />
@@ -270,18 +270,11 @@ async function emitTimer() {
 }
 </script>
 
-<style scoped>
+<style>
 @import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap");
-
-.time-display[disabled] {
-  color: black;
-  background-color: white;
-  border-color: black;
-}
 
 .mode {
   font-family: "Libre Baskerville", sans-serif;
-  color: white;
 }
 
 .timer-header {

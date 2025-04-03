@@ -24,8 +24,8 @@ describe("Integration Tests Task Management - Frontend + Backend", () => {
     cy.visit("/#/tasks");
 
     cy.contains("New Task").click();
-    cy.get("#taskName").type("Test Task Title");
-    cy.get("#taskDeadline").type("2030-12-31T12:00");
+    cy.get("#task_name").type("Test Task Title");
+    cy.get("#task_deadline").type("2030-12-31T12:00");
     cy.get("button").contains("Create").click();
     cy.contains("Test Task Title").should("exist");
   });
@@ -38,20 +38,20 @@ describe("Integration Tests Task Management - Frontend + Backend", () => {
     cy.get(".btn-circle").first().click();
     cy.contains("Add New Folder").click();
 
-    cy.get("#folderName").type("Test Class");
-    cy.get("#classToggle").click();
+    cy.get("#folder_name").type("Test Class");
+    cy.get("#class_toggle").click();
     cy.get(".form-select").should("be.visible").last().select("true");
-    cy.get("#addFolderButton").click();
+    cy.get("#add_folder_button").click();
     cy.contains("Test Class").should("be.visible");
 
     cy.visit("/#/tasks");
 
     cy.contains("New Task").click();
-    cy.get("#taskName").type("Test Task 2 Title");
-    cy.get("#taskDeadline").type("2030-12-31T12:00");
-    cy.get("#isForClass").click();
-    cy.get("#taskClass").select("Test Class");
-    cy.get("#taskGrade").type("20");
+    cy.get("#task_name").type("Test Task 2 Title");
+    cy.get("#task_deadline").type("2030-12-31T12:00");
+    cy.get("#is_for_class").click();
+    cy.get("#task_class").select("Test Class");
+    cy.get("#task_grade").type("20");
     cy.get("button").contains("Create").click();
     cy.contains("Test Task 2 Title").should("exist");
   });
@@ -73,8 +73,8 @@ describe("Integration Tests Task Management - Frontend + Backend", () => {
     cy.get(".row").contains("Test Task 2 Title").first().click();
     cy.get(".bi-three-dots-vertical").click();
     cy.contains("Edit Details").click();
-    cy.get("#taskName").clear();
-    cy.get("#taskName").type("Test Edited");
+    cy.get("#task_name").clear();
+    cy.get("#task_name").type("Test Edited");
     cy.get("button").contains("Save").click();
     cy.contains("Test Edited").should("exist");
   });
