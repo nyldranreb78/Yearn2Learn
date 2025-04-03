@@ -60,11 +60,11 @@
         <div class="button-container">
           <button
             type="submit"
-            class="btn btn-warning"
+            class="btn btn-sm btn-warning fs-6 w-100"
           >
             Login
           </button>
-          <span class="sign-up">
+          <span class="sign-up fs-6">
             Don't have an account?
             <router-link :to="{ name: 'register' }"> Sign Up </router-link>
           </span>
