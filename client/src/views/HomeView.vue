@@ -65,6 +65,7 @@
                   @mouseenter="coreStore.setTask(task)"
                 >
                   <FeatureCard
+                    header-class="text-bg-warning"
                     :bootstrap-icon-code="''"
                     :feature-name="new Date(task.deadline).toLocaleString()"
                     :route-name="'tasks'"
@@ -105,6 +106,7 @@
                 @mouseenter="coreStore.setNote(note)"
               >
                 <FeatureCard
+                  header-class="y2l-blue text-white"
                   :bootstrap-icon-code="''"
                   :feature-name="note.title"
                   :route-name="'notes'"
@@ -169,7 +171,7 @@ const flashcardDesc =
 const taskDesc = "Keep track of your tasks, goals, and grade progress.";
 const timerDesc = "Choose between a generic or Pomodoro Method timer.";
 
-const featureHeaderClass = ["y2l-blue text-white", "y2l-red text-white", "text-bg-success", "y2l-yellow"]
+const featureHeaderClass = ["y2l-blue text-white", "bg-white", "y2l-yellow", "y2l-red text-white"]
 const featureIcon = ["journal-text", "card-heading", "calendar2-check", "stopwatch"];
 const featureTitle = ["Notes", "Flashcards", "Task Management", "Timer"]
 const featureRoute = ["notes", "flashcards", "tasks", null]
