@@ -237,7 +237,7 @@
                     <span v-if="gradedTaskList.length">
                       <br>This task is
                       <span v-if="currentTask.taskGrade">worth <b>{{ currentTask.taskGrade }}%</b> of your final grade </span>
-                      for a <b>{{ currentClass?.priority ? " Major" : "n Elective" }} course</b>
+                      for <b>{{ currentClass?.priority ? " a Major" : " an Elective" }} course</b>
                       <span v-if="averageGrade">
                         that you're averaging
                         <b>{{ (averageGrade * 100).toFixed(1) + "%" }}</b> on.
