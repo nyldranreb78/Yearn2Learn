@@ -225,7 +225,7 @@
   <!--SIDEBAR-->
   <div
     id="side_bar_left"
-    class="offcanvas offcanvas-start border-top navbar-offset z-1"
+    class="offcanvas offcanvas-start border-top navbar-offset z-1 pb-4"
     data-bs-scroll="false"
     data-bs-backdrop="true"
     tabindex="-1"
