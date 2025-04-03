@@ -137,7 +137,7 @@
           <div
             v-for="set in quickAccessFlashcards"
             :key="set"
-            class="col-2 mt-2 mb-2"
+            class="col-3 mt-2 mb-2"
             @mouseenter="coreStore.setFlashcardSet(set)"
           >
             <FeatureCard
