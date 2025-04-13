@@ -50,12 +50,6 @@
             type="password"
             class="form-control"
           >
-          <p
-            class="forgot-password"
-            @click="forgotPassword"
-          >
-            Forgot Password?
-          </p>
         </div>
         <div class="button-container">
           <button
@@ -88,10 +82,6 @@ const loginData = reactive({
 });
 
 const errorMessage = ref("");
-
-async function forgotPassword () {
-  alert("If you've forgotten your password, please create a new account. Thank you!");
-}
 
 async function submit() {
   errorMessage.value = "";
