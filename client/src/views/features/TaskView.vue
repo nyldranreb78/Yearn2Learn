@@ -233,12 +233,21 @@
                     class="mt-4"
                   >
                     <b><small>Our Message:</small></b><br>
-                    Consider prioritizing this task! This task is due the soonest
-                    <span v-if="gradedTaskList.length">
+                    
+                    <span>Consider prioritizing this task! This task is due the soonest</span>
+
+                    <!--Only shown if the task is for a class-->
+                    <span v-if="currentClass?.priority != null">
+                      <!--Only shown if the class-related task is graded-->
                       <span v-if="currentTask.taskGrade">
                         and is also worth <b>{{ currentTask.taskGrade }}%</b> of your final grade
                       </span>
-                      for <b>{{ currentClass?.priority ? " a Major" : " an Elective" }} course</b>
+
+                      <span>
+                        for <b>{{ currentClass?.priority ? " a Major" : " an Elective" }} course</b>
+                      </span>
+
+                      <!--Only shown if the user has existing grades for the class the task is for-->
                       <span v-if="averageGrade">
                         that you're averaging
                         <b>{{ toTwoDecimalPlaces(averageGrade * 100) + "%" }}</b> on.
@@ -681,7 +690,7 @@ onMounted(() => {
     // Then check for new ones every 5 seconds
     setInterval(() => {
       if (
-        priorityTask.value &&
+        !priorityTask.value ||
         new Date().getTime() > new Date(priorityTask.value.deadline).getTime()
       ) {
         priorityTask.value = recommendedTask.value;
@@ -744,14 +753,12 @@ watch(filteredTasks, (newValue) => {
 });
 
 // STATE GETTERS
-// The task recommendation system
+// The task recommendation system logic
 const recommendedTask = computed(() => {
-  if (taskList.value.length) {
+  if (upcomingTaskList.value.length) {
     if (gradedTaskList.value.length && classList.value.length) {
       // Only compare tasks from today onwards
-      // This line ets the local 12AM time for the day
       let currentDate = new Date();
-      currentDate?.setHours(0, 0, 0, 0); // Set the time to midnight
 
       // Find the Date of the closest, upcoming graded task
       let closestTaskDate = getClosestTaskDate(currentDate);
@@ -762,7 +769,7 @@ const recommendedTask = computed(() => {
 
       return getRecommendedTask(candidateTasks)
     } else if (!allTasksFinished.value) {
-      return taskList.value[0];
+      return upcomingTaskList.value[0];
     }
   }
 
@@ -813,7 +820,7 @@ const taskList = computed(() => {
 // List of Graded Tasks
 const gradedTaskList = computed(() => {
   return coreStore.tasks.filter((task) => {
-    return task.taskGrade != null;
+    return task.taskGrade != null && !task.isFinished;
   });
 });
 
@@ -968,15 +975,10 @@ function resetFilteredTasks(){
   filteredTasks.finished = finishedTaskList.value;
 }
 
-
 // Find the Date of the closest, upcoming graded task
 function getClosestTaskDate(fromDate){
   const closestTask = gradedTaskList.value.find((task) => {
-    let deadlineDate = new Date(task?.deadline);
-    return (
-      deadlineDate.getTime() >= fromDate.getTime() && // Deadline is today onwards
-      deadlineDate.getTime() > new Date().getTime()   // Deadline hasn't passed
-    );
+    return new Date(task.deadline).getTime() >= fromDate.getTime();
   })
 
   if(closestTask){
