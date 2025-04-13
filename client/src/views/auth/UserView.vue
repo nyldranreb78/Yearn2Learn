@@ -137,8 +137,7 @@ async function getUser() {
 
 async function editUser() {
   // If any of the user info are changed, update the user
-  if(userData.email !== user.value.email
-    || userData.firstName !== user.value.first_name
+  if(userData.firstName !== user.value.first_name
     || userData.lastName !== user.value.last_name
   ) {
     console.log("TODO")
