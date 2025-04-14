@@ -19,7 +19,7 @@
                 @click="isEditMode = !isEditMode"
               >
                 <small>
-                  {{ isEditMode? 'Cancel' : 'Edit Details' }}
+                  {{ isEditMode ? "Cancel" : "Edit Details" }}
                 </small>
               </button>
             </div>
@@ -32,9 +32,7 @@
 
                   <span v-show="isEditMode">
                     <small class="text-muted">
-                      <i>
-                        (Email address cannot be changed)
-                      </i>
+                      <i> (Email address cannot be changed) </i>
                     </small>
                   </span>
 
@@ -66,7 +64,7 @@
 
                 <li class="list-group-item">
                   <strong>Last Name: </strong>
-                  
+
                   <span v-if="isEditMode">
                     <input
                       v-model="userData.lastName"
@@ -113,7 +111,6 @@
   </div>
 </template>
 
-
 <script setup lang="js">
 import { useAuthStore } from "../../store/auth";
 import { ref, reactive, computed, onMounted } from "vue";
@@ -125,7 +122,7 @@ const userData = reactive({
   email: "",
   firstName: "",
   lastName: "",
-})
+});
 
 const user = computed(() => {
   return authStore.userDetail;
@@ -137,10 +134,21 @@ async function getUser() {
 
 async function editUser() {
   // If any of the user info are changed, update the user
-  if(userData.firstName !== user.value.first_name
-    || userData.lastName !== user.value.last_name
+  if (
+    userData.firstName !== user.value.first_name ||
+    userData.lastName !== user.value.last_name
   ) {
-    console.log("TODO")
+    try {
+      await authStore.updateUser(user.value._id, {
+        first_name: userData.firstName,
+        last_name: userData.lastName,
+      });
+
+      // Optionally show a success message
+      console.log("User updated!");
+    } catch (err) {
+      console.log("Failed to update user.");
+    }
   }
 
   isEditMode.value = false;
@@ -180,5 +188,4 @@ onMounted(async () => {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
-
 </style>
