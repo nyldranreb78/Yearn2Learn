@@ -29,7 +29,7 @@
             :class="showAnswer? 'btn-secondary' : 'btn-light flash-card'"
             title="Open the Question List to see the full text."
             :disabled="!filteredList.length"
-            @click="showAnswer = !showAnswer"
+            @click="flipCard"
             @mouseenter="showAltText = true"
             @mouseleave="showAltText = false"
           >
@@ -247,7 +247,7 @@
                   id="create_flashcard"
                   type="button"
                   class="btn btn-sm btn-primary w-100"
-                  @click="showForm = true"
+                  @click="showFlashcardForm"
                 >
                   <i class="bi bi-plus-lg me-1" /> Create Flashcard
                 </button>
@@ -367,7 +367,13 @@
           class="row"
         >
           <div class="col text-center m-4">
-            <i class="text-muted">The question list is hidden to avoid spoiling the answers. Click on the "Show Question List" button to view or edit them.</i>
+            <button
+              type="button"
+              class="btn btn-link"
+              @click="showQuestionList = true"
+            >
+              <i><b>The question list is hidden to avoid spoiling the answers. Click here or on the "Show Question List" button to view or edit them.</b></i>
+            </button>
           </div>
         </div>
       </div>
@@ -404,6 +410,12 @@ const flashcardData = reactive({
 watch(setInput, (newValue) => {
   if (newValue) {
     flashcardData.setName = "";
+  }
+});
+
+watch(flashcardData, (newValue) => {
+  if (newValue) {
+    setNameFilter.value = newValue.setName;
   }
 });
 
@@ -482,6 +494,10 @@ async function editFlashcard() {
 async function deleteFlashcard() {
   await coreStore.deleteFlashcard(currentFlashcard.value._id);
 
+  if(setNameFilter.value === currentFlashcard.value.setName) {
+    setNameFilter.value = "";
+  }
+
   resetFlashcardData();
 }
 
@@ -495,6 +511,7 @@ async function showEditForm(flashcard) {
 
   showForm.value = true;
   isEditMode.value = true;
+  isDeleteMode.value = false;
 
   document.body.scrollTop = document.documentElement.scrollTop = 0;
 }
@@ -507,7 +524,6 @@ async function showDeleteMode(flashcard) {
 }
 
 async function resetFlashcardData() {
-  setNameFilter.value = "";
   setInput.value = "";
 
   flashcardData.setName = "";
@@ -530,6 +546,20 @@ async function skipFlashcard(numSkipped) {
 async function shuffleFlashcards() {
   isShuffleMode.value = false;
   isShuffleMode.value = true;
+}
+
+async function showFlashcardForm() {
+  showForm.value = true;
+  showQuestionList.value = true;
+
+  if(setNameFilter.value) {
+    flashcardData.setName = setNameFilter.value;
+  }
+}
+
+async function flipCard() {
+  showAnswer.value = !showAnswer.value
+  showAltText.value = false;
 }
 
 onBeforeMount(() => {

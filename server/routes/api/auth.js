@@ -18,6 +18,9 @@ router.post("/refresh", authControllers.refresh);
 // Get user
 router.get("/user", authMiddleware, authControllers.user);
 
+// Update user
+router.patch("/user/:id", authMiddleware, authControllers.updateUser);
+
 // Delete user for integration tests
 router.post("/delete-test-user", authControllers.deleteTestUser);
 

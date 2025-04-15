@@ -104,11 +104,11 @@
         <div class="button-container">
           <button
             type="submit"
-            class="btn btn-warning"
+            class="btn btn-sm btn-warning fs-6 mt-4 w-100"
           >
             Sign Up
           </button>
-          <span class="login">
+          <span class="login fs-6">
             Have an account?
             <router-link :to="{ name: 'login' }"> Login </router-link>
           </span>

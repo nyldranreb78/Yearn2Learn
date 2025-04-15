@@ -53,6 +53,16 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
+    async updateUser(userId, userData) {
+      try {
+        const { data } = await useApiPrivate().patch(`/api/auth/user/${userId}`, userData);
+        return data;
+      } catch (error) {
+        console.error("Update failed:", error.response?.data || error.message);
+        throw error.message;
+      }
+    },
+
     async logout() {
       try {
         const { data } = await useApiPrivate().post(`/api/auth/logout`);

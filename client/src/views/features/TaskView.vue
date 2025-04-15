@@ -215,8 +215,8 @@
                   <div v-if="currentTask.taskGrade > 0">
                     <b><small>Final Grade Weight:</small></b><br>{{ currentTask.taskGrade }}%
                   </div>
-                  <div v-if="currentTask.actualGrade > 0">
-                    <b><small>Score Received:</small></b><br>{{
+                  <div v-if="currentTask.actualGrade !== null">
+                    <b><small>Received/Forecasted:</small></b><br>{{
                       currentTask.actualGrade + " / " + currentTask.taskGrade
                     }}%
                   </div>
@@ -233,18 +233,29 @@
                     class="mt-4"
                   >
                     <b><small>Our Message:</small></b><br>
-                    Consider prioritizing this task!
-                    <span v-if="gradedTaskList.length">
-                      <br>This task is
-                      <span v-if="currentTask.taskGrade">worth <b>{{ currentTask.taskGrade }}%</b> of your final grade </span>
-                      for <b>{{ currentClass?.priority ? " a Major" : " an Elective" }} course</b>
+                    
+                    <span>Consider prioritizing this task! This task is due the soonest</span>
+
+                    <!--Only shown if the task is for a class-->
+                    <span v-if="currentClass?.priority != null">
+                      <!--Only shown if the class-related task is graded-->
+                      <span v-if="currentTask.taskGrade">
+                        and is also worth <b>{{ currentTask.taskGrade }}%</b> of your final grade
+                      </span>
+
+                      <span>
+                        for <b>{{ currentClass?.priority ? " a Major" : " an Elective" }} course</b>
+                      </span>
+
+                      <!--Only shown if the user has existing grades for the class the task is for-->
                       <span v-if="averageGrade">
                         that you're averaging
-                        <b>{{ (averageGrade * 100).toFixed(1) + "%" }}</b> on.
+                        <b>{{ toTwoDecimalPlaces(averageGrade * 100) + "%" }}</b> on.
                         <br><br>See full class progress breakdown below.
                       </span>
                       <span v-else>.</span>
                     </span>
+                    <span v-else>.</span>
                   </div>
                 </div>
               </div>
@@ -330,7 +341,7 @@
                     </div>
 
                     <div class="col-6">
-                      ? / {{ task.taskGrade }}
+                      ?? / {{ toTwoDecimalPlaces(task.taskGrade) }}
                     </div>
                   </div>
                 </div>
@@ -362,7 +373,7 @@
                     </div>
 
                     <div class="col-6">
-                      {{ task.actualGrade }} / {{ task.taskGrade }}
+                      {{ toTwoDecimalPlaces(task.actualGrade) }} / {{ toTwoDecimalPlaces(task.taskGrade) }}
                     </div>
                   </div>
 
@@ -376,7 +387,7 @@
                           " / " +
                           totalTaskGrade +
                           " (" +
-                          (averageGrade * 100).toFixed(1) +
+                          toTwoDecimalPlaces(averageGrade * 100) +
                           "%)"
                       }}
                     </div>
@@ -461,7 +472,6 @@
                       id="task_class"
                       v-model="taskData.folderID"
                       class="form-select"
-                      @change="resetWeight"
                     >
                       <option :value="null">
                         None
@@ -491,6 +501,7 @@
                       id="task_grade"
                       v-model="taskData.taskGrade"
                       type="number"
+                      step="any"
                       class="form-control"
                       min="0"
                       max="100"
@@ -501,14 +512,31 @@
                     <label
                       for="actual_grade"
                       class="form-label"
-                    >Grade received
-                      <small class="text-muted">(if applicable)</small></label>
+                    >
+                      Grade received
+                      <small
+                        v-if="taskData.actualGrade === null"
+                        class="text-muted"
+                      >
+                        (if applicable)
+                      </small>
+
+                      <button
+                        v-else
+                        type="button"
+                        class="btn btn-link link-danger p-0 m-0"
+                        @click="taskData.actualGrade = null"
+                      >
+                        <small>Remove</small>
+                      </button>
+                    </label>
                     <div class="row">
                       <div class="col">
                         <input
                           id="actual_grade"
                           v-model="taskData.actualGrade"
                           type="number"
+                          step="any"
                           class="form-control"
                           min="0"
                           :max="taskData?.taskGrade"
@@ -655,20 +683,20 @@ const taskData = reactive({
 });
 
 onMounted(() => {
-  // Wait 1 second to calculate a recommendation (one time)
+  // Wait 0.5 seconds to calculate a recommendation (one time)
   setTimeout(() => {
     priorityTask.value = recommendedTask.value;
 
     // Then check for new ones every 5 seconds
     setInterval(() => {
       if (
-        priorityTask.value &&
+        !priorityTask.value ||
         new Date().getTime() > new Date(priorityTask.value.deadline).getTime()
       ) {
         priorityTask.value = recommendedTask.value;
       }
     }, 5000);
-  }, 1000);
+  }, 500);
 });
 
 // Some logic to enforce values between taskGrade and actualGrade
@@ -695,6 +723,14 @@ watch(taskData, (newValue) => {
       // of a local date string, which is why this is hard-coded
       taskData.deadline = taskData?.deadline.substring(0, 16);
     }
+
+    if(newValue.taskGrade && toTwoDecimalPlaces(newValue.taskGrade) > newValue.taskGrade) {
+      taskData.taskGrade = toTwoDecimalPlaces(newValue.taskGrade);
+    }
+
+    if(newValue.actualGrade && toTwoDecimalPlaces(newValue.actualGrade) > newValue.actualGrade) {
+      taskData.actualGrade = toTwoDecimalPlaces(newValue.actualGrade);
+    }
   }
 });
 
@@ -717,14 +753,12 @@ watch(filteredTasks, (newValue) => {
 });
 
 // STATE GETTERS
-// The task recommendation system
+// The task recommendation system logic
 const recommendedTask = computed(() => {
-  if (taskList.value.length) {
+  if (upcomingTaskList.value.length) {
     if (gradedTaskList.value.length && classList.value.length) {
       // Only compare tasks from today onwards
-      // This line ets the local 12AM time for the day
       let currentDate = new Date();
-      currentDate?.setHours(0, 0, 0, 0); // Set the time to midnight
 
       // Find the Date of the closest, upcoming graded task
       let closestTaskDate = getClosestTaskDate(currentDate);
@@ -735,7 +769,7 @@ const recommendedTask = computed(() => {
 
       return getRecommendedTask(candidateTasks)
     } else if (!allTasksFinished.value) {
-      return taskList.value[0];
+      return upcomingTaskList.value[0];
     }
   }
 
@@ -786,7 +820,7 @@ const taskList = computed(() => {
 // List of Graded Tasks
 const gradedTaskList = computed(() => {
   return coreStore.tasks.filter((task) => {
-    return task.taskGrade != null;
+    return task.taskGrade != null && !task.isFinished;
   });
 });
 
@@ -836,7 +870,7 @@ async function addTask() {
     folderID: taskData?.folderID,
     taskGrade: taskData?.taskGrade,
     actualGrade: taskData?.actualGrade,
-    isFinished: taskData?.actualGrade ? true : false,
+    isFinished: false,
   };
 
   await coreStore.addTask(newTask);
@@ -855,7 +889,7 @@ async function editTask() {
     folderID: taskData?.folderID,
     taskGrade: taskData?.taskGrade,
     actualGrade: taskData?.actualGrade,
-    isFinished: taskData?.actualGrade ? true : currentTask.value.isFinished,
+    isFinished: currentTask.value.isFinished,
   };
 
   await coreStore.editTask(currentTask?.value._id, updatedTask);
@@ -864,19 +898,14 @@ async function editTask() {
   resetFilteredTasks();
 
   priorityTask.value = recommendedTask.value;
-  currentTask.value = updatedTask;
 }
 
 async function deleteTask() {
   await coreStore.deleteTask(currentTask.value?._id);
 
-  currentTask.value = taskList.value.length ? taskList.value[0] : "";
-
-  if (currentTask.value?._id === priorityTask.value?._id) {
-    currentTask.value = "";
-  }
-  
   resetFilteredTasks();
+  currentTask.value = "";
+  priorityTask.value = recommendedTask.value;
 }
 
 async function changeStatus(newStatus) {
@@ -887,7 +916,7 @@ async function changeStatus(newStatus) {
     deadline: currentTask.value?.deadline,
     folderID: currentTask.value?.folderID,
     taskGrade: currentTask.value?.taskGrade,
-    actualGrade: newStatus? currentTask.value?.actualGrade : null,
+    actualGrade: currentTask.value?.actualGrade,
     isFinished: newStatus,
   };
 
@@ -931,11 +960,6 @@ async function resetClass() {
   taskData.folderID = null;
 }
 
-async function resetWeight() {
-  taskData.taskGrade = null;
-  taskData.actualGrade = null;
-}
-
 async function closeModal() {
   if (taskData?.name && taskData?.deadline) {
     const modal = document.querySelector("#add_edit_task_form");
@@ -951,15 +975,10 @@ function resetFilteredTasks(){
   filteredTasks.finished = finishedTaskList.value;
 }
 
-
 // Find the Date of the closest, upcoming graded task
 function getClosestTaskDate(fromDate){
   const closestTask = gradedTaskList.value.find((task) => {
-    let deadlineDate = new Date(task?.deadline);
-    return (
-      deadlineDate.getTime() >= fromDate.getTime() && // Deadline is today onwards
-      deadlineDate.getTime() > new Date().getTime()   // Deadline hasn't passed
-    );
+    return new Date(task.deadline).getTime() >= fromDate.getTime();
   })
 
   if(closestTask){
@@ -1015,7 +1034,7 @@ function getRecommendedTask(taskArray){
 
     weight += taskArray[i].taskGrade / 100; // Add weight based on final grade worth
     weight += 1 - currentAverage; // Add weight based on current grade average
-    weight += classPriority ? 0.5 : 0; // Add weight based on whether the class is a major or elective
+    weight += classPriority ? 0.25 : 0; // Add weight based on whether the class is a major or elective
     weight += (24 - deadlineHour) / 100; // Add weight based on how soon in the day it's due
 
     if (weight > mostWeight) {
@@ -1042,9 +1061,13 @@ function getClass(folderID) {
 
 // Get the sum of all the grades in a class
 function getTotalGrade(gradeArray, gradeType) {
-  return gradeArray.reduce((gradeA, gradeB) => {
+  return toTwoDecimalPlaces(gradeArray.reduce((gradeA, gradeB) => {
     return gradeA + gradeB[gradeType];
-  }, 0);
+  }, 0));
+}
+
+function toTwoDecimalPlaces(number) {
+  return parseFloat(number).toFixed(2);
 }
 
 onBeforeMount(() => {

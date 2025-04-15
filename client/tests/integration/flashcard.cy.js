@@ -75,8 +75,8 @@ describe("Integration Tests - Frontend + Backend", () => {
     cy.visit("/#/flashcards");
 
     cy.get("#current_flashcard").should("have.text", "unique question 1").click();
-    cy.get("#current_flashcard").should("have.text", "Return to the question");
-    //<button type="button" class="btn btn-sm btn-primary w-100"><i class="bi bi-plus-lg me-1"></i> Create Flashcard </button>
+    cy.get("#current_flashcard").should("have.text", "unique answer 1");
+    
   });
 
   it("should create one more card for the same set(Group1)", () => {

@@ -50,21 +50,15 @@
             type="password"
             class="form-control"
           >
-          <p
-            class="forgot-password"
-            @click="forgotPassword"
-          >
-            Forgot Password?
-          </p>
         </div>
         <div class="button-container">
           <button
             type="submit"
-            class="btn btn-warning"
+            class="btn btn-sm btn-warning fs-6 w-100"
           >
             Login
           </button>
-          <span class="sign-up">
+          <span class="sign-up fs-6">
             Don't have an account?
             <router-link :to="{ name: 'register' }"> Sign Up </router-link>
           </span>
@@ -88,10 +82,6 @@ const loginData = reactive({
 });
 
 const errorMessage = ref("");
-
-async function forgotPassword () {
-  alert("If you've forgotten your password, please create a new account. Thank you!");
-}
 
 async function submit() {
   errorMessage.value = "";

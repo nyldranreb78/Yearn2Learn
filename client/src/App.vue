@@ -1,3 +1,13 @@
+<template>
+  <div id="app">
+    <div v-if="!isInUserManagement">
+      <NavBar />
+    </div>
+
+    <RouterView />
+  </div>
+</template>
+
 <script setup lang="js">
 import { useRouter, RouterView } from "vue-router";
 import { computed } from "vue";
@@ -11,16 +21,6 @@ const isInUserManagement = computed(() => {
   return currentPath === "login" || currentPath === "register";
 });
 </script>
-
-<template>
-  <div id="app">
-    <div v-show="!isInUserManagement">
-      <NavBar />
-    </div>
-
-    <RouterView />
-  </div>
-</template>
 
 <style lang="scss">
 #app {

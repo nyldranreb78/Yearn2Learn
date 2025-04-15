@@ -94,10 +94,8 @@ async function update(req, res) {
 
     task.folderID = req.body.folderID ? req.body.folderID : task.folderID;
     task.name = req.body.name ? req.body.name : task.name;
-    task.taskGrade = req.body.taskGrade ? req.body.taskGrade : task.taskGrade;
-    task.actualGrade = req.body.actualGrade
-      ? req.body.actualGrade
-      : task.actualGrade;
+    task.taskGrade = req.body.taskGrade;
+    task.actualGrade = req.body.actualGrade;
     task.deadline = req.body.deadline ? req.body.deadline : task.deadline;
     task.isFinished = req.body.isFinished;
 

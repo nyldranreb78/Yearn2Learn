@@ -1,7 +1,15 @@
 const User = require("../models/user");
+const auth = require('../middleware/auth-service');
 const jwt = require("jsonwebtoken");
 const sanitize = require("mongo-sanitize");
 const { hashPassword, comparePassword } = require("../utils/helpers");
+
+async function verifyID(id, res) {
+  if (!id) {
+    return res.status(401).json({ message: "Unauthorized: Invalid token" });
+  }
+  return true;
+}
 
 // Register a new user
 async function register(req, res) {
@@ -94,6 +102,31 @@ async function login(req, res) {
   res.json({ access_token: accessToken });
 }
 
+async function updateUser(req, res) {
+  try {
+    const id = auth.getUserID(req);
+
+    if (!(await verifyID(id, res))) return;
+
+    // Find the User
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Update only if new values are provided
+    if (req.body.first_name) user.first_name = req.body.first_name.trim();
+    if (req.body.last_name) user.last_name = req.body.last_name.trim();
+
+    await user.save();
+    return res.status(200).json({ user });
+  } catch (err) {
+    console.error("Update error:", err);
+    return res.status(500).json({ message: err.message });
+  }
+}
+
 // Logout the user
 async function logout(req, res) {
   const cookies = req.cookies;
@@ -170,4 +203,4 @@ async function user(req, res) {
   return res.status(200).json(user);
 }
 
-module.exports = { register, login, logout, refresh, user, deleteTestUser };
+module.exports = { register, login, logout, refresh, user, updateUser, deleteTestUser };
